@@ -1,0 +1,2154 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>2026美联储1月决议前瞻・金十期货独家</title>
+  <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+SC:wght@300;400;500;700;900&family=Source+Han+Sans:wght@300;400;500;700&family=Orbitron:wght@500;700;900&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  
+  <!-- 引入 ECharts (原有) -->
+  <script src="https://cdn.jsdelivr.net/npm/echarts@5.4.3/dist/echarts.min.js"></script>
+  <!-- 引入 Chart.js (新增，用于华尔街预测散点图) -->
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+  <style>
+    :root {
+      /* 黑金主色调 */
+      --gold: #D4AF37;
+      --gold-light: #F9E79F;
+      --gold-dark: #8E7326;
+      --black: #050505;
+      --black-card: #141414;
+      --black-border: #2A2A2A;
+      --text-main: #FFFFFF;
+      --text-dim: #A0A0A0;
+      
+      /* 中国市场习惯：红涨(热) 绿跌(冷) */
+      --up-red: #FF3B30;      /* 鹰派/加息/通胀/多头 */
+      --down-green: #00C853;  /* 鸽派/降息/衰退/空头 */
+      --neutral: #8E8E93;
+    }
+
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: 'Source Han Sans', 'Noto Sans CJK SC', 'Noto Sans SC', sans-serif;
+      background: var(--black);
+      color: var(--text-main);
+      line-height: 1.6;
+      overflow-x: hidden;
+      -webkit-font-smoothing: antialiased;
+    }
+
+    /* 通用工具类 */
+    .highlight-gold { color: var(--gold); }
+    .highlight-red { color: var(--up-red); }
+    .highlight-green { color: var(--down-green); }
+    
+    /* 新增颜色辅助类 */
+    .text-gold { color: var(--gold); }
+    .text-red { color: var(--up-red); }
+    .text-green { color: var(--down-green); }
+
+    .orbitron { font-family: 'Source Han Sans', 'Noto Sans CJK SC', 'Noto Sans SC', sans-serif; }
+    .fade-up { opacity: 0; transform: translateY(20px); transition: opacity 0.6s ease, transform 0.6s ease; }
+    .fade-up.visible { opacity: 1; transform: translateY(0); }
+
+    .screen {
+      min-height: auto;
+      padding: 40px 20px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      /* 确保背景图正确覆盖 */
+      background-size: cover;
+      background-position: center;
+      background-repeat: no-repeat;
+    }
+
+    .section-container {
+      width: 100%;
+      max-width: 900px; /* 加宽以适应三列布局 */
+      margin-bottom: 20px;
+      /* 确保内容在背景之上 */
+      z-index: 1;
+    }
+
+    .section-header {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      margin-bottom: 24px;
+      border-left: 4px solid var(--gold);
+      padding-left: 16px;
+    }
+
+    .section-title {
+      font-size: 24px;
+      font-weight: 700;
+      color: var(--text-main);
+    }
+    
+    /* 新增英文小标题样式 */
+    .st-en {
+      font-size: 12px;
+      color: #666;
+      margin-left: 10px;
+      font-weight: 400;
+      font-family: 'Orbitron', sans-serif;
+      text-transform: uppercase;
+    }
+
+    /* --- Screen 1: Cover --- */
+    .screen-cover {
+      min-height: auto;
+      padding-top: 80px;
+      padding-bottom: 60px;
+      justify-content: center;
+      text-align: center;
+      position: relative;
+      background: 
+        linear-gradient(to bottom, rgba(5,5,5,0.4) 0%, rgba(5,5,5,0.5) 70%, #050505 100%),
+        radial-gradient(circle at center, rgba(0,0,0,0.5) 0%, rgba(0,0,0,0.9) 100%),
+        url('https://img.jin10.com/news/26/01/LP6NzATN59V-8kXKjeaJp.jpg');
+      background-size: cover;
+      background-position: center;
+      background-repeat: no-repeat;
+    }
+
+    .main-title {
+      font-size: clamp(32px, 8vw, 56px);
+      font-weight: 900;
+      /* 修改点1：渐变色改为“白->浅金->亮金->白”的流光效果，去掉了暗色 */
+      background: linear-gradient(135deg, #FFFFFF 0%, #FFF5CC 30%, #FFD700 60%, #FFFFFF 100%);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      margin-bottom: 12px;
+    }
+    .data-bar {
+      display: flex;
+      justify-content: space-around;
+      width: 100%;
+      max-width: 600px;
+      background: rgba(20, 20, 20, 0.6);
+      border: 1px solid var(--gold-dark);
+      border-radius: 12px;
+      padding: 15px;
+      margin-top: 30px;
+      margin-bottom: 40px;
+      backdrop-filter: blur(8px);
+      box-shadow: 0 10px 30px rgba(0,0,0,0.5);
+    }
+
+    /* --- Timeline Style --- */
+    .timeline-section {
+      width: 100%;
+      max-width: 700px;
+      margin: 0 auto 30px auto;
+      position: relative;
+    }
+    .tl-main-header {
+      font-size: 18px;
+      font-weight: 700;
+      color: var(--gold);
+      text-align: left;
+      margin-bottom: 30px;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      border-bottom: 1px solid rgba(212, 175, 55, 0.2);
+      padding-bottom: 15px;
+      text-shadow: 0 2px 4px rgba(0,0,0,0.5);
+    }
+    /* Calendar Link Style */
+    .calendar-link {
+        margin-left: auto;
+        font-size: 12px;
+        color: var(--text-dim);
+        text-decoration: none;
+        display: flex;
+        align-items: center;
+        gap: 6px;
+        background: rgba(255,255,255,0.05);
+        padding: 4px 10px;
+        border-radius: 20px;
+        transition: all 0.3s ease;
+        border: 1px solid transparent;
+        font-weight: 400;
+    }
+    .calendar-link:hover {
+        color: var(--gold);
+        background: rgba(212, 175, 55, 0.1);
+        border-color: rgba(212, 175, 55, 0.3);
+    }
+
+    .timeline-container { position: relative; padding-left: 20px; }
+    .timeline-container::before {
+      content: '';
+      position: absolute; left: 88px; top: 5px; bottom: 20px; width: 2px;
+      background: linear-gradient(180deg, rgba(212,175,55,0.1) 0%, rgba(212,175,55,0.5) 50%, rgba(255,59,48,0.5) 100%);
+    }
+    .tl-row { display: flex; margin-bottom: 30px; position: relative; }
+    .tl-time-col { width: 70px; text-align: right; padding-right: 15px; }
+    .tl-time-text { font-family: 'Source Han Sans', 'Noto Sans CJK SC', 'Noto Sans SC', sans-serif; font-weight: 700; color: var(--text-main); font-size: 16px; text-shadow: 0 2px 4px rgba(0,0,0,0.8); }
+    .tl-marker {
+      position: absolute; left: 62px; top: 5px; width: 14px; height: 14px; border-radius: 50%;
+      background: var(--black); border: 2px solid var(--gold); z-index: 2; box-shadow: 0 0 10px rgba(212,175,55,0.3);
+    }
+    .tl-marker.alert { border-color: var(--up-red); background: var(--up-red); animation: pulse-red 2s infinite; }
+    @keyframes pulse-red { 0% { box-shadow: 0 0 0 0 rgba(255, 59, 48, 0.7); } 100% { box-shadow: 0 0 0 10px rgba(255, 59, 48, 0); } }
+    .tl-content-card {
+      flex: 1; background: rgba(20,20,20,0.6); border: 1px solid rgba(255,255,255,0.1); border-radius: 8px;
+      padding: 16px 20px; margin-left: 20px; transition: all 0.3s ease; backdrop-filter: blur(10px);
+    }
+    .tl-content-card:hover { transform: translateX(5px); border-color: var(--gold); }
+    .tl-content-card.alert-card { border-left: 3px solid var(--up-red); background: linear-gradient(90deg, rgba(255,59,48,0.1) 0%, rgba(0,0,0,0.6) 100%); }
+    .tl-title { font-size: 15px; font-weight: 700; color: #fff; margin-bottom: 8px; display: flex; align-items: center; gap: 8px; flex-wrap: wrap; }
+    .tl-tag { font-size: 10px; padding: 2px 6px; border-radius: 4px; background: rgba(212,175,55,0.2); color: var(--gold); }
+    .tl-tag.red { background: rgba(255,59,48,0.2); color: var(--up-red); }
+    
+    /* Live Link Style */
+    .tl-tag-link { text-decoration: none; display: inline-block; transition: transform 0.2s; }
+    .tl-tag-link .tl-tag { cursor: pointer; border: 1px solid rgba(212,175,55,0.3); display: flex; align-items: center; gap: 4px; transition: all 0.2s; }
+    .tl-tag-link:hover .tl-tag { background: var(--gold); color: #000; }
+    
+    .tl-desc { font-size: 13px; color: #ccc; line-height: 1.5; }
+    .tl-highlight { color: var(--gold-light); font-weight: 500; border-bottom: 1px dotted var(--gold); }
+    .tl-highlight-red { color: #ff8a80; font-weight: 500; }
+    
+    /* Dot Plot & Press Trigger Style */
+    .dotplot-trigger, .press-trigger {
+        color: var(--gold);
+        cursor: pointer;
+        margin-left: 5px;
+        transition: transform 0.2s ease, color 0.2s ease;
+        font-size: 14px;
+        vertical-align: middle;
+    }
+    .dotplot-trigger:hover, .press-trigger:hover {
+        transform: scale(1.1);
+        color: #fff;
+    }
+    .press-trigger {
+        font-size: 12px;
+        background: rgba(212, 175, 55, 0.1);
+        padding: 2px 8px;
+        border-radius: 12px;
+        border: 1px solid rgba(212, 175, 55, 0.3);
+        margin-left: 10px;
+        display: inline-flex;
+        align-items: center;
+        gap: 4px;
+        text-decoration: none;
+    }
+    .press-trigger:hover {
+        background: var(--gold);
+        color: #000;
+    }
+
+    @media (max-width: 600px) {
+      .timeline-container::before { left: 24px; }
+      .tl-row { flex-direction: column; padding-left: 40px; }
+      .tl-time-col { width: 100%; text-align: left; }
+      .tl-marker { left: 18px; }
+      .tl-content-card { margin-left: 0; }
+    }
+
+    /* --- Intro --- */
+    .intro-block {
+      background: rgba(212, 175, 55, 0.08); border: 1px solid rgba(212, 175, 55, 0.3);
+      border-radius: 12px; padding: 25px; margin-bottom: 50px; position: relative;
+    }
+    .intro-block::before { content: '"'; position: absolute; top: -10px; left: 20px; font-size: 60px; color: var(--gold); opacity: 0.3; font-family: serif; }
+    .intro-text { font-size: 16px; color: #ddd; text-align: justify; }
+    .intro-highlight { color: var(--gold); font-weight: 700; }
+
+    /* --- Core Dimensions Cards --- */
+    .core-stack {
+      display: flex;
+      flex-direction: column;
+      gap: 30px;
+      margin-bottom: 40px;
+    }
+    
+    .core-card {
+      background: var(--black-card);
+      border: 1px solid var(--black-border);
+      border-radius: 16px;
+      padding: 24px;
+      transition: all 0.3s;
+      width: 100%; /* Full width */
+    }
+    
+    .core-card:hover {
+      transform: translateY(-5px);
+      border-color: var(--gold-dark);
+      box-shadow: 0 10px 30px rgba(0,0,0,0.3);
+    }
+
+    .core-title {
+      font-size: 20px;
+      font-weight: 700;
+      color: var(--text-main);
+      margin-bottom: 16px;
+      border-bottom: 1px solid var(--black-border);
+      padding-bottom: 12px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      flex-wrap: wrap;
+      gap: 10px;
+    }
+    
+    .core-desc { font-size: 14px; color: var(--text-dim); margin-bottom: 20px; line-height: 1.5; }
+    
+    /* ECharts Container */
+    .chart-box { width: 100%; margin-bottom: 30px; }
+    .chart-container { width: 100%; height: 280px; position: relative; }
+    .heatmap-container { width: 100%; height: 400px; overflow: hidden; }
+
+    /* CME Table Styles */
+    .cme-table-wrapper { overflow-x: auto; margin-top: 10px; }
+    .cme-table { width: 100%; border-collapse: collapse; font-size: 13px; text-align: center; }
+    .cme-table th { background: rgba(212, 175, 55, 0.1); color: var(--gold); padding: 12px 8px; font-weight: 700; border-bottom: 1px solid var(--gold-dark); }
+    .cme-table td { padding: 12px 8px; border-bottom: 1px solid rgba(255,255,255,0.05); color: #ddd; }
+    .cme-table tr:hover { background: rgba(255,255,255,0.03); }
+    .cme-highlight-row { background: rgba(212, 175, 55, 0.05); }
+    .cme-val-high { font-weight: 700; color: var(--text-main); font-size: 14px; }
+
+    /* --- NEW CANDIDATE GRID STYLES --- */
+    .candidate-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+      gap: 20px;
+      margin-top: 20px;
+    }
+    .candidate-card {
+      background: rgba(255,255,255,0.03);
+      border: 1px solid var(--black-border);
+      border-radius: 12px;
+      padding: 16px;
+      display: flex;
+      flex-direction: column;
+      position: relative;
+    }
+    .candidate-header {
+      display: flex;
+      align-items: center;
+      gap: 15px;
+      margin-bottom: 15px;
+    }
+    .cand-img-wrapper {
+      width: 50px;
+      height: 50px;
+      border-radius: 50%;
+      overflow: hidden;
+      background: #333;
+      border: 2px solid var(--gold);
+      flex-shrink: 0;
+    }
+    .cand-img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+    }
+    .cand-info {
+      flex: 1;
+    }
+    .cand-name {
+      font-size: 16px;
+      font-weight: 700;
+      color: var(--text-main);
+      line-height: 1.2;
+    }
+    .cand-role {
+      font-size: 11px;
+      color: var(--text-dim);
+      margin-top: 2px;
+    }
+    .cand-prob-row {
+      margin-bottom: 15px;
+    }
+    .cand-prob-label {
+      font-size: 11px;
+      color: var(--gold);
+      display: flex;
+      justify-content: space-between;
+      margin-bottom: 4px;
+    }
+    .cand-prob-bar-bg {
+      width: 100%;
+      height: 6px;
+      background: rgba(255,255,255,0.1);
+      border-radius: 3px;
+      overflow: hidden;
+    }
+    .cand-prob-bar-fill {
+      height: 100%;
+      background: linear-gradient(90deg, var(--gold-dark) 0%, var(--gold) 100%);
+      border-radius: 3px;
+    }
+    .cand-tags {
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+    }
+    .cand-tag-row {
+      font-size: 12px;
+      line-height: 1.4;
+      display: flex;
+      gap: 6px;
+    }
+    .cand-tag-icon {
+      color: var(--gold);
+      width: 16px;
+      text-align: center;
+      flex-shrink: 0;
+      margin-top: 2px;
+    }
+    .cand-tag-text strong {
+      color: #ddd;
+      font-weight: 500;
+    }
+    .cand-tag-text {
+      color: #999;
+    }
+
+    /* Core Points Grid (Legacy) */
+    .core-points-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+      gap: 20px;
+      padding-top: 20px;
+      border-top: 1px dashed var(--black-border);
+    }
+    .core-point { margin-bottom: 0; }
+    .cp-label { font-size: 12px; color: #888; display: block; margin-bottom: 4px; }
+    .cp-value { font-size: 14px; font-weight: 500; color: #eee; }
+    
+    /* ING Insight Box Styles */
+    .ing-insight-box {
+      margin-top: 20px;
+      background: linear-gradient(180deg, rgba(255, 107, 0, 0.05) 0%, rgba(20,20,20,0.6) 100%);
+      border: 1px solid rgba(255, 107, 0, 0.2);
+      border-radius: 12px;
+      padding: 20px;
+      position: relative;
+      overflow: hidden;
+    }
+    .ing-insight-box::before {
+      content: '';
+      position: absolute; top: 0; left: 0; width: 4px; height: 100%;
+      background: #FF6B00; /* ING Orange */
+    }
+    .ing-header {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      margin-bottom: 15px;
+      font-family: 'Source Han Sans', 'Noto Sans CJK SC', 'Noto Sans SC', sans-serif;
+      color: #FF6B00;
+      font-weight: 700;
+      font-size: 14px;
+      text-transform: uppercase;
+    }
+    .ing-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+      gap: 15px;
+    }
+    .ing-item {
+      background: rgba(0,0,0,0.3);
+      padding: 12px;
+      border-radius: 8px;
+      border: 1px solid rgba(255,255,255,0.05);
+    }
+    .ing-item-title {
+      font-size: 13px;
+      font-weight: 700;
+      color: #ddd;
+      margin-bottom: 6px;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+    .ing-item-desc {
+      font-size: 12px;
+      color: #999;
+      line-height: 1.4;
+    }
+
+    /* --- Scenarios & Strategy --- */
+    .scenario-container { background: var(--black-card); border: 1px solid var(--black-border); border-radius: 12px; overflow: hidden; margin-top: 20px; }
+    .scenario-tabs { display: flex; justify-content: center; background: #111; padding: 10px; gap: 10px; }
+    .sc-tab {
+      background: transparent; border: 1px solid transparent; color: #666; padding: 8px 16px; border-radius: 20px;
+      cursor: pointer; font-size: 13px; font-weight: 600; transition: all 0.3s;
+    }
+    .sc-tab.active-hawk { background: rgba(255, 59, 48, 0.1); color: var(--up-red); border-color: var(--up-red); }
+    .sc-tab.active-dove { background: rgba(0, 200, 83, 0.1); color: var(--down-green); border-color: var(--down-green); }
+    .sc-tab.active-black { background: rgba(255, 255, 255, 0.1); color: #fff; border-color: #fff; }
+    .sc-content { padding: 30px; display: none; }
+    .sc-content.active { display: block; animation: fadeIn 0.4s ease; }
+    .sc-title { font-size: 20px; font-weight: 700; margin-bottom: 15px; }
+    .sc-desc { font-size: 14px; color: #aaa; margin-bottom: 25px; font-style: italic; }
+    .asset-list li { margin-bottom: 12px; font-size: 14px; list-style: none; display: flex; align-items: flex-start; }
+    .asset-icon { width: 24px; text-align: center; margin-right: 10px; }
+    .ref-source { font-size: 12px; color: #555; margin-top: 20px; border-top: 1px dashed #333; padding-top: 10px; }
+
+    /* --- Articles Section Styles (New) --- */
+    .articles-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+      gap: 20px;
+      margin-top: 20px;
+    }
+    .article-card {
+      background: var(--black-card);
+      border: 1px solid var(--black-border);
+      border-radius: 12px;
+      overflow: hidden;
+      display: flex;
+      flex-direction: column;
+      text-decoration: none;
+      transition: all 0.3s ease;
+      height: 100%;
+    }
+    .article-card:hover {
+      transform: translateY(-5px);
+      border-color: var(--gold-dark);
+      box-shadow: 0 5px 15px rgba(0,0,0,0.3);
+    }
+    .article-image {
+      width: 100%;
+      height: 160px;
+      background: #222;
+      overflow: hidden;
+      position: relative;
+    }
+    .article-image img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      transition: transform 0.5s ease;
+    }
+    .article-card:hover .article-image img {
+      transform: scale(1.05);
+    }
+    .article-content {
+      padding: 20px;
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+    }
+    .article-title {
+      font-size: 16px;
+      font-weight: 700;
+      color: var(--text-main);
+      margin-bottom: 16px;
+      line-height: 1.5;
+      display: -webkit-box;
+      -webkit-line-clamp: 2;
+      -webkit-box-orient: vertical;
+      overflow: hidden;
+    }
+    .article-footer {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      font-size: 12px;
+      color: var(--text-dim);
+      border-top: 1px solid rgba(255,255,255,0.05);
+      padding-top: 12px;
+    }
+    .read-btn {
+      color: var(--gold);
+      font-weight: 500;
+      display: flex;
+      align-items: center;
+      gap: 5px;
+      transition: gap 0.2s ease;
+    }
+    .article-card:hover .read-btn {
+      gap: 8px;
+    }
+
+    /* --- Wall Street Section (Modified) --- */
+    .summary-box { background: linear-gradient(180deg, rgba(212,175,55,0.05) 0%, rgba(0,0,0,0) 100%); border: 1px solid var(--black-border); border-radius: 12px; padding: 24px; margin-bottom: 30px; }
+    
+    /* New Grid for Wall Street Cards */
+    .core-grid {
+      display: grid;
+      gap: 15px;
+      margin-top: 20px;
+    }
+    
+    .bank-detail-card { 
+      background: var(--black-card); 
+      border: 1px solid var(--black-border); 
+      border-radius: 16px; 
+      overflow: hidden; 
+      transition: transform 0.3s ease;
+      padding: 20px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+    .bank-detail-card:hover { border-color: var(--gold-dark); transform: translateY(-3px); }
+    .bd-name { font-size: 16px; font-weight: 700; margin-bottom: 4px; color: var(--text-main); }
+    .bd-tag { font-size: 12px; display: inline-block; font-weight: 500; text-align: right; min-width: 60px; }
+    
+    /* --- Modal Styles --- */
+    .modal-overlay {
+        display: none;
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background: rgba(0,0,0,0.85);
+        z-index: 1000;
+        justify-content: center;
+        align-items: center;
+        backdrop-filter: blur(5px);
+    }
+    .modal-content {
+        background: var(--black-card);
+        border: 1px solid var(--gold);
+        width: 90%;
+        max-width: 800px;
+        max-height: 90vh;
+        overflow-y: auto;
+        padding: 30px;
+        border-radius: 12px;
+        position: relative;
+        box-shadow: 0 10px 40px rgba(0,0,0,0.8);
+        animation: modalFadeIn 0.3s ease;
+    }
+    @keyframes modalFadeIn {
+        from { opacity: 0; transform: scale(0.95); }
+        to { opacity: 1; transform: scale(1); }
+    }
+    .close-modal {
+        position: absolute;
+        top: 15px;
+        right: 20px;
+        font-size: 28px;
+        color: var(--text-dim);
+        cursor: pointer;
+        transition: color 0.3s;
+        z-index: 10;
+    }
+    .close-modal:hover { color: var(--gold); }
+    
+    .dp-container { color: #ddd; }
+    .dp-header { font-size: 20px; color: var(--gold); font-weight: 700; margin-bottom: 15px; border-bottom: 1px solid #333; padding-bottom: 10px; }
+    .dp-img-box { width: 100%; margin-bottom: 20px; border: 1px solid #333; padding: 10px; background: #fff; border-radius: 8px; }
+    .dp-img-box img { width: 100%; height: auto; display: block; }
+    .dp-text-section { margin-bottom: 20px; font-size: 14px; line-height: 1.6; }
+    .dp-subtitle { color: #fff; font-weight: 700; margin-top: 15px; margin-bottom: 8px; font-size: 16px; border-left: 3px solid var(--gold); padding-left: 8px; }
+    .dp-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 15px; margin-top: 20px; }
+    .dp-card { background: rgba(255,255,255,0.05); padding: 15px; border-radius: 8px; border: 1px solid #333; }
+    .dp-card-title { color: var(--gold); font-weight: 700; font-size: 15px; margin-bottom: 8px; display: block; }
+    .dp-card ul { padding-left: 20px; margin: 0; }
+    .dp-card li { font-size: 12px; color: #ccc; margin-bottom: 5px; }
+    
+    /* Press Modal Styles */
+    .press-term-grid { display: grid; grid-template-columns: 1fr; gap: 20px; margin-top: 20px; }
+    .press-term-card { background: rgba(255,255,255,0.05); padding: 16px; border-radius: 8px; border-left: 3px solid var(--gold); }
+    .term-title { font-size: 16px; font-weight: 700; color: var(--gold); margin-bottom: 8px; }
+    .term-desc { font-size: 13px; color: #ccc; margin-bottom: 10px; line-height: 1.5; font-style: italic; }
+    .term-row { display: flex; font-size: 13px; margin-bottom: 6px; padding-bottom: 6px; border-bottom: 1px dashed rgba(255,255,255,0.1); }
+    .term-row:last-child { border-bottom: none; margin-bottom: 0; padding-bottom: 0; }
+    .term-label { font-weight: 700; color: #fff; width: 80px; flex-shrink: 0; }
+    .term-val { color: var(--text-dim); }
+
+    @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+    @media (max-width: 768px) {
+      .scenario-tabs { flex-direction: column; }
+      .modal-content { padding: 20px; width: 95%; }
+      .press-term-grid { grid-template-columns: 1fr; }
+    }
+
+    /* ========================================= */
+    /* === 活动互动专区 (HFT Terminal Zone) CSS === */
+    /* ========================================= */
+    
+    /* === 活动区域容器样式 === */
+    .hft-terminal-section {
+        background: radial-gradient(circle at center, #141414 0%, #000 100%);
+        border-top: 2px solid var(--gold-dark);
+        padding-top: 50px;
+        padding-bottom: 60px;
+        position: relative;
+        overflow: hidden;
+        font-family: 'Source Han Sans', 'Noto Sans CJK SC', 'Noto Sans SC', sans-serif;
+    }
+    .hft-container {
+        width: 100%;
+        max-width: 800px;
+        margin: 0 auto;
+        position: relative;
+        z-index: 2;
+        padding: 0 20px;
+    }
+
+    /* === 标题与分享按钮 === */
+    .hft-title-area { 
+        text-align: center; 
+        margin-bottom: 30px; 
+        position: relative; 
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+    }
+    .hft-title-row {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: 15px;
+        margin-bottom: 5px;
+    }
+    .hft-main-title {
+        font-size: 24px;
+        color: var(--text-main);
+        font-weight: 700;
+        letter-spacing: 1px;
+        text-shadow: 0 0 10px rgba(212,175,55,0.3);
+        margin: 0;
+    }
+    .hft-sub-title { font-size: 14px; color: var(--text-dim); margin-top: 5px; }
+
+    /* 分享按钮 */
+    .share-btn {
+        background: rgba(255,255,255,0.1);
+        border: 1px solid rgba(255,255,255,0.2);
+        color: var(--gold);
+        padding: 5px 12px;
+        border-radius: 20px;
+        font-size: 12px;
+        cursor: pointer;
+        transition: all 0.3s ease;
+        display: flex;
+        align-items: center;
+        gap: 5px;
+    }
+    .share-btn:hover {
+        background: var(--gold);
+        color: #000;
+        transform: scale(1.05);
+    }
+
+    /* === 倒计时样式 === */
+    .hft-countdown-box { text-align: center; margin-bottom: 35px; }
+    .hft-timer {
+        font-family: 'Orbitron', 'Roboto Mono', monospace; /* 确保数字等宽 */
+        font-size: 48px;
+        font-weight: 700;
+        color: var(--up-red);
+        text-shadow: 0 0 15px rgba(255,59,48,0.3);
+        letter-spacing: 2px;
+    }
+    .hft-timer-label { font-size: 12px; color: #666; text-transform: uppercase; letter-spacing: 1px; margin-bottom: 5px; }
+
+    /* === 投票按钮 (垂直堆叠) === */
+    .hft-vote-container {
+        display: flex;
+        flex-direction: column;
+        gap: 15px;
+        width: 100%;
+        max-width: 450px;
+        margin: 0 auto 40px auto;
+    }
+    .hft-btn {
+        width: 100%;
+        padding: 15px 20px;
+        border: none;
+        border-radius: 8px;
+        cursor: pointer;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        font-weight: 700;
+        font-size: 16px;
+        color: #fff;
+        transition: all 0.3s ease;
+        position: relative;
+        overflow: hidden;
+        box-shadow: 0 4px 6px rgba(0,0,0,0.3);
+    }
+    .hft-btn:hover { transform: translateY(-2px); box-shadow: 0 6px 12px rgba(0,0,0,0.5); }
+    /* 按钮光效 */
+    .hft-btn::before {
+        content: ''; position: absolute; top: 0; left: 0; width: 100%; height: 100%;
+        background: linear-gradient(90deg, rgba(255,255,255,0) 0%, rgba(255,255,255,0.1) 50%, rgba(255,255,255,0) 100%);
+        transform: translateX(-100%); transition: transform 0.5s;
+    }
+    .hft-btn:hover::before { transform: translateX(100%); }
+
+    /* 按钮颜色 */
+    .btn-bull { background: linear-gradient(90deg, #8B0000 0%, #FF3B30 100%); border: 1px solid #FF3B30; }
+    .btn-hold { background: linear-gradient(90deg, #333333 0%, #666666 100%); border: 1px solid #777; color: #ddd; }
+    .btn-bear { background: linear-gradient(90deg, #006400 0%, #00C853 100%); border: 1px solid #00C853; }
+    .btn-icon-wrapper { font-size: 18px; width: 24px; text-align: center; }
+
+    /* === 社交风格评论区 === */
+    .social-comments-wrapper {
+        background: #1a1a1a;
+        border-radius: 12px;
+        border: 1px solid #333;
+        padding: 0;
+        overflow: hidden;
+        max-width: 600px;
+        margin: 0 auto;
+    }
+    .sc-header {
+        padding: 15px 20px;
+        border-bottom: 1px solid #333;
+        font-size: 15px;
+        font-weight: 700;
+        color: var(--text-main);
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        background: #222;
+    }
+    .sc-count { font-weight: 400; color: #888; font-size: 12px; }
+
+    .sc-list { padding: 0; max-height: 500px; overflow-y: auto; }
+
+    .sc-item {
+        display: flex;
+        gap: 12px;
+        padding: 20px;
+        border-bottom: 1px solid rgba(255,255,255,0.05);
+    }
+    .sc-item:last-child { border-bottom: none; }
+
+    .sc-avatar {
+        width: 36px; height: 36px; border-radius: 50%;
+        background: #333; overflow: hidden; border: 1px solid #444; flex-shrink: 0;
+    }
+    .sc-avatar img { width: 100%; height: 100%; object-fit: cover; }
+
+    .sc-content { flex: 1; text-align: left; }
+
+    .sc-user-row {
+        display: flex; align-items: center; gap: 8px; margin-bottom: 4px;
+    }
+    .sc-username { font-size: 13px; font-weight: 700; color: #999; }
+    .sc-level-tag { font-size: 9px; background: rgba(212,175,55,0.2); color: var(--gold); padding: 1px 4px; border-radius: 3px; }
+
+    .sc-text {
+        font-size: 14px; color: #eee; line-height: 1.5; margin-bottom: 8px;
+    }
+
+    .sc-footer {
+        display: flex; align-items: center; justify-content: space-between;
+        font-size: 11px; color: #666;
+    }
+    .sc-meta { display: flex; gap: 10px; }
+    .sc-actions { display: flex; gap: 15px; }
+    .sc-action-item { cursor: pointer; display: flex; align-items: center; gap: 4px; transition: color 0.2s; }
+    .sc-action-item:hover { color: var(--gold); }
+
+    /* 嵌套回复 */
+    .sc-reply-box {
+        background: #262626;
+        border-radius: 6px;
+        padding: 10px 12px;
+        margin-top: 10px;
+        font-size: 13px;
+    }
+    .sc-reply-row { margin-bottom: 6px; line-height: 1.4; color: #ccc; }
+    .sc-reply-row:last-child { margin-bottom: 0; }
+    .sc-reply-user { color: #888; font-weight: 600; margin-right: 5px; }
+
+    /* 输入框区域 */
+    .sc-input-area {
+        border-top: 1px solid #333;
+        padding: 12px 15px;
+        background: #222;
+        display: flex;
+        gap: 10px;
+        align-items: center;
+    }
+    .sc-input {
+        flex: 1;
+        background: #111;
+        border: 1px solid #444;
+        border-radius: 20px;
+        padding: 8px 15px;
+        color: #fff;
+        font-size: 13px;
+        outline: none;
+        transition: border-color 0.2s;
+    }
+    .sc-input:focus { border-color: var(--gold); }
+    .sc-send-btn {
+        color: var(--gold);
+        background: transparent;
+        border: none;
+        font-weight: 700;
+        cursor: pointer;
+        font-size: 13px;
+    }
+
+    /* === 转盘弹窗样式 === */
+    /* .modal-overlay 已在上方定义，这里只定义特定的 modal-content 覆盖或内部元素 */
+    
+    /* 转盘动画部件 */
+    .wheel-container {
+        position: relative; width: 280px; height: 280px; margin: 20px auto;
+        border-radius: 50%; border: 4px solid #333; box-shadow: 0 0 20px rgba(0,0,0,0.8); overflow: hidden;
+    }
+    .the-wheel {
+        width: 100%; height: 100%; border-radius: 50%;
+        background: conic-gradient(
+            var(--black-card) 0% 25%,   /* Thanks */
+            var(--gold) 25% 50%,        /* Calendar */
+            #C0C0C0 50% 75%,            /* PRO Card */
+            #333333 75% 100%            /* Tool */
+        );
+        transform: rotate(0deg);
+    }
+    .wheel-pointer {
+        position: absolute; top: -10px; left: 50%; transform: translateX(-50%);
+        width: 0; height: 0; border-left: 15px solid transparent; border-right: 15px solid transparent;
+        border-top: 25px solid var(--up-red); z-index: 10;
+    }
+    .wheel-center-dot {
+        position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%);
+        width: 40px; height: 40px; background: #111; border: 2px solid var(--gold); border-radius: 50%; z-index: 5;
+        display: flex; justify-content: center; align-items: center; color: var(--gold); font-size: 10px; font-weight: 900;
+    }
+    .wheel-legend { display: flex; justify-content: center; gap: 15px; flex-wrap: wrap; margin-top: 20px; }
+    .wl-item { display: flex; align-items: center; gap: 5px; font-size: 12px; color: #aaa; }
+    .wl-dot { width: 10px; height: 10px; border-radius: 50%; }
+
+    @media (max-width: 768px) {
+        .hft-timer { font-size: 36px; }
+        .sc-item { padding: 15px; }
+        .wheel-container { width: 240px; height: 240px; }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- Cover -->
+  <section class="screen screen-cover">
+    <div style="width: 100%; max-width: 700px; padding: 0 20px;">
+      <p class="orbitron" style="color: var(--gold); font-size: 20px; letter-spacing: 2px; margin-bottom: 10px; text-shadow: 0 2px 4px rgba(0,0,0,0.8);">美联储FOMC 1月决议前瞻</p>
+      <h1 class="main-title fade-up">美联储2026首秀<br>降息地图将如何重绘？</h1>
+      
+      <!-- Key Data Bar -->
+      <div class="data-bar fade-up" style="transition-delay: 0.1s;">
+        <div>
+          <div style="font-size: 15px; color:#ccc;">决议时间 (北京)</div>
+          <div class="orbitron" style="color:var(--text-main);">1月29日 03:00</div>
+        </div>
+        <div>
+          <div style="font-size: 15px; color:#ccc;">市场共识</div>
+          <div class="orbitron highlight-gold">3.50% - 3.75%</div>
+        </div>
+      </div>
+
+      <!-- Vertical Timeline -->
+      <div class="timeline-section fade-up" style="transition-delay: 0.2s;">
+        <div class="tl-main-header">
+          <i class="fas fa-history text-gold"></i>
+          <span class="orbitron">决战 60 分钟时间轴</span>
+          <!-- Calendar Link -->
+          <a href="https://rili.jin10.com/day/2026-01-29" target="_blank" class="calendar-link">
+            点击金十日历 <i class="fas fa-chevron-right" style="font-size: 10px;"></i>
+          </a>
+        </div>
+        <div class="timeline-container">
+          <div class="tl-row">
+            <div class="tl-time-col"><div class="tl-time-text">03:00</div></div>
+            <div class="tl-marker"></div>
+            <div class="tl-content-card">
+              <div class="tl-title">
+                  声明发布：利率决议公布 
+                  <span class="tl-tag">重磅</span>
+                  <span class="press-trigger" onclick="openModal()" style="margin-left: 8px;">
+                      <i class="fas fa-question-circle"></i> 什么是点阵图？
+                  </span>
+              </div>
+              <div class="tl-desc">
+                <i class="fas fa-bullseye text-gold" style="font-size:10px;margin-right:5px;"></i>
+                关注点：市场普遍预期美联储将在本次会议上维持货币政策不变
+              </div>
+            </div>
+          </div>
+          <div class="tl-row">
+            <div class="tl-time-col"><div class="tl-time-text">03:30</div></div>
+            <div class="tl-marker"></div>
+            <div class="tl-content-card">
+              <div class="tl-title">
+                鲍威尔新闻发布会 
+                <a href="https://tv.jin10.com/#/tradingNew" target="_blank" class="tl-tag-link">
+                    <span class="tl-tag">同传LIVE <i class="fas fa-external-link-alt" style="font-size: 9px; margin-left: 2px;"></i></span>
+                </a>
+                <span class="press-trigger" onclick="openPressModal()">
+                    <i class="fas fa-question-circle"></i> 什么是发布会？
+                </span>
+              </div>
+              <div class="tl-desc"><i class="fas fa-bullseye text-gold" style="font-size:10px;margin-right:5px;"></i>关注点：开场语态。是“Good afternoon”还是“Hello everyone”？</div>
+            </div>
+          </div>
+          <div class="tl-row">
+            <div class="tl-time-col"><div class="tl-time-text" style="color:var(--up-red);">03:45</div></div>
+            <div class="tl-marker alert"></div>
+            <div class="tl-content-card alert-card">
+              <div class="tl-title" style="color:var(--up-red);">记者问答<span class="tl-tag red">预警</span></div>
+              <div class="tl-desc"><i class="fas fa-exclamation-triangle text-red" style="font-size:10px;margin-right:5px;"></i>留意关于<span class="tl-highlight-red">“特朗普财政政策”</span>与<span class="tl-highlight-red">“美联储独立性”</span>提问，这是容易出黑天鹅的时段。</div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Intro & Core Dimensions & Strategy -->
+  <!-- ADDED BACKGROUND: Core Dimensions (Cjarh0Vpy4y4U06neujgK.png) -->
+  <section class="screen" style="background: linear-gradient(rgba(5,5,5,0.9), rgba(5,5,5,0.9)), url('https://img.jin10.com/news/26/01/vVI3XtQ85tMRBBGnATnvN.jpg') center/cover no-repeat;">
+    <div class="section-container">
+      
+      <!-- 导读 -->
+      <div class="intro-block fade-up">
+        <p class="intro-text">
+          北京时间 2026年1月29日 03:00，美联储将公布2026年首份利率决议。当前市场共识：<span class="intro-highlight">维持 3.50% - 3.75% 利率区间不变（概率约97%）</span>。本次会议的关键不在于“是否降息”，而在于鲍威尔如何平衡强劲的经济增长与来自白宫的政治压力。交易者应密切关注前瞻指引中对 2026 年降息次数的微妙修订。
+        </p>
+      </div>
+
+      <!-- 三大核心维度 (Vertical Stack) -->
+      <div class="section-header fade-up">
+        <h2 class="section-title">交易者重点关注的三个核心维度</h2>
+      </div>
+
+      <div class="core-stack fade-up">
+        
+        <!-- Card 1: CME Data Deep Dive -->
+        <div class="core-card">
+          <div class="core-title">
+            <span>利率路径：重心转向未来季度的宽松步伐</span>
+            <span style="font-size:12px; color:var(--gold); border:1px solid var(--gold); padding:2px 8px; border-radius:4px;">数据来源：FEDWATCH</span>
+          </div>
+          <p class="core-desc">美联储与华尔街在降息节奏上存在明显“温差”。CME 美联储观察数据显示，市场对于1月会议维持当前利率的押注已接近 100%，重心转向未来季度的宽松步伐。</p>
+          
+          <!-- ECharts Visualization -->
+          <div class="chart-box">
+            <h4 style="color:#eee; font-size:14px; margin-bottom:10px; text-align:center;">2026年01月29日议息结果预测 (概率分布)</h4>
+            <div id="cme-chart" class="chart-container"></div>
+          </div>
+
+          <!-- Future Meetings Table -->
+          <h4 style="color:#eee; font-size:14px; margin-bottom:10px; border-left:3px solid var(--gold); padding-left:8px;">往后三次议息会议可能性预测</h4>
+          <div class="cme-table-wrapper">
+            <table class="cme-table">
+              <thead>
+                <tr>
+                  <th style="text-align:left;">预测利率</th>
+                  <th>2026.01.29</th>
+                  <th>2026.03.19</th>
+                  <th>2026.04.30</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <td style="text-align:left;">2.75%–3.00%</td>
+                  <td>-</td>
+                  <td>-</td>
+                  <td>0.1%</td>
+                </tr>
+                <tr>
+                  <td style="text-align:left;">3.00%–3.25%</td>
+                  <td>-</td>
+                  <td>0.4%</td>
+                  <td>2.6%</td>
+                </tr>
+                <tr>
+                  <td style="text-align:left;">3.25%–3.50%</td>
+                  <td>2.8%</td>
+                  <td>15.5%</td>
+                  <td>25.5%</td>
+                </tr>
+                <tr class="cme-highlight-row">
+                  <td style="text-align:left; color:var(--gold);">3.50%–3.75% (当前)</td>
+                  <td class="cme-val-high">97.2%</td>
+                  <td class="cme-val-high">84.1%</td>
+                  <td class="cme-val-high">71.9%</td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+
+        <!-- Card 2: Political Pressure & Candidates (UPDATED) -->
+        <div class="core-card">
+          <div class="core-title">
+            <span>政治干扰：鲍威尔的防线</span>
+            <span style="font-size:12px; color:var(--gold); border:1px solid var(--gold); padding:2px 8px; border-radius:4px;">数据来源：Polymarket</span>
+          </div>
+          <p class="core-desc">白宫对降息的公开施压已达到顶峰。市场正密切关注下一任美联储主席的角逐，特朗普中意的“华尔街务实派”正在领跑。</p>
+          
+          <div class="core-points-grid">
+            <div class="core-point">
+              <span class="cp-label">核心威胁</span>
+              <span class="cp-value highlight-red">美国司法部传票与鲍威尔独立性危机</span>
+            </div>
+            <div class="core-point">
+              <span class="cp-label">主要变数</span>
+              <span class="cp-value">提名过程中的政治博弈</span>
+            </div>
+          </div>
+
+          <h4 style="color:#eee; font-size:16px; margin-top:25px; margin-bottom:15px; border-left:3px solid var(--gold); padding-left:8px;">美联储主席角逐 (1月27日Polymarket 预测)</h4>
+          
+          <div class="candidate-grid">
+            <!-- Candidate 1: Rick Rieder -->
+            <div class="candidate-card">
+              <div class="candidate-header">
+                <div class="cand-img-wrapper">
+                  <!-- 替换 src 为实际头像 -->
+                  <img src="https://img.jin10.com/news/26/01/sK1bFFsj4OPCcb3cDaUzd.jpg" alt="Rick Rieder" class="cand-img">
+                </div>
+                <div class="cand-info">
+                  <div class="cand-name">里克·里德（Rick Rieder） <span style="font-size:10px; background:#333; padding:2px 4px; border-radius:3px; color:var(--gold);">黑马领跑</span></div>
+                  <div class="cand-role">贝莱德 (BlackRock) 固收首席</div>
+                </div>
+              </div>
+              <div class="cand-prob-row">
+                <div class="cand-prob-label">
+                  <span>预测概率</span>
+                  <span class="orbitron">48%</span>
+                </div>
+                <div class="cand-prob-bar-bg">
+                  <div class="cand-prob-bar-fill" style="width: 48%;"></div>
+                </div>
+              </div>
+              <div class="cand-tags">
+                <div class="cand-tag-row">
+                  <div class="cand-tag-icon"><i class="fas fa-gavel"></i></div>
+                  <div class="cand-tag-text"><strong>政策:</strong> 务实降息派，关注流动性</div>
+                </div>
+                <div class="cand-tag-row">
+                  <div class="cand-tag-icon"><i class="fas fa-chart-line"></i></div>
+                  <div class="cand-tag-text"><strong>市场:</strong> 利好债市，缓和华尔街担忧</div>
+                </div>
+                <div class="cand-tag-row">
+                  <div class="cand-tag-icon"><i class="fas fa-star"></i></div>
+                  <div class="cand-tag-text"><strong>优势:</strong> 深刻理解全球信贷“管道”</div>
+                </div>
+              </div>
+            </div>
+
+            <!-- Candidate 2: Kevin Warsh -->
+            <div class="candidate-card">
+              <div class="candidate-header">
+                <div class="cand-img-wrapper">
+                  <img src="https://img.jin10.com/news/26/01/AE7KKftHLxj474TVYN3DR.jpg" alt="Kevin Warsh" class="cand-img">
+                </div>
+                <div class="cand-info">
+                  <div class="cand-name">凯文·沃什（Kevin Warsh）</div>
+                  <div class="cand-role">前美联储理事 / 传统热门</div>
+                </div>
+              </div>
+              <div class="cand-prob-row">
+                <div class="cand-prob-label">
+                  <span>预测概率</span>
+                  <span class="orbitron">28%</span>
+                </div>
+                <div class="cand-prob-bar-bg">
+                  <div class="cand-prob-bar-fill" style="width: 28%; opacity: 0.7;"></div>
+                </div>
+              </div>
+              <div class="cand-tags">
+                <div class="cand-tag-row">
+                  <div class="cand-tag-icon"><i class="fas fa-gavel"></i></div>
+                  <div class="cand-tag-text"><strong>政策:</strong> 结构性改革派，看重通胀</div>
+                </div>
+                <div class="cand-tag-row">
+                  <div class="cand-tag-icon"><i class="fas fa-chart-line"></i></div>
+                  <div class="cand-tag-text"><strong>市场:</strong> 美元走强，收益率曲线走平</div>
+                </div>
+                <div class="cand-tag-row">
+                  <div class="cand-tag-icon"><i class="fas fa-star"></i></div>
+                  <div class="cand-tag-text"><strong>优势:</strong> 具备美联储内部运作经验</div>
+                </div>
+              </div>
+            </div>
+
+            <!-- Candidate 3: Christopher Waller -->
+            <div class="candidate-card">
+              <div class="candidate-header">
+                <div class="cand-img-wrapper">
+                  <img src="https://img.jin10.com/news/26/01/vTCJBLztCpfKuTvEWhCZo.jpg" alt="Christopher Waller" class="cand-img">
+                </div>
+                <div class="cand-info">
+                  <div class="cand-name">克里斯托弗·沃勒（Christopher Waller）</div>
+                  <div class="cand-role">现任美联储理事 / 内部代表</div>
+                </div>
+              </div>
+              <div class="cand-prob-row">
+                <div class="cand-prob-label">
+                  <span>预测概率</span>
+                  <span class="orbitron">11%</span>
+                </div>
+                <div class="cand-prob-bar-bg">
+                  <div class="cand-prob-bar-fill" style="width: 11%; opacity: 0.5;"></div>
+                </div>
+              </div>
+              <div class="cand-tags">
+                <div class="cand-tag-row">
+                  <div class="cand-tag-icon"><i class="fas fa-gavel"></i></div>
+                  <div class="cand-tag-text"><strong>政策:</strong> 偏鹰派，但支持“保险式降息”</div>
+                </div>
+                <div class="cand-tag-row">
+                  <div class="cand-tag-icon"><i class="fas fa-chart-line"></i></div>
+                  <div class="cand-tag-text"><strong>市场:</strong> 政策连续性信号，波动率降低</div>
+                </div>
+                <div class="cand-tag-row">
+                  <div class="cand-tag-icon"><i class="fas fa-star"></i></div>
+                  <div class="cand-tag-text"><strong>优势:</strong> 已获参议院确认，过渡最快</div>
+                </div>
+              </div>
+            </div>
+
+            <!-- Candidate 4: Kevin Hassett -->
+            <div class="candidate-card">
+              <div class="candidate-header">
+                <div class="cand-img-wrapper">
+                  <img src="https://img.jin10.com/news/26/01/Tnna_PLaRa__k8IbKyau6.jpg" alt="Kevin Hassett" class="cand-img">
+                </div>
+                <div class="cand-info">
+                  <div class="cand-name">凯文·哈塞特（Kevin Hassett）</div>
+                  <div class="cand-role">白宫 NEC 主任 / 亲信</div>
+                </div>
+              </div>
+              <div class="cand-prob-row">
+                <div class="cand-prob-label">
+                  <span>预测概率</span>
+                  <span class="orbitron">5%</span>
+                </div>
+                <div class="cand-prob-bar-bg">
+                  <div class="cand-prob-bar-fill" style="width: 5%; opacity: 0.3;"></div>
+                </div>
+              </div>
+              <div class="cand-tags">
+                <div class="cand-tag-row">
+                  <div class="cand-tag-icon"><i class="fas fa-gavel"></i></div>
+                  <div class="cand-tag-text"><strong>政策:</strong> 激进降息派，支持财政扩张</div>
+                </div>
+                <div class="cand-tag-row">
+                  <div class="cand-tag-icon"><i class="fas fa-chart-line"></i></div>
+                  <div class="cand-tag-text"><strong>市场:</strong> 曲线陡峭化，利多黄金</div>
+                </div>
+                <div class="cand-tag-row">
+                  <div class="cand-tag-icon"><i class="fas fa-star"></i></div>
+                  <div class="cand-tag-text"><strong>优势:</strong> 特朗普亲信，政策一致性极高</div>
+                </div>
+              </div>
+            </div>
+
+          </div>
+        </div>
+
+        <!-- Card 3: Macro Economy (UPDATED WITH ING INSIGHTS) -->
+        <div class="core-card">
+          <div class="core-title">
+            <span>宏观矛盾：K型经济与数据迷雾</span>
+            <span style="font-size:12px; color:var(--text-dim); border:1px solid #444; padding:2px 8px; border-radius:4px;">数据来源：BEA / BLS</span>
+          </div>
+          
+          <div class="core-points-grid" style="margin-bottom:20px; border-top:none; padding-top:0;">
+            <div class="core-point">
+              <span class="cp-label">GDP 预测 (2026)</span>
+              <span class="cp-value">上调至 2.3% (此前为 1.8%)</span>
+            </div>
+            <div class="core-point">
+              <span class="cp-label">PCE通胀目标 (2026)</span>
+              <span class="cp-value">下调至 2.4%（此前为 2.6%）</span>
+            </div>
+            <div class="core-point">
+              <span class="cp-label">官方失业率</span>
+              <span class="cp-value">4.4% (充分就业水平?)</span>
+            </div>
+          </div>
+          
+          <!-- ING Analysis Section -->
+          <div class="ing-insight-box">
+             <div class="ing-header">
+               <i class="fas fa-search-dollar"></i> 荷兰国际银行 (ING) 深度解读
+             </div>
+             <p class="core-desc" style="margin-bottom:15px; color:#ddd;">
+               强劲的GDP数据掩盖了经济内部的剧烈分化。从“K型消费”到“就业注水”，基本面并不如表面光鲜，这可能是美联储最终被迫降息的底层逻辑。
+             </p>
+             <div class="ing-grid">
+               <!-- Point 1 -->
+               <div class="ing-item">
+                 <div class="ing-item-title">
+                   <i class="fas fa-layer-group text-gold"></i> 消费分化严重
+                 </div>
+                 <div class="ing-item-desc">
+                   收入<strong>前20%</strong>群体因股市房市财富效应消费强劲，而<strong>后60%</strong>群体因就业不安全感和关税担忧而苦苦挣扎。
+                 </div>
+               </div>
+               <!-- Point 2 -->
+               <div class="ing-item">
+                 <div class="ing-item-title">
+                   <i class="fas fa-tint text-red"></i> 就业数据注水
+                 </div>
+                 <div class="ing-item-desc">
+                   鲍威尔暗示美国劳工部每月可能<strong>高估了约6万个</strong>就业岗位。剥去水分后，实际就业增长可能已经停滞。
+                 </div>
+               </div>
+               <!-- Point 3 -->
+               <div class="ing-item">
+                 <div class="ing-item-title">
+                   <i class="fas fa-microchip" style="color:#aaa;"></i> 行业投资失衡
+                 </div>
+                 <div class="ing-item-desc">
+                   科技行业投资同比激增<strong>19%</strong>，但除去科技外的实体商业资本支出已<strong>连续四个季度萎缩</strong>。
+                 </div>
+               </div>
+             </div>
+          </div>
+  </section>
+
+  <!-- NEW SECTION: Market Must-Read Articles -->
+  <!-- ADDED BACKGROUND: Must-Read Articles (yYCeQqCXYP9UxcKTpau8m.jpg) -->
+  <section class="screen" style="background: linear-gradient(rgba(5,5,5,0.9), rgba(5,5,5,0.9)), url('https://img.jin10.com/news/26/01/yYCeQqCXYP9UxcKTpau8m.jpg') center/cover no-repeat;">
+    <div class="section-container">
+      <div class="fade-up" style="margin-bottom: 30px;">
+      <div class="section-header fade-up" style="margin-top: 60px;">
+        <h2 class="section-title">市场必读分析</h2>
+      </div>
+        <p style="color:var(--text-dim); font-size:14px; margin-top:5px;">洞察FOMC利率决议背后的投资机遇</p>
+      </div>
+
+      <div class="articles-grid">
+        <a href="https://xnews.jin10.com/details/208375" target="_blank" class="article-card fade-up">
+          <div class="article-image">
+            <img src="https://gimg.jin10.com/gallary/25/10/FOi-vVm5FVeIBZO38C_xa.png/lite" alt="美联储新操盘手">
+          </div>
+          <div class="article-content">
+            <h3 class="article-title">就是他？2.4万亿美金操盘手或空降美联储，料引爆政策大转向</h3>
+            <div class="article-footer">
+              <span>金十数据</span>
+              <span class="read-btn">阅读原文 <i class="fas fa-arrow-right"></i></span>
+            </div>
+          </div>
+        </a>
+        <a href="https://xnews.jin10.com/details/208335" target="_blank" class="article-card fade-up" style="transition-delay: 0.1s;">
+          <div class="article-image">
+            <img src="https://gimg.jin10.com/gallary/25/10/nzYyCofSw9RQfH4fFypWD.png/lite" alt="美联储暂停加息">
+          </div>
+          <div class="article-content">
+            <h3 class="article-title">高盛预计美联储本周将按兵不动，“暂停期”时长或成最大悬念</h3>
+            <div class="article-footer">
+              <span>金十数据</span>
+              <span class="read-btn">阅读原文 <i class="fas fa-arrow-right"></i></span>
+            </div>
+          </div>
+        </a>
+                <a href="https://qihuo.jin10.com/articleDetail.html?id=1107934&comments=all" target="_blank" class="article-card fade-up" style="transition-delay: 0.1s;">
+          <div class="article-image">
+            <img src="https://img.jin10.com/gallary/25/11/90gMFQsuvdv8fbmggOPYz.png/lite" alt="美联储暂停加息">
+          </div>
+          <div class="article-content">
+            <h3 class="article-title">【投行热图】法国农业信贷银行：预计1月FOMC会议维持利率不变</h3>
+            <div class="article-footer">
+              <span>金十期货PRO</span>
+              <span class="read-btn">阅读原文 <i class="fas fa-arrow-right"></i></span>
+            </div>
+          </div>
+        </a>
+                <a href="https://xnews.jin10.com/details/208156?id=208156" target="_blank" class="article-card fade-up" style="transition-delay: 0.1s;">
+          <div class="article-image">
+            <img src="https://img.jin10.com/news/25/08/CUBQq0sdvOToHqHMi31NY.jpg/lite" alt="美联储暂停加息">
+          </div>
+          <div class="article-content">
+            <h3 class="article-title">本周美联储：利率之外的隐形风暴</h3>
+            <div class="article-footer">
+              <span>金十数据精英VIP</span>
+              <span class="read-btn">阅读原文 <i class="fas fa-arrow-right"></i></span>
+            </div>
+          </div>
+        </a>
+                <a href="https://xnews.jin10.com/details/208318?id=208318" target="_blank" class="article-card fade-up" style="transition-delay: 0.1s;">
+          <div class="article-image">
+            <img src="https://gimg.jin10.com/gallary/25/10/zYVVHBsCwSn9n22BYB3m0.png/lite" alt="美联储暂停加息">
+          </div>
+          <div class="article-content">
+            <h3 class="article-title">美联储内部鹰鸽和解，但外部风暴恐再度升级！</h3>
+            <div class="article-footer">
+              <span>金十数据</span>
+              <span class="read-btn">阅读原文 <i class="fas fa-arrow-right"></i></span>
+            </div>
+          </div>
+        </a>
+                <a href="https://xnews.jin10.com/details/208317?id=208317" target="_blank" class="article-card fade-up" style="transition-delay: 0.1s;">
+          <div class="article-image">
+            <img src="https://gimg.jin10.com/gallary/26/01/nh_rXsVT45bYU7SfKMPyO.png/lite" alt="美联储暂停加息">
+          </div>
+          <div class="article-content">
+            <h3 class="article-title">美联储“风暴眼”时刻：本周利率决议退居次席，场外危机成最大焦点!</h3>
+            <div class="article-footer">
+              <span>金十数据</span>
+              <span class="read-btn">阅读原文 <i class="fas fa-arrow-right"></i></span>
+            </div>
+          </div>
+        </a>
+      </div>
+    </div>
+  </section>
+
+  <!-- Wall Street Forecast Section (MODIFIED) -->
+  <!-- ADDED BACKGROUND: Wall Street Forecast (l135YJXpfERE-lfe2JzSV.jpg) -->
+  <section class="screen" style="background: linear-gradient(rgba(5,5,5,0.9), rgba(5,5,5,0.9)), url('https://img.jin10.com/news/26/01/l135YJXpfERE-lfe2JzSV.jpg') center/cover no-repeat;">
+    <div class="section-container">
+      <div class="section-header fade-up">
+        <h2 class="section-title">华尔街前瞻汇总：共识下的“暗流涌动”</h2>
+      </div>
+      <div class="summary-box fade-up">
+        <h3 style="color:var(--gold); margin-bottom:10px;">核心分歧</h3>
+        <p class="intro-text">
+          各大投行一致预测 1 月份美联储将维持利率在 <span class="highlight-gold orbitron">3.50% - 3.75%</span> 不变。
+          然而，针对 2026 年全年的降息路径，随着 5 月联储主席更迭临近，投行们正在重新审视其“政治反应函数”。
+          市场已分裂为三大阵营：押注衰退风险的<strong>乐观派</strong>、追求中性平衡的<strong>温和派</strong>，以及担忧二次通胀的<strong>强硬派</strong>。
+        </p>
+      </div>
+      
+      <!-- 投行预测可视化 (替代原有表格) -->
+      <div class="section-title fade-up">
+        华尔街预测分布 <span class="st-en"></span>
+      </div>
+      <div class="chart-container fade-up" style="height: 350px;">
+        <canvas id="predictionChart"></canvas>
+        <div style="font-size: 10px; color: #666; text-align: center; margin-top: 2px;">*横轴：预测首次降息月份 (2026) / 纵轴：预测全年降息次数</div>
+      </div>
+      <div class="core-grid fade-up" style="grid-template-columns: 1fr;">
+        <!-- 保留关键投行逻辑文本 -->
+        <div class="bank-detail-card" style="border-left: 3px solid var(--gold);">
+          <div>
+            <div class="bd-name">高盛  & 摩根士丹利</div>
+            <div style="font-size: 12px; color: #aaa;">共识：6月开启降息，全年2次。高盛认为因就业强劲及通胀顽固，政策转向更为审慎耐心。</div>
+          </div>
+          <div class="bd-tag text-gold">稳健派</div>
+        </div>
+        <div class="bank-detail-card" style="border-left: 3px solid var(--up-red);">
+          <div>
+            <div class="bd-name">摩根大通</div>
+            <div style="font-size: 12px; color: #aaa;">观点：0次降息。认为经济韧性过强，2027年甚至可能加息。</div>
+          </div>
+          <div class="bd-tag text-red">鹰派</div>
+        </div>
+        <div class="bank-detail-card" style="border-left: 3px solid var(--down-green);">
+          <div>
+            <div class="bd-name">花旗  & 瑞银 </div>
+            <div style="font-size: 12px; color: #aaa;">观点：3月或7月抢跑，全年3次。担忧劳动力市场滞后性崩盘。</div>
+          </div>
+          <div class="bd-tag text-green">激进派</div>
+        </div>
+      </div>
+      
+    </div>
+  </section>
+
+  <!-- Commodity Heatmap -->
+  <!-- ADDED BACKGROUND: Commodity History (NKI7ecG_qWOg7ojP19xam.jpg) -->
+  <section class="screen" style="background: linear-gradient(rgba(5,5,5,0.9), rgba(5,5,5,0.9)), url('https://img.jin10.com/news/26/01/NKI7ecG_qWOg7ojP19xam.jpg') center/cover no-repeat;">
+    <div class="section-container">
+      <div class="section-header fade-up">
+        <h2 class="section-title">历史回溯：降息周期中的大宗商品演义</h2>
+      </div>
+      
+      <div class="core-card fade-up">
+        <div class="core-title">
+          <span>核心品种涨跌幅热力图</span>
+          <span style="font-size:12px; color:var(--text-dim); font-weight:400;">1990年以来降息周期</span>
+        </div>
+        <p class="core-desc" style="margin-bottom:15px;">
+          复盘过去30年，黄金在降息周期中胜率最高，铜油等工业品往往在初期承压。
+          <br><span style="font-size:12px; color:#888;">(数据来源：广发期货，单位：%)</span>
+        </p>
+        
+        <div class="heatmap-container" id="heatmap-chart"></div>
+        
+        <div style="display:flex; justify-content:center; gap:20px; font-size:12px; margin-top:10px;">
+          <div style="display:flex; align-items:center; gap:5px;"><span style="width:10px; height:10px; background:#FF3B30;"></span> 涨幅 > 0%</div>
+          <div style="display:flex; align-items:center; gap:5px;"><span style="width:10px; height:10px; background:#00C853;"></span> 跌幅 < 0%</div>
+        </div>
+      </div>
+
+      <div style="margin-top: 40px; text-align: center; border-top: 1px solid var(--black-border); padding-top: 20px;">
+        <p class="orbitron" style="color: var(--gold); font-size: 14px;">金十期货APP独家整理</p>
+        <p style="font-size: 10px; color: #444; margin-top: 5px;">免责声明：本页面消息均来自公开市场资料，仅供信息展示与教育目的，不构成任何投资建议。投资存在风险，请谨慎决策。
+</p>
+      </div>
+
+    </div>
+  </section>
+
+  <!-- ========================================= -->
+  <!-- === 活动互动专区 (HFT Terminal Zone) === -->
+  <!-- ========================================= -->
+  <section class="hft-terminal-section">
+      <div class="hft-container">
+          
+          <!-- 标题与分享区 -->
+          <div class="hft-title-area">
+              <div class="hft-title-row">
+                  <h2 class="hft-main-title">猜黄金涨跌 抽取大礼包</h2>
+                  <button class="share-btn" onclick="shareToSocial()">
+                      <i class="fas fa-share-alt"></i> 分享
+                  </button>
+              </div>
+              <div class="hft-sub-title">03:00 利率决议公布，黄金第一根 K 线 (M1) 怎么收？</div>
+              <div style="font-size: 10px; color: #666; margin-top: 5px;">以 TradingHero 现货黄金报价为准，见证波动的诞生。</div>
+          </div>
+          
+          <!-- 倒计时 -->
+          <div class="hft-countdown-box">
+              <div class="hft-timer-label">活动截止时间 2026-01-29 02:59:58</div>
+              <div class="hft-timer" id="hft-timer">00:00:00</div>
+          </div>
+          
+          <!-- 投票按钮 (垂直排列) -->
+          <div class="hft-vote-container">
+              <button class="hft-btn btn-bull" onclick="triggerVote('BULL')">
+                  <span>上涨</span>
+                  <div class="btn-icon-wrapper"><i class="fas fa-arrow-up"></i></div>
+              </button>
+              <button class="hft-btn btn-hold" onclick="triggerVote('hold')">
+                  <span>持平</span>
+                  <div class="btn-icon-wrapper"><i class="fas fa-equals"></i></div>
+              </button>
+              <button class="hft-btn btn-bear" onclick="triggerVote('BEAR')">
+                  <span>下跌</span>
+                  <div class="btn-icon-wrapper"><i class="fas fa-arrow-down"></i></div>
+              </button>
+          </div>
+          
+          <!-- 仿社交APP评论区 -->
+          <div class="social-comments-wrapper">
+              <div class="sc-header">
+                  <span>全部评论</span>
+                  <span class="sc-count">(8)</span>
+              </div>
+              
+              <div class="sc-list" id="social-chat-list">
+                  <!-- 评论内容将由 JS 自动注入 -->
+              </div>
+              
+              <div class="sc-input-area">
+                  <input type="text" class="sc-input" id="chat-input" placeholder="涨涨跌跌，请说出您对市场的看法。">
+                  <button class="sc-send-btn" onclick="submitComment()">发送</button>
+              </div>
+          </div>
+          
+          <div style="font-size: 10px; color: #444; text-align: center; font-family: 'Source Han Sans', sans-serif; margin-top: 15px;">
+              结算规则：标的为现货黄金 (XAU/USD) 03:00-03:01 的 1 分钟 K 线涨跌。收盘>开盘为涨，收盘<开盘为跌。
+          </div>
+      </div>
+  </section>
+
+  <!-- Dot Plot Modal -->
+  <div id="dotplot-modal" class="modal-overlay">
+    <div class="modal-content">
+      <span class="close-modal" onclick="closeModal('dotplot-modal')">&times;</span>
+      
+      <div class="dp-container">
+        <div class="dp-header">美联储点阵图 (Dot Plot) 介绍</div>
+        
+        <div class="dp-text-section">
+          <p style="margin-bottom: 10px;">美联储点阵图是每季度末随‘经济预测摘要 (SEP)’一同发布的利率预测散点图。它记录了 19 位美联储官员（包括理事和地方联储主席）对未来三至四年及长期利率水平的匿名‘最佳预测’。对于交易员而言，它不是承诺，而是美联储内部政策偏好和分歧程度的视觉呈现。注意，1月份本次会议不公布点阵图。</p>
+        </div>
+
+        <div class="dp-img-box">
+          <img src="https://img.jin10.com/news/26/01/vhYZmuFF4G7qBcLIuA_NG.jpg" alt="2025年12月美联储点阵图">
+        </div>
+
+        <div class="dp-subtitle">图表结构：如何拆解每一颗‘点’</div>
+        <div class="dp-text-section">
+          <p>当你打开一张点阵图时，请按照以下逻辑观察：</p>
+          <ul style="padding-left: 20px; color:#aaa; font-size: 13px; margin-top: 5px;">
+            <li><strong>横轴 (X-Axis):</strong> 代表年份。通常包括当前年份、未来三年，以及‘长期’。</li>
+            <li><strong>纵轴 (Y-Axis):</strong> 代表联邦基金利率的水平，通常以 0.25% (25个基点) 为一个刻度单位。</li>
+            <li><strong>每一个点:</strong> 代表一位匿名官员的预测。如果多位官员的看法一致，这些点就会堆叠在一起，形成一个厚实的‘集群’。</li>
+          </ul>
+        </div>
+
+        <div class="dp-subtitle">实例分析</div>
+        <div class="dp-text-section" style="border-left: 2px solid var(--gold); padding-left: 10px; background: rgba(212, 175, 55, 0.05); padding: 10px;">
+          <p style="color: #eee;">2025 年 12 月发布的点阵图中，2026 年的中值点位落在 3.25%-3.50% 区间，这意味着在当时，美联储多数人认为今年只需再降息一次。</p>
+        </div>
+
+        <div class="dp-subtitle">三大核心要素：交易员的‘读心术’</div>
+        <div class="dp-grid">
+          <div class="dp-card">
+            <span class="dp-card-title"><i class="fas fa-bullseye"></i> 中值点 (The Median)</span>
+            <ul>
+              <li><strong>定义：</strong>所有官员预测的中位数</li>
+              <li><strong>市场角色：</strong>美联储‘共识’的代名词</li>
+              <li><strong>观察点：</strong>与上次中值相比的移动方向</li>
+              <li><strong>局限性：</strong>不代表一定会发生的政策路径</li>
+            </ul>
+          </div>
+          <div class="dp-card">
+            <span class="dp-card-title"><i class="fas fa-infinity"></i> 长期点 (Longer Run)</span>
+            <ul>
+              <li><strong>代表意义：</strong>理论上的‘平衡利率’</li>
+              <li><strong>趋势观察：</strong>2024-2025年该点位在缓慢上移</li>
+              <li><strong>影响：</strong>长期美债收益率的底部边界</li>
+              <li><strong>关注度：</strong>代表美联储对长期通胀的看法</li>
+            </ul>
+          </div>
+          <div class="dp-card">
+            <span class="dp-card-title"><i class="fas fa-random"></i> 离散度 (Dispersion)</span>
+            <ul>
+              <li><strong>密集集群：</strong>高共识，政策路径较明确</li>
+              <li><strong>高度分散：</strong>高不确定性，政策波动风险大</li>
+              <li><strong>极值点：</strong>通常是激进鹰派或鸽派的少数派</li>
+              <li><strong>信号意义：</strong>分歧越大，鲍威尔的讲话越关键</li>
+            </ul>
+          </div>
+        </div>
+
+      </div>
+    </div>
+  </div>
+
+  <!-- Press Conference Modal -->
+  <div id="press-modal" class="modal-overlay">
+    <div class="modal-content">
+      <span class="close-modal" onclick="closeModal('press-modal')">&times;</span>
+      
+      <div class="dp-container">
+        <div class="dp-header">什么是新闻发布会？</div>
+        
+        <div class="dp-text-section">
+          <p style="color: #eee; font-style: italic; border-left: 3px solid var(--gold); padding-left: 12px; background: rgba(212, 175, 55, 0.05); padding: 12px;">
+            美联储主席的讲话是一场高度精准的‘平衡艺术’。每一个单词都经过精心挑选，旨在引导市场预期而不引发恐慌。在 2026 年换届年的特殊背景下，鲍威尔的措辞不仅关乎短期利率，更隐含了对政策延续性的暗示。掌握这套‘美联储黑话’，能让你在发布会的前10分钟就看清全场风向。
+          </p>
+        </div>
+
+        <div class="dp-subtitle">核心词典：从‘字面意思’到‘交易逻辑’</div>
+        
+        <div class="press-term-grid">
+          <div class="press-term-card">
+            <div class="term-title">数据依赖 (Data Dependent)</div>
+            <div class="term-desc">这是鲍威尔最常用的‘挡箭牌’。其核心含义是联储内部也对趋势感到困惑。</div>
+            <div class="term-row"><span class="term-label">字面意思:</span><span class="term-val">取决于未来的经济数据</span></div>
+            <div class="term-row"><span class="term-label">交易翻译:</span><span class="term-val text-gold">“我们目前无法给出前瞻指引”</span></div>
+            <div class="term-row"><span class="term-label">市场反应:</span><span class="term-val">波动率加剧，放大非农/CPI重要性</span></div>
+            <div class="term-row"><span class="term-label">关注度:</span><span class="term-val">如果此词出现频率降低，说明方向已定</span></div>
+          </div>
+          <div class="press-term-card">
+            <div class="term-title">中性利率 (Neutral Rate)</div>
+            <div class="term-desc">2026 年的终极博弈点。如果鲍威尔认为利率已达中性，意味着降息周期可能提前结束。</div>
+            <div class="term-row"><span class="term-label">字面意思:</span><span class="term-val">既不刺激也不限制经济的水平</span></div>
+            <div class="term-row"><span class="term-label">交易翻译:</span><span class="term-val text-gold">“降息的终点快到了，别想太多”</span></div>
+            <div class="term-row"><span class="term-label">市场反应:</span><span class="term-val">利多美元，利空美债长期头寸</span></div>
+            <div class="term-row"><span class="term-label">风险点:</span><span class="term-val text-red">如果他说中性利率已上移，市场将下跌</span></div>
+          </div>
+          <div class="press-term-card">
+            <div class="term-title">风险平衡 (Balance of Risks)</div>
+            <div class="term-desc">衡量美联储目前更怕通胀还是更怕失业。这是 2026 年政策转向最清晰的信号灯。</div>
+            <div class="term-row"><span class="term-label">偏向通胀:</span><span class="term-val text-red">鹰派表态，美元走强</span></div>
+            <div class="term-row"><span class="term-label">偏向就业:</span><span class="term-val text-green">鸽派表态，利多黄金/美股</span></div>
+            <div class="term-row"><span class="term-label">‘双向’:</span><span class="term-val">中性表态，市场维持震荡走势</span></div>
+            <div class="term-row"><span class="term-label">关键点:</span><span class="term-val">注意他是否提到‘失业率面临上行风险’</span></div>
+          </div>
+        </div>
+
+        <div class="dp-subtitle">2026 特殊词汇预警：独立性与任期</div>
+        <div class="dp-text-section">
+          <p style="margin-bottom:15px;">在 2026 年 1 月的决议中，由于鲍威尔任期将于 5 月届满，以下词汇将具有超常规的权重：</p>
+          <ul style="padding-left: 20px; color:#ccc; font-size: 13px; line-height: 1.8;">
+            <li><strong>机构独立性 (Institutional Independence)：</strong> 如果他多次强调此词，通常是在委婉地回应来自行政部门的降息压力。这通常被视为一种<span class="text-gold">‘防御性鹰派’</span>立场。</li>
+            <li><strong>政策延续性 (Continuity)：</strong> 用来安抚市场，暗示即使换人，目前的货币政策逻辑（如缩表计划）也不会发生剧变。</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- 抽奖转盘弹窗 (Hidden by default) -->
+  <div id="wheel-modal" class="modal-overlay">
+      <div class="modal-content" style="max-width: 500px; text-align: center; border: 2px solid #333; background: #111;">
+          <span class="close-modal" onclick="closeModal('wheel-modal')">&times;</span>
+          <h3 style="color:#D4AF37; font-family:sans-serif; letter-spacing:1px; margin-bottom:10px;">金十·幸运转盘</h3>
+          <p id="wheel-msg" style="color:#aaa; font-size:13px; margin-bottom:20px;">感谢参与互动！祝君交易长虹！</p>
+          
+          <div class="wheel-container">
+              <div class="wheel-pointer"></div>
+              <div class="wheel-center-dot">转动</div>
+              <div class="the-wheel" id="theWheel"></div>
+          </div>
+          
+          <div class="wheel-legend">
+              <div class="wl-item"><div class="wl-dot" style="background:#D4AF37"></div> 2026期货人台历</div>
+              <div class="wl-item"><div class="wl-dot" style="background:#C0C0C0"></div> 期货快讯PRO 7天卡</div>
+              <div class="wl-item"><div class="wl-dot" style="background:#333"></div> 任选1个期货盯盘神器 7天卡</div>
+          </div>
+          
+          <button onclick="closeModal('wheel-modal')" style="margin-top:25px; background:transparent; border:1px solid #444; color:#666; padding:8px 20px; cursor:pointer;">CLOSE</button>
+      </div>
+  </div>
+
+  <script>
+    // Scenario Tab Logic
+    function switchScenario(scenarioId) {
+      document.getElementById('st-btn-hawk').classList.remove('active-hawk');
+      document.getElementById('st-btn-dove').classList.remove('active-dove');
+      document.getElementById('st-btn-black').classList.remove('active-black');
+      if(scenarioId === 'hawk') document.getElementById('st-btn-hawk').classList.add('active-hawk');
+      if(scenarioId === 'dove') document.getElementById('st-btn-dove').classList.add('active-dove');
+      if(scenarioId === 'black') document.getElementById('st-btn-black').classList.add('active-black');
+      document.querySelectorAll('.sc-content').forEach(c => c.classList.remove('active'));
+      document.getElementById(`sc-${scenarioId}`).classList.add('active');
+    }
+
+    // Modal Logic
+    function openModal() {
+        document.getElementById('dotplot-modal').style.display = 'flex';
+        document.body.style.overflow = 'hidden';
+    }
+
+    function openPressModal() {
+        document.getElementById('press-modal').style.display = 'flex';
+        document.body.style.overflow = 'hidden';
+    }
+
+    function closeModal(modalId) {
+        document.getElementById(modalId).style.display = 'none';
+        document.body.style.overflow = 'auto';
+    }
+
+    window.onclick = function(event) {
+        if (event.target.classList.contains('modal-overlay')) {
+            event.target.style.display = 'none';
+            document.body.style.overflow = 'auto';
+        }
+    }
+
+    // Initialize CME Bar Chart (ECharts)
+    const chartDom = document.getElementById('cme-chart');
+    const myChart = echarts.init(chartDom);
+    const option = {
+      backgroundColor: 'transparent',
+      tooltip: {
+        trigger: 'axis',
+        axisPointer: { type: 'shadow' },
+        backgroundColor: 'rgba(20, 20, 20, 0.9)',
+        borderColor: '#D4AF37',
+        textStyle: { color: '#fff' }
+      },
+      grid: {
+        left: '3%', right: '4%', bottom: '3%', top: '15%', containLabel: true
+      },
+      legend: {
+        data: ['今日概率', '昨日概率'],
+        textStyle: { color: '#A0A0A0' },
+        top: 0
+      },
+      xAxis: {
+        type: 'category',
+        data: ['3.25%-3.50%', '3.50%-3.75% (当前)'],
+        axisLine: { lineStyle: { color: '#333' } },
+        axisLabel: { color: '#A0A0A0', interval: 0, fontSize: 11 }
+      },
+      yAxis: {
+        type: 'value',
+        axisLabel: { formatter: '{value}%', color: '#555' },
+        splitLine: { lineStyle: { color: '#222' } }
+      },
+      series: [
+        {
+          name: '今日概率',
+          type: 'bar',
+          data: [2.8, 97.2],
+          itemStyle: { color: '#8E7326' },
+          label: { show: true, position: 'top', color: '#D4AF37', formatter: '{c}%' }
+        },
+        {
+          name: '昨日概率',
+          type: 'bar',
+          data: [4.4, 95.6],
+          itemStyle: { color: '#F9B700' },
+          label: { show: true, position: 'top', color: '#F9B700', formatter: '{c}%' }
+        }
+      ]
+    };
+    myChart.setOption(option);
+
+    // Initialize Commodity Heatmap Chart (ECharts)
+    const heatmapDom = document.getElementById('heatmap-chart');
+    const hmChart = echarts.init(heatmapDom);
+    const periods = ['1990-1992', '1995-1996', '1998', '2001-2003', '2007-2008', '2019', '2020'];
+    const commodities = ['CBOT 大豆', 'CBOT 玉米', 'LME 铜', 'WTI 原油', 'COMEX 白银', 'COMEX 黄金'];
+    const hmData = [
+      [0, 5, -11.39], [1, 5, 6.05], [2, 5, -0.67], [3, 5, 36.80], [4, 5, 16.44], [5, 5, 3.97], [6, 5, -7.74],
+      [0, 4, -9.35], [1, 4, 6.44], [2, 4, -8.01], [3, 4, 7.60], [4, 4, -17.18], [5, 4, 10.73], [6, 4, -24.98],
+      [0, 3, -19.16], [1, 3, 2.13], [2, 3, -20.03], [3, 3, 18.86], [4, 3, -45.66], [5, 3, -0.64], [6, 3, -38.43],
+      [0, 2, 1.49], [1, 2, -14.66], [2, 2, -4.45], [3, 2, -2.59], [4, 2, -59.75], [5, 2, -1.01], [6, 2, -6.63],
+      [0, 1, -5.53], [1, 1, 29.29], [2, 1, 3.50], [3, 1, 2.35], [4, 1, 25.35], [5, 1, -3.65], [6, 1, -6.44],
+      [0, 0, 0], [1, 0, 18.77], [2, 0, 10.38], [3, 0, 12.28], [4, 0, -11.45], [5, 0, 7.84], [6, 0, -8.69]
+    ];
+    const hmOption = {
+      tooltip: {
+        position: 'top',
+        backgroundColor: 'rgba(20, 20, 20, 0.9)',
+        borderColor: '#D4AF37',
+        textStyle: { color: '#fff' },
+        formatter: function (params) {
+          return `${params.name}<br/>${commodities[params.value[1]]}: <span style="color:${params.value[2] >= 0 ? '#FF3B30' : '#00C853'}">${params.value[2]}%</span>`;
+        }
+      },
+      grid: { height: '80%', top: '10%', left: '15%', right: '5%' },
+      xAxis: {
+        type: 'category',
+        data: periods,
+        splitArea: { show: true, areaStyle: { color: ['rgba(255,255,255,0.01)', 'rgba(255,255,255,0.03)'] } },
+        axisLabel: { color: '#A0A0A0', interval: 0, rotate: 30, fontSize: 10 },
+        axisLine: { lineStyle: { color: '#333' } }
+      },
+      yAxis: {
+        type: 'category',
+        data: commodities,
+        splitArea: { show: true },
+        axisLabel: { color: '#D4AF37', fontSize: 11, fontWeight: 'bold' },
+        axisLine: { lineStyle: { color: '#333' } }
+      },
+      visualMap: { show: false, min: -60, max: 40, inRange: { color: ['#00C853', '#0a0a0a', '#FF3B30'] } },
+      series: [{
+        name: 'Commodity Return',
+        type: 'heatmap',
+        data: hmData,
+        label: { show: true, fontSize: 10, color: '#fff', formatter: '{@[2]}%' },
+        itemStyle: { borderColor: '#141414', borderWidth: 1 }
+      }]
+    };
+    hmChart.setOption(hmOption);
+
+    // --- Wall Street Prediction Chart (Chart.js) ---
+    const ctxChart = document.getElementById('predictionChart').getContext('2d');
+    new Chart(ctxChart, {
+      type: 'scatter',
+      data: {
+        datasets: [{
+          label: '投行预测',
+          data: [
+            {x: 6, y: 2, bank: '高盛 (Goldman)'},
+            {x: 6, y: 2, bank: '摩根士丹利 (MS)'},
+            {x: 9, y: 1, bank: '德银 (DB)'},
+            {x: 3, y: 3, bank: '花旗 (Citi)'}, 
+            {x: 7, y: 2, bank: '瑞银 (UBS)'},
+            {x: 12, y: 0, bank: '摩根大通 (JPM)'}
+          ],
+          backgroundColor: '#D4AF37',
+          pointRadius: 8,
+          pointHoverRadius: 12,
+          pointBorderColor: '#fff'
+        }]
+      },
+      options: {
+        responsive: true,
+        maintainAspectRatio: false,
+        plugins: {
+          legend: { display: false },
+          tooltip: {
+            backgroundColor: 'rgba(20,20,20, 0.9)',
+            titleColor: '#D4AF37',
+            borderColor: '#D4AF37',
+            borderWidth: 1,
+            callbacks: {
+              label: function(context) {
+                let month = context.raw.x === 12 ? '无降息/年底' : context.raw.x + '月';
+                return context.raw.bank + ': 首降' + month + ', 全年' + context.raw.y + '次';
+              }
+            }
+          }
+        },
+        scales: {
+          x: {
+            title: { display: true, text: '2026 预测开启降息月份', color: '#666' },
+            min: 1, max: 13,
+            grid: { color: '#222' },
+            ticks: { color: '#888', stepSize: 1 }
+          },
+          y: {
+            title: { display: true, text: '全年降息总次数', color: '#666' },
+            min: -0.5, max: 4,
+            grid: { color: '#222' },
+            ticks: { stepSize: 1, color: '#888' }
+          }
+        }
+      }
+    });
+
+    // Resize Charts on Window Resize
+    window.addEventListener('resize', () => { 
+      myChart.resize(); 
+      hmChart.resize();
+    });
+
+    // Scroll Animation
+    const observer = new IntersectionObserver((entries) => {
+      entries.forEach(entry => {
+        if (entry.isIntersecting) {
+          entry.target.classList.add('visible');
+        }
+      });
+    }, { threshold: 0.1 });
+    document.querySelectorAll('.fade-up').forEach(el => observer.observe(el));
+
+    // =========================================
+    // === 活动互动专区 JS 逻辑 (Activity Zone) ===
+    // =========================================
+
+    /**
+     * 倒计时逻辑
+     * 目标时间：2026年1月29日 02:59:58
+     */
+    function updateCountdown() {
+        const targetDate = new Date("January 29, 2026 02:59:58").getTime();
+        const now = new Date().getTime();
+        
+        let distance = targetDate - now;
+        
+        // 如果过期则归零
+        if (distance < 0) {
+           distance = 0;
+        }
+
+        const hours = Math.floor((distance % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+        const minutes = Math.floor((distance % (1000 * 60 * 60)) / (1000 * 60));
+        const seconds = Math.floor((distance % (1000 * 60)) / 1000);
+
+        const timerEl = document.getElementById("hft-timer");
+        if(timerEl) {
+            timerEl.innerHTML = 
+                (hours < 10 ? "0" + hours : hours) + ":" + 
+                (minutes < 10 ? "0" + minutes : minutes) + ":" + 
+                (seconds < 10 ? "0" + seconds : seconds);
+        }
+    }
+    setInterval(updateCountdown, 1000);
+    updateCountdown(); // 立即执行一次
+
+    /**
+     * 分享功能
+     */
+    function shareToSocial() {
+        // 实际项目中这里应调用微信/微博SDK
+        alert("已调起分享面板：\n1. 发送给微信好友\n2. 分享到朋友圈\n3. 分享到微博");
+    }
+
+    /**
+     * 评论区数据与渲染
+     */
+    const chatList = document.getElementById('social-chat-list');
+
+    // 初始模拟数据
+    const dummyComments = [
+        {
+            avatar: 'https://img.jin10.com/news/23/05/11/1683796677462.jpg',
+            name: '金十网友',
+            location: '山东',
+            time: '1分钟前',
+            text: '监督系统是必须的',
+            likes: 0,
+            replies: []
+        },
+        {
+            avatar: 'https://img.jin10.com/news/23/05/11/1683796589326.jpg',
+            name: '辉',
+            location: '上海市',
+            time: '3分钟前',
+            text: '你不去抗议吗',
+            likes: 0,
+            replies: []
+        },
+        {
+            avatar: 'https://img.jin10.com/news/23/05/11/1683796677462.jpg',
+            name: '网友517184c7',
+            location: '内蒙古自治区',
+            time: '24分钟前',
+            text: '这货把行程都发出来了是不是要干伊朗了',
+            likes: 2,
+            replies: []
+        },
+        {
+            avatar: 'https://img.jin10.com/news/23/05/11/1683796677462.jpg',
+            name: '云',
+            location: '江苏',
+            time: '27分钟前',
+            text: '请他吃花生米',
+            likes: 0,
+            replies: [
+                { user: '网友073b8ded', to: 'cxs', content: '空🐶啊😂', time: '10分钟前 · 上海市' },
+                { user: '网友073b8ded', to: '云', content: '😀😀😂', time: '23分钟前 · 上海市' },
+                { user: 'cxs', to: '云', content: '没买黄金？', time: '23分钟前 · 湖北' }
+            ]
+        }
+    ];
+
+    // 生成单条评论HTML
+    function createCommentHTML(comment) {
+        let repliesHTML = '';
+        if (comment.replies && comment.replies.length > 0) {
+            repliesHTML = `<div class="sc-reply-box">`;
+            comment.replies.forEach(r => {
+                repliesHTML += `
+                    <div class="sc-reply-row">
+                        <span class="sc-reply-user">${r.user}</span>回复 <span class="sc-reply-user">@${r.to}</span> : ${r.content}
+                        <div style="font-size:10px; color:#666; margin-top:2px;">${r.time}</div>
+                    </div>
+                `;
+            });
+            repliesHTML += `</div>`;
+        }
+
+        return `
+            <div class="sc-item">
+                <div class="sc-avatar"><img src="${comment.avatar}"></div>
+                <div class="sc-content">
+                    <div class="sc-user-row">
+                        <span class="sc-username">${comment.name}</span>
+                        ${comment.level ? `<span class="sc-level-tag">${comment.level}</span>` : ''}
+                    </div>
+                    <div class="sc-text">${comment.text}</div>
+                    ${repliesHTML}
+                    <div class="sc-footer">
+                        <div class="sc-meta">
+                            <span>${comment.time}</span>
+                            <span>· ${comment.location}</span>
+                        </div>
+                        <div class="sc-actions">
+                            <span class="sc-action-item">回复Ta</span>
+                            <span class="sc-action-item"><i class="far fa-thumbs-up"></i> ${comment.likes}</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        `;
+    }
+
+    // 渲染初始化评论
+    if(chatList) {
+        chatList.innerHTML = '';
+        dummyComments.forEach(c => {
+            chatList.innerHTML += createCommentHTML(c);
+        });
+    }
+
+    /**
+     * 提交评论
+     */
+    function submitComment() {
+        const input = document.getElementById('chat-input');
+        const text = input.value.trim();
+        if(!text) {
+            alert("请输入评论内容");
+            return;
+        }
+        
+        const newComment = {
+            avatar: 'https://img.jin10.com/news/23/05/11/1683796677462.jpg', // 默认头像
+            name: '我',
+            location: '北京',
+            time: '刚刚',
+            text: text,
+            likes: 0,
+            replies: []
+        };
+        
+        // 插入到列表顶部
+        const html = createCommentHTML(newComment);
+        chatList.insertAdjacentHTML('afterbegin', html);
+        
+        input.value = '';
+        
+        // 评论后触发转盘 (作为奖励)
+        setTimeout(() => {
+            spinTheWheel();
+        }, 500);
+    }
+
+    /**
+     * 投票逻辑
+     */
+    function triggerVote(side) {
+        // 可以在这里记录用户选择了 'BULL', 'HOLD', 'BEAR'
+        console.log("User voted:", side);
+        // 投票后打开转盘
+        spinTheWheel();
+    }
+
+    /**
+     * 转盘逻辑
+     */
+    function spinTheWheel() {
+        const modal = document.getElementById('wheel-modal');
+        const wheel = document.getElementById('theWheel');
+        const msg = document.getElementById('wheel-msg');
+        
+        modal.style.display = 'flex';
+        document.body.style.overflow = 'hidden'; // 禁止背景滚动
+        
+        // 重置状态
+        wheel.style.transition = 'none';
+        wheel.style.transform = 'rotate(0deg)';
+        msg.innerText = "正在抽取幸运大奖...";
+        msg.style.color = "#aaa";
+        
+        // 强制重绘
+        void wheel.offsetWidth;
+        
+        // 随机逻辑 (模拟)
+        const rand = Math.random();
+        let targetAngle = 0;
+        let resultText = "";
+        
+        // 70% 未中奖, 10% 台历, 10% PRO卡, 10% 盯盘神器
+        if (rand < 0.7) {
+            // 黑色区域 (0-90度)
+            targetAngle = 1800 + (360 - (Math.random() * 60 + 15)); 
+            resultText = "差一点！去评论区/分享给战友，解锁下一次机会！";
+        } else if (rand < 0.8) {
+            // 金色区域 (90-180度)
+            targetAngle = 1800 + (360 - (Math.random() * 60 + 105));
+            resultText = "恭喜！2026 期货人·黑金台历已锁定！[截屏联系客服]";
+        } else if (rand < 0.9) {
+            // 银色区域 (180-270度)
+            targetAngle = 1800 + (360 - (Math.random() * 60 + 195));
+            resultText = "恭喜！期货快讯 PRO 7天卡已到账！";
+        } else {
+            // 深灰区域 (270-360度)
+            targetAngle = 1800 + (360 - (Math.random() * 60 + 285));
+            resultText = "恭喜！盯盘神器 7天试用已激活！";
+        }
+        
+        // 开始旋转
+        wheel.style.transition = 'transform 4s cubic-bezier(0.25, 0.1, 0.25, 1)';
+        wheel.style.transform = `rotate(${targetAngle}deg)`;
+        
+        // 显示结果
+        setTimeout(() => {
+            msg.innerText = resultText;
+            msg.style.color = resultText.includes("恭喜") ? "#D4AF37" : "#aaa";
+        }, 4000);
+    }
+  </script>
+</body>
+</html>
