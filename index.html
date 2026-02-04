@@ -1,0 +1,1138 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
+<title>凯文·沃什：美联储范式变革</title>
+<!-- Tailwind CSS -->
+<script src="https://cdn.tailwindcss.com"></script>
+
+<!-- Fonts -->
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+SC:wght@300;400;500;700;900&family=Source+Han+Sans+SC:wght@300;400;500;700;900&display=swap" rel="stylesheet">
+
+<!-- Lucide Icons (General UI) -->
+<script src="https://unpkg.com/lucide@latest"></script>
+
+<!-- FontAwesome (For Social Brand Icons) -->
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+
+<script>
+  tailwind.config = {
+    theme: {
+      extend: {
+        fontFamily: {
+          sans: ['"Source Han Sans SC"', '"Noto Sans SC"', 'sans-serif'],
+        },
+        colors: {
+          fed: {
+            900: '#1a237e', // Deep Blue
+            800: '#283593',
+            700: '#303f9f',
+            600: '#3949ab',
+            200: '#c5cae9',
+            100: '#e8eaf6',
+            50:  '#eef2ff',
+            950: '#0f172a', // Darker for divider
+          },
+          gold: {
+            50: '#fffdf0',
+            100: '#fefce8',
+            200: '#fef08a',
+            300: '#fde047',
+            400: '#facc15',
+            500: '#d4af37',
+            600: '#b4941f',
+            700: '#a16207',
+          }
+        },
+        spacing: {
+          'safe-bottom': 'env(safe-area-inset-bottom)',
+        }
+      }
+    }
+  }
+</script>
+
+<style>
+  body {
+    font-family: 'Source Han Sans SC', 'Noto Sans SC', sans-serif;
+    background-color: #f8fafc;
+    overflow-x: hidden;
+    scroll-behavior: smooth;
+  }
+
+  /* Custom Scrollbar */
+  ::-webkit-scrollbar {
+    width: 8px;
+  }
+  ::-webkit-scrollbar-track {
+    background: #f1f1f1; 
+  }
+  ::-webkit-scrollbar-thumb {
+    background: #cbd5e1; 
+    border-radius: 4px;
+  }
+  ::-webkit-scrollbar-thumb:hover {
+    background: #94a3b8; 
+  }
+
+  /* Animation Utilities */
+  .reveal {
+    opacity: 0;
+    transform: translateY(30px);
+    transition: all 0.8s ease-out;
+  }
+  .reveal.active {
+    opacity: 1;
+    transform: translateY(0);
+  }
+  
+  .reveal-left {
+    opacity: 0;
+    transform: translateX(-50px);
+    transition: all 0.8s ease-out;
+  }
+  .reveal-left.active {
+    opacity: 1;
+    transform: translateX(0);
+  }
+
+  .reveal-right {
+    opacity: 0;
+    transform: translateX(50px);
+    transition: all 0.8s ease-out;
+  }
+  .reveal-right.active {
+    opacity: 1;
+    transform: translateX(0);
+  }
+
+  /* Mobile Animation Adjustments */
+  @media (max-width: 768px) {
+    .reveal, .reveal-left, .reveal-right {
+        transform: translateY(15px); /* Less movement on mobile */
+        transition: all 0.6s ease-out;
+    }
+    .reveal-left, .reveal-right {
+        transform: translateY(15px); /* Override horizontal slide on mobile to prevent overflow */
+    }
+  }
+
+  .delay-100 { transition-delay: 100ms; }
+  .delay-200 { transition-delay: 200ms; }
+  .delay-300 { transition-delay: 300ms; }
+
+  /* Modal Animation - FIXED: Pointer Events Logic */
+  .modal-backdrop {
+    transition: opacity 0.3s ease-out;
+  }
+  .modal-content-wrapper {
+    transition: transform 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+  }
+  
+  /* 
+     关键修复点：
+     当模态框隐藏时，必须设置 pointer-events: none;
+     否则那个透明的全屏 div 会挡住页面所有的点击和文字选择。
+  */
+  .modal-hidden {
+    pointer-events: none;
+  }
+
+  .modal-hidden .modal-backdrop {
+    opacity: 0;
+  }
+  .modal-hidden .modal-content-wrapper {
+    transform: translateY(100%);
+  }
+  
+  .modal-visible {
+    pointer-events: auto;
+  }
+  .modal-visible .modal-backdrop {
+    opacity: 1;
+  }
+  .modal-visible .modal-content-wrapper {
+    transform: translateY(0);
+  }
+
+</style>
+</head>
+<body class="text-slate-900 selection:bg-gold-500 selection:text-white pb-24 md:pb-0">
+    <!-- Navigation -->
+<nav id="navbar" class="fixed top-0 left-0 w-full z-50 transition-all duration-300 bg-transparent py-4 md:py-5">
+  <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 flex justify-between items-center">
+    <!-- Logo -->
+    <div id="nav-logo" class="font-bold text-lg md:text-xl tracking-wider uppercase flex items-center gap-2 text-fed-900 transition-colors duration-300">
+       <span class="truncate max-w-[220px] md:max-w-none">美联储 | 金十期货专题</span>
+    </div>
+
+    <!-- Desktop Nav -->
+    <div class="hidden md:flex space-x-6 lg:space-x-8">
+      <a href="#hero" class="nav-link text-sm font-medium transition-colors duration-200 text-slate-600 hover:text-fed-900" data-target="hero">首页</a>
+      <a href="#blueprint" class="nav-link text-sm font-medium transition-colors duration-200 text-slate-600 hover:text-fed-900" data-target="blueprint">宏观蓝图</a>
+      <a href="#reforms" class="nav-link text-sm font-medium transition-colors duration-200 text-slate-600 hover:text-fed-900" data-target="reforms">改革方略</a>
+      <a href="#inflation" class="nav-link text-sm font-medium transition-colors duration-200 text-slate-600 hover:text-fed-900" data-target="inflation">通胀博弈</a>
+      <a href="#history" class="nav-link text-sm font-medium transition-colors duration-200 text-slate-600 hover:text-fed-900" data-target="history">往昔表态</a>
+      <a href="#outlook" class="nav-link text-sm font-medium transition-colors duration-200 text-slate-600 hover:text-fed-900" data-target="outlook">2026展望</a>
+      <a href="#agency" class="nav-link text-sm font-medium transition-colors duration-200 text-slate-600 hover:text-fed-900" data-target="agency">机构观点</a>
+    </div>
+
+    <!-- Mobile Toggle -->
+    <button id="mobile-menu-btn" class="md:hidden text-fed-900 focus:outline-none p-2">
+      <i data-lucide="menu"></i>
+    </button>
+  </div>
+
+  <!-- Mobile Menu -->
+  <div id="mobile-menu" class="hidden md:hidden absolute top-full left-0 w-full bg-fed-900 border-t border-fed-800 shadow-xl h-screen overflow-y-auto">
+    <div class="flex flex-col p-6 space-y-6 pb-24">
+      <a href="#hero" class="mobile-nav-link text-left text-lg font-medium text-gray-300 block border-b border-fed-800 pb-2">首页</a>
+      <a href="#blueprint" class="mobile-nav-link text-left text-lg font-medium text-gray-300 block border-b border-fed-800 pb-2">宏观蓝图</a>
+      <a href="#reforms" class="mobile-nav-link text-left text-lg font-medium text-gray-300 block border-b border-fed-800 pb-2">改革方略</a>
+      <a href="#inflation" class="mobile-nav-link text-left text-lg font-medium text-gray-300 block border-b border-fed-800 pb-2">通胀博弈</a>
+      <a href="#history" class="mobile-nav-link text-left text-lg font-medium text-gray-300 block border-b border-fed-800 pb-2">往昔表态</a>
+      <a href="#outlook" class="mobile-nav-link text-left text-lg font-medium text-gray-300 block border-b border-fed-800 pb-2">2026展望</a>
+      <a href="#agency" class="mobile-nav-link text-left text-lg font-medium text-gold-400 block pb-2">机构观点</a>
+    </div>
+  </div>
+</nav>
+  
+<main>
+    <!-- Hero Section -->
+    <section id="hero" class="relative min-h-[55vh] md:min-h-screen flex items-center justify-center overflow-hidden bg-slate-50 pt-20">
+        <!-- Background Image with Overlay -->
+        <div class="absolute inset-0 z-0">
+            <img src="https://img.jin10.com/news/26/02/97drl-Knf82iEKGStN4dd.jpg" class="w-full h-full object-cover opacity-70 md:opacity-70" alt="Kevin Warsh Background">
+            <!-- Gradient Overlay for readability -->
+            <div class="absolute inset-0 bg-gradient-to-b from-slate-50/90 via-slate-50/70 to-slate-50"></div>
+        </div>
+
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10 text-center reveal">
+            <span class="inline-block py-1 px-3 rounded-full bg-fed-100 text-fed-900 text-sm font-semibold mb-6 tracking-wide border border-fed-900/10">
+                美联储主席热门候选人
+            </span>
+            <h1 class="text-4xl md:text-7xl font-black text-slate-900 mb-6 leading-tight">
+                凯文·沃什<br/>
+                <span class="text-transparent bg-clip-text bg-gradient-to-r from-fed-900 to-fed-800">
+                </span>
+            </h1>
+            <h2 class="text-xl md:text-3xl font-light text-slate-600 mb-8">
+                美联储<span class="text-gold-600 font-bold">“范式变革”</span>的领航者？
+            </h2>
+            <p class="max-w-2xl mx-auto text-base md:text-lg text-slate-500 leading-relaxed mb-12 px-2">
+                主张通过缩减资产负债表换取低利率，坚信AI驱动的生产力能抑制通胀。
+                <br class="hidden md:block"/>
+                市场正处于“沃什冲击”后的重新定价中。
+            </p>
+        </div>
+    </section>
+
+    <!-- Blueprint Section -->
+    <section id="blueprint" class="py-16 md:py-24 bg-white relative">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            
+            <!-- Section Header -->
+            <div class="text-center mb-12 md:mb-20 reveal">
+                <h2 class="text-3xl md:text-5xl font-black text-slate-900 mb-6 mt-2">宏观蓝图：“新鹰派”的崛起</h2>
+                <div class="w-24 h-1.5 bg-gold-500 mx-auto rounded-full"></div>
+                <p class="mt-8 text-slate-600 text-base md:text-lg max-w-3xl mx-auto leading-relaxed">
+                    沃什对当前美联储的决策机制持尖锐批评态度，认为其过于依赖落后的数据。他提出了一套基于<span class="font-bold text-fed-900">生产力驱动</span>的货币政策新框架。
+                </p>
+            </div>
+
+            <!-- Core Policy Cards - 电脑3列，平板2列，手机1列 -->
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 md:gap-8 mb-20 md:mb-32">
+                
+                <!-- Card 1: Inflation -->
+                <div class="bg-white rounded-2xl p-6 md:p-8 border border-slate-200 shadow-md hover:shadow-xl hover:border-fed-200 transition-all duration-300 group flex flex-col reveal delay-100">
+                    <!-- Icon & Title Row -->
+                    <div class="flex items-center gap-4 mb-4">
+                        <div class="w-12 h-12 bg-fed-900 rounded-xl flex items-center justify-center text-white shadow-lg shadow-fed-900/30 group-hover:scale-110 transition-transform duration-300 flex-shrink-0">
+                            <i data-lucide="trending-up" class="w-6 h-6"></i>
+                        </div>
+                        <h3 class="text-2xl font-black text-slate-900 tracking-tight leading-tight">通胀是一种选择</h3>
+                    </div>
+                    
+                    <!-- Bold Summary -->
+                    <p class="text-slate-800 font-bold text-lg mb-4 leading-snug">
+                        通胀并非不可预见的冲击，而是政策失误的结果。
+                    </p>
+                    
+                    <!-- Divider Line -->
+                    <div class="w-full h-px bg-slate-100 my-2"></div>
+                    
+                    <!-- Description + Image Flex -->
+                    <div class="mt-4 flex flex-col xl:flex-row gap-4 flex-grow">
+                        <div class="flex-1">
+                            <p class="text-slate-500 text-sm leading-relaxed text-justify">
+                                沃什主张美联储应放弃过时的“菲利普斯曲线”模型，认为通胀源于“政府花钱太多、印钱太多”。
+                            </p>
+                        </div>
+                        <!-- Inserted Image Right/Bottom -->
+                        <div class="w-full xl:w-2/5 flex-shrink-0 self-center xl:self-start">
+                            <img src="https://img.jin10.com/gallary/25/10/hvZAM1Ls_al3plEy7E4i7.png/lite" alt="通胀图表" class="rounded-lg border border-slate-100 shadow-sm w-full h-auto object-contain">
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Card 2: AI -->
+                <div class="bg-white rounded-2xl p-6 md:p-8 border border-slate-200 shadow-md hover:shadow-xl hover:border-fed-200 transition-all duration-300 group flex flex-col reveal delay-200">
+                    <!-- Icon & Title Row -->
+                    <div class="flex items-center gap-4 mb-4">
+                        <div class="w-12 h-12 bg-fed-900 rounded-xl flex items-center justify-center text-white shadow-lg shadow-fed-900/30 group-hover:scale-110 transition-transform duration-300 flex-shrink-0">
+                            <i data-lucide="brain-circuit" class="w-6 h-6"></i>
+                        </div>
+                        <h3 class="text-2xl font-black text-slate-900 tracking-tight leading-tight">AI生产力红利</h3>
+                    </div>
+                    
+                    <!-- Bold Summary -->
+                    <p class="text-slate-800 font-bold text-lg mb-4 leading-snug">
+                        AI将带来巨大的通缩压力和生产力提升。
+                    </p>
+                    
+                    <!-- Divider Line -->
+                    <div class="w-full h-px bg-slate-100 my-2"></div>
+                    
+                    <!-- Description + Image Flex -->
+                    <div class="mt-4 flex flex-col xl:flex-row gap-4 flex-grow">
+                        <div class="flex-1">
+                            <p class="text-slate-500 text-sm leading-relaxed text-justify">
+                                技术进步是结构性的通缩力量，这使得利率可以处于较低水平而不引发通胀。
+                            </p>
+                        </div>
+                         <!-- Inserted Image Right/Bottom -->
+                         <div class="w-full xl:w-2/5 flex-shrink-0 self-center xl:self-start">
+                            <img src="https://img.jin10.com/gallary/25/11/mBWx9fTqstkEiV0Y9m9az.png/lite" alt="AI生产力图表" class="rounded-lg border border-slate-100 shadow-sm w-full h-auto object-contain">
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Card 3: Shrink Balance Sheet -->
+                <div class="bg-white rounded-2xl p-6 md:p-8 border border-slate-200 shadow-md hover:shadow-xl hover:border-fed-200 transition-all duration-300 group flex flex-col reveal delay-300">
+                    <!-- Icon & Title Row -->
+                    <div class="flex items-center gap-4 mb-4">
+                        <div class="w-12 h-12 bg-fed-900 rounded-xl flex items-center justify-center text-white shadow-lg shadow-fed-900/30 group-hover:scale-110 transition-transform duration-300 flex-shrink-0">
+                            <i data-lucide="scale" class="w-6 h-6"></i>
+                        </div>
+                        <h3 class="text-2xl font-black text-slate-900 tracking-tight leading-tight">缩表换降息</h3>
+                    </div>
+                    
+                    <!-- Bold Summary -->
+                    <p class="text-slate-800 font-bold text-lg mb-4 leading-snug">
+                        用缩表换取更低的利率。
+                    </p>
+                    
+                    <!-- Divider Line -->
+                    <div class="w-full h-px bg-slate-100 my-2"></div>
+                    
+                    <!-- Description + Image Flex -->
+                    <div class="mt-4 flex flex-col xl:flex-row gap-4 flex-grow">
+                        <div class="flex-1">
+                            <p class="text-slate-500 text-sm leading-relaxed text-justify">
+                                减持MBS改善流动性，支持短端利率下行。此举旨在将过度干预的“有形之手”撤出。
+                            </p>
+                        </div>
+                         <!-- Inserted Image Right/Bottom -->
+                         <div class="w-full xl:w-2/5 flex-shrink-0 self-center xl:self-start">
+                            <img src="https://img.jin10.com/news/24/08/VMTQJ1evaby3uhwM_IyUh.png/lite" alt="缩表图表" class="rounded-lg border border-slate-100 shadow-sm w-full h-auto object-contain">
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Reform Strategies - UPDATED: Image Cards -->
+            <div id="reforms" class="mb-20 md:mb-32 reveal">
+                <div class="flex items-center gap-4 mb-8 md:mb-12">
+                    <div class="h-px bg-slate-200 flex-grow"></div>
+                    <h3 class="text-xl md:text-3xl font-bold text-fed-900 text-center uppercase tracking-wide">
+                        沃什的“四大改革方略”
+                    </h3>
+                    <div class="h-px bg-slate-200 flex-grow"></div>
+                </div>
+                
+                <!-- Grid: 2 columns mobile, 2 columns desktop (2x2) -->
+                <div class="grid grid-cols-2 md:grid-cols-2 gap-3 md:gap-8">
+                    
+                    <!-- Strategy 1: 预测模型 -->
+                    <div class="group bg-white rounded-xl md:rounded-2xl overflow-hidden border border-slate-200 shadow-sm hover:shadow-2xl hover:border-gold-500/30 transition-all duration-300 flex flex-col">
+                        <div class="h-32 md:h-56 overflow-hidden relative">
+                            <img src="https://img.jin10.com/news/26/02/hZdF5hv-VcQYPpaAwX48l.jpg" alt="预测模型范式转移" class="w-full h-full object-cover transform group-hover:scale-110 transition-transform duration-700">
+                            <!-- Gradient Overlay -->
+                            <div class="absolute inset-0 bg-gradient-to-t from-black/80 via-black/20 to-transparent"></div>
+                            <!-- Title on Image -->
+                            <div class="absolute bottom-3 left-3 md:bottom-5 md:left-6 z-10">
+                                <h4 class="text-sm md:text-2xl font-bold text-white shadow-black drop-shadow-md border-l-4 border-gold-500 pl-2 md:pl-3">预测模型范式转移</h4>
+                            </div>
+                        </div>
+                        <div class="p-4 md:p-6 flex-grow bg-white">
+                            <p class="text-slate-600 text-xs md:text-base leading-snug md:leading-relaxed">放弃对“滞胀”的悲观预测。沃什认为AI将显著推升实际工资并改善生活水平，美联储的宏观经济预测模型必须进行根本性调整，以捕捉技术进步带来的结构性红利。</p>
+                        </div>
+                    </div>
+
+                    <!-- Strategy 2: 激进缩表 -->
+                    <div class="group bg-white rounded-xl md:rounded-2xl overflow-hidden border border-slate-200 shadow-sm hover:shadow-2xl hover:border-gold-500/30 transition-all duration-300 flex flex-col">
+                         <div class="h-32 md:h-56 overflow-hidden relative">
+                            <img src="https://img.jin10.com/news/26/02/rDRf3o70JsXNAiCQmyY4E.jpg" alt="激进缩减资产负债表" class="w-full h-full object-cover transform group-hover:scale-110 transition-transform duration-700">
+                            <div class="absolute inset-0 bg-gradient-to-t from-black/80 via-black/20 to-transparent"></div>
+                            <div class="absolute bottom-3 left-3 md:bottom-5 md:left-6 z-10">
+                                <h4 class="text-sm md:text-2xl font-bold text-white shadow-black drop-shadow-md border-l-4 border-gold-500 pl-2 md:pl-3">激进缩减资产负债表</h4>
+                            </div>
+                        </div>
+                        <div class="p-4 md:p-6 flex-grow bg-white">
+                            <p class="text-slate-600 text-xs md:text-base leading-snug md:leading-relaxed">终结“肥大”的资产负债表。称当前6万亿美元的规模为“陈旧的危机思维产物”。主张大幅缩表，减少对大型机构的隐形补贴，并将释放的流动性导向实体经济。</p>
+                        </div>
+                    </div>
+
+                     <!-- Strategy 3: 监管重回本土 -->
+                     <div class="group bg-white rounded-xl md:rounded-2xl overflow-hidden border border-slate-200 shadow-sm hover:shadow-2xl hover:border-gold-500/30 transition-all duration-300 flex flex-col">
+                         <div class="h-32 md:h-56 overflow-hidden relative">
+                            <img src="https://img.jin10.com/news/26/02/A9p98cJaxTk_ghitNfUqH.jpg" alt="监管权力重回本土" class="w-full h-full object-cover transform group-hover:scale-110 transition-transform duration-700">
+                            <div class="absolute inset-0 bg-gradient-to-t from-black/80 via-black/20 to-transparent"></div>
+                            <div class="absolute bottom-3 left-3 md:bottom-5 md:left-6 z-10">
+                                <h4 class="text-sm md:text-2xl font-bold text-white shadow-black drop-shadow-md border-l-4 border-gold-500 pl-2 md:pl-3">监管权力重回本土</h4>
+                            </div>
+                        </div>
+                        <div class="p-4 md:p-6 flex-grow bg-white">
+                            <p class="text-slate-600 text-xs md:text-base leading-snug md:leading-relaxed">摆脱全球监管枷锁。批评美联储试图用Basel规则约束美资银行，主张建立独立的、服务于美国信贷扩张的本土监管体系，让美国成为全球银行中心。</p>
+                        </div>
+                    </div>
+
+                     <!-- Strategy 4: 减少前瞻指引 -->
+                     <div class="group bg-white rounded-xl md:rounded-2xl overflow-hidden border border-slate-200 shadow-sm hover:shadow-2xl hover:border-gold-500/30 transition-all duration-300 flex flex-col">
+                         <div class="h-32 md:h-56 overflow-hidden relative">
+                            <img src="https://img.jin10.com/news/26/02/tG4oLRRuW5dvS6wlPcrcf.jpg" alt="减少前瞻指引" class="w-full h-full object-cover transform group-hover:scale-110 transition-transform duration-700">
+                            <div class="absolute inset-0 bg-gradient-to-t from-black/80 via-black/20 to-transparent"></div>
+                            <div class="absolute bottom-3 left-3 md:bottom-5 md:left-6 z-10">
+                                <h4 class="text-sm md:text-2xl font-bold text-white shadow-black drop-shadow-md border-l-4 border-gold-500 pl-2 md:pl-3">减少“前瞻指引”</h4>
+                            </div>
+                        </div>
+                        <div class="p-4 md:p-6 flex-grow bg-white">
+                            <p class="text-slate-600 text-xs md:text-base leading-snug md:leading-relaxed">退出过度指引业务。沃什主张美联储不应只是观测价格，更应防止政策导致的资产泡沫。这意味着未来的点阵图（Dot Plot）或频繁的议息剧透可能消失。</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Trump vs Warsh Comparison -->
+            <div class="bg-gradient-to-br from-fed-900 to-fed-800 rounded-3xl overflow-hidden shadow-2xl text-white relative reveal isolate">
+                <!-- Decorative BG -->
+                <div class="absolute top-0 right-0 p-32 bg-white opacity-5 rounded-full filter blur-3xl transform translate-x-1/2 -translate-y-1/2 -z-10"></div>
+                
+                <!-- VS Badge (Desktop: Absolute Center) -->
+                <div class="hidden md:flex absolute left-1/2 top-1/2 transform -translate-x-1/2 -translate-y-1/2 z-20 w-16 h-16 bg-fed-900 rounded-full border-4 border-gold-500 items-center justify-center shadow-lg shadow-black/50">
+                    <span class="text-2xl font-black text-gold-500 italic pr-0.5">VS</span>
+                </div>
+
+                <!-- FIXED LINE HERE: Removed 'divide-y-4' -->
+                <div class="grid grid-cols-1 md:grid-cols-2 md:divide-x-4 md:divide-fed-950/50">
+                    <!-- Left Side: Trump -->
+                    <div class="p-6 md:p-12 relative">
+                        <!-- Header with Image -->
+                        <div class="flex flex-col items-center mb-6 md:mb-8 text-center">
+                            <div class="w-20 h-20 md:w-28 md:h-28 rounded-full border-4 border-gold-500 shadow-xl overflow-hidden mb-4 relative bg-fed-950">
+                                <img src="https://img.jin10.com/news/26/02/8MFdQvz8ypGTdxEUXQbCW.jpg" alt="Trump" class="w-full h-full object-cover transform hover:scale-110 transition-transform duration-500">
+                            </div>
+                            <h3 class="text-2xl md:text-3xl font-black text-gold-500 uppercase tracking-wide">特朗普的算盘</h3>
+                        </div>
+                        
+                        <ul class="space-y-4 md:space-y-6">
+                            <li class="flex gap-4">
+                                <span class="w-6 h-6 rounded-full bg-gold-500/20 text-gold-500 flex items-center justify-center text-xs font-bold flex-shrink-0 mt-0.5">1</span>
+                                <span class="text-fed-100 font-light leading-relaxed text-sm md:text-base">希望通过任命沃什实现大幅降息，以刺激增长</span>
+                            </li>
+                            <li class="flex gap-4">
+                                <span class="w-6 h-6 rounded-full bg-gold-500/20 text-gold-500 flex items-center justify-center text-xs font-bold flex-shrink-0 mt-0.5">2</span>
+                                <span class="text-fed-100 font-light leading-relaxed text-sm md:text-base">看重沃什此前曾公开支持特朗普对鲍威尔不降息的批评</span>
+                            </li>
+                            <li class="flex gap-4">
+                                <span class="w-6 h-6 rounded-full bg-gold-500/20 text-gold-500 flex items-center justify-center text-xs font-bold flex-shrink-0 mt-0.5">3</span>
+                                <span class="text-fed-100 font-light leading-relaxed text-sm md:text-base">寻求一个能配合白宫经济议程的“盟友”</span>
+                            </li>
+                        </ul>
+                    </div>
+
+                    <!-- Mobile VS Badge -->
+                    <div class="md:hidden h-14 relative flex items-center justify-center z-20 bg-gradient-to-r from-transparent via-fed-900/50 to-transparent -my-7 pointer-events-none">
+                        <div class="w-12 h-12 bg-fed-900 rounded-full border-4 border-gold-500 flex items-center justify-center shadow-lg">
+                            <span class="text-xl font-black text-gold-500 italic pr-0.5">VS</span>
+                        </div>
+                    </div>
+
+                    <!-- Right Side: Warsh -->
+                    <div class="p-6 md:p-12 bg-black/20 relative">
+                         <!-- Header with Image -->
+                         <div class="flex flex-col items-center mb-6 md:mb-8 text-center pt-4 md:pt-0">
+                            <div class="w-20 h-20 md:w-28 md:h-28 rounded-full border-4 border-slate-300 shadow-xl overflow-hidden mb-4 relative bg-fed-950">
+                                <img src="https://img.jin10.com/news/26/02/k7uyHgRgwn18GLehjwgIf.jpg" alt="Warsh" class="w-full h-full object-cover transform hover:scale-110 transition-transform duration-500">
+                            </div>
+                            <h3 class="text-2xl md:text-3xl font-black text-white uppercase tracking-wide">沃什的独立性</h3>
+                        </div>
+
+                        <ul class="space-y-4 md:space-y-6">
+                            <li class="flex gap-4">
+                                <span class="w-6 h-6 rounded-full bg-white/10 text-white flex items-center justify-center text-xs font-bold flex-shrink-0 mt-0.5">1</span>
+                                <span class="text-slate-200 font-light leading-relaxed text-sm md:text-base">华尔街视为“传统且合格”的选择，能安抚市场对独立性受损的担忧</span>
+                            </li>
+                            <li class="flex gap-4">
+                                <span class="w-6 h-6 rounded-full bg-white/10 text-white flex items-center justify-center text-xs font-bold flex-shrink-0 mt-0.5">2</span>
+                                <span class="text-slate-200 font-light leading-relaxed text-sm md:text-base">若通胀居高不下，可能会回归其“鹰派”本质，捍卫货币信用</span>
+                            </li>
+                            <li class="flex gap-4">
+                                <span class="w-6 h-6 rounded-full bg-white/10 text-white flex items-center justify-center text-xs font-bold flex-shrink-0 mt-0.5">2</span>
+                                <span class="text-slate-200 font-light leading-relaxed text-sm md:text-base">职业信誉建立在对通胀和资产泡沫的强硬态度上</span>
+                            </li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+    </section>
+
+
+    <!-- History Section -->
+    <section id="history" class="py-16 md:py-24 bg-fed-900 text-white relative overflow-hidden">
+        <!-- Background Pattern -->
+        <div class="absolute inset-0 opacity-10" style="background-image: radial-gradient(circle at 2px 2px, rgba(255,255,255,0.15) 1px, transparent 0); background-size: 40px 40px;"></div>
+
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
+            <div class="text-center mb-16 reveal">
+                <h2 class="text-3xl md:text-4xl font-bold mb-4 text-white">往昔表态与资产价格联动</h2>
+                <p class="text-fed-100 max-w-2xl mx-auto">
+                    从“最年轻理事”到“原则派辞职者”，沃什的每一次表态都对市场产生了深远影响。
+                </p>
+            </div>
+
+            <div class="relative">
+                <!-- Vertical Line (Desktop Only) -->
+                <div class="hidden md:block absolute left-1/2 transform -translate-x-1/2 h-full w-0.5 bg-fed-700"></div>
+
+                <div class="space-y-12">
+                    <!-- Event 1: 2011 -->
+                    <div class="flex flex-col md:flex-row items-center justify-between gap-6 md:gap-8 reveal">
+                         <!-- Year Bubble 2011 -->
+                         <div class="hidden md:flex absolute left-1/2 transform -translate-x-1/2 w-16 h-16 bg-gold-500 rounded-full items-center justify-center font-bold text-fed-900 text-sm shadow-lg z-10 border-4 border-fed-900">
+                            2011
+                        </div>
+                        <div class="w-full md:w-5/12 text-left md:text-right">
+                            <div class="bg-fed-800 p-6 rounded-xl border border-fed-700 hover:border-gold-500/50 transition-colors">
+                                <span class="inline-block md:hidden bg-gold-500 text-fed-900 text-xs font-bold px-2 py-1 rounded mb-2">2011年2月10日</span>
+                                <h3 class="text-xl font-bold text-gold-500 mb-2">原则派辞职：对QE2的决裂</h3>
+                                <p class="text-slate-300 text-sm leading-relaxed mb-4">因反对QE2（第二轮量化宽松）而辞职，警告非常规干预的长期风险远超短期收益。辞职后，市场预期通胀上行及信用重估。</p>
+                                
+                                <!-- Inserted Chart Image -->
+                                <div class="mt-4 rounded-lg overflow-hidden border border-fed-600 shadow-md">
+                                    <img src="https://img.jin10.com/news/26/02/T1dMEIm4UJH_CLFLjtFWK.jpg" alt="黄金行情走势图" class="w-full h-auto object-cover">
+                                </div>
+                                <p class="text-xs text-slate-400 mt-2 italic">注：辞职后金价向$1,900冲击，白银创下历史高点。</p>
+
+                            </div>
+                        </div>
+                        <div class="hidden md:block w-full md:w-5/12"></div>
+                    </div>
+
+                    <!-- Event 2: 2025 -->
+                    <div class="flex flex-col md:flex-row-reverse items-center justify-between gap-6 md:gap-8 reveal">
+                         <!-- Year Bubble 2025 -->
+                         <div class="hidden md:flex absolute left-1/2 transform -translate-x-1/2 w-16 h-16 bg-gold-500 rounded-full items-center justify-center font-bold text-fed-900 text-sm shadow-lg z-10 border-4 border-fed-900">
+                            2025
+                        </div>
+                        <div class="w-full md:w-5/12 text-left">
+                            <div class="bg-fed-800 p-6 rounded-xl border border-fed-700 hover:border-gold-500/50 transition-colors">
+                                <span class="inline-block md:hidden bg-gold-500 text-fed-900 text-xs font-bold px-2 py-1 rounded mb-2">2025年11月16日</span>
+                                <h3 class="text-xl font-bold text-gold-500 mb-2">《华尔街日报》社论：美联储破碎的领导层</h3>
+                                <p class="text-slate-300 text-sm leading-relaxed mb-4">凯文·沃什在《华尔街日报》发表了题为《美联储破碎的领导层》的重磅社论。这篇社论不仅是对现任主席鲍威尔的公开挑战，更是他竞选美联储主席的“政策宣言”。他系统性地批判了美联储近年来的失误，并提出了一套基于AI生产力与激进缩表的新货币哲学。
+。他提出四大核心失败：误判通胀、归咎就业、忽视AI通缩力量、维持臃肿负债表。</p>
+                                
+                                <!-- Inserted New Chart Image -->
+                                <div class="mt-4 rounded-lg overflow-hidden border border-fed-600 shadow-md">
+                                    <img src="https://img.jin10.com/news/26/02/bECzI4enTTzi7C3VBiQfZ.jpg" alt="黄金130表现" class="w-full h-auto object-cover">
+                                </div>
+                                <p class="text-xs text-slate-400 mt-2 italic">注：Charles Schwab认为，虽然该社论发表于2025年底，但其引发的市场对“沃什休克”的预期在2026年1月正式提名为现实。避险资产重估： 文章中对货币纪律的强调，预示了他在通胀抬头时可能的“硬核”转向，这也是提名日黄金暴跌的心理伏笔</p>
+
+                            </div>
+                        </div>
+                        <div class="hidden md:block w-full md:w-5/12"></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Outlook Section -->
+    <section id="outlook" class="py-16 md:py-24 bg-slate-50 border-t border-slate-200">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            
+            <div class="text-center mb-16 reveal">
+                <h2 class="text-3xl md:text-5xl font-black text-slate-900 mb-6 mt-2">2026 沃什时代展望</h2>
+                <p class="text-slate-600 text-base md:text-lg max-w-3xl mx-auto leading-relaxed">
+                    若凯文·沃什正式执掌美联储，市场定价逻辑或发生转变。
+                </p>
+            </div>
+
+            <!-- 2-Column Grid for Tofu Blocks on Mobile -->
+            <div class="grid grid-cols-2 md:grid-cols-2 gap-3 md:gap-8 mb-16">
+                <!-- Outlook 1 -->
+                <div class="bg-white rounded-xl md:rounded-2xl shadow-sm hover:shadow-xl transition-all duration-300 overflow-hidden border border-slate-200 group flex flex-col reveal delay-100">
+                    <div class="h-1 bg-gradient-to-r from-fed-900 to-fed-700 group-hover:from-gold-500 group-hover:to-gold-600 transition-all duration-300"></div>
+                    <div class="p-3 md:p-8 flex-grow">
+                        <div class="flex flex-col xl:flex-row items-start xl:items-center justify-between mb-2 md:mb-6 gap-2">
+                            <div class="flex items-center gap-2 md:gap-4">
+                                <div class="p-1.5 md:p-3 bg-fed-50 rounded-lg md:rounded-xl text-fed-900 group-hover:bg-gold-50 group-hover:text-gold-600 transition-colors">
+                                    <i data-lucide="landmark" class="w-4 h-4 md:w-7 md:h-7"></i>
+                                </div>
+                                <h3 class="text-sm md:text-xl font-bold text-slate-900">利率路径</h3>
+                            </div>
+                        </div>
+                        <ul class="space-y-1 md:space-y-4">
+                            <li class="flex items-start text-slate-600 text-xs md:text-base">
+                                <span class="leading-snug">多数机构预测下调至 3.0% - 3.5%</span>
+                            </li>
+                            <li class="flex items-start text-slate-600 text-xs md:text-base">
+                                <span class="leading-snug">废除前瞻指引（点阵图）</span>
+                            </li>
+                                                            <li class="flex items-start text-slate-600 text-xs md:text-base">
+                                <span class="leading-snug">收长放短：大幅削减长端购债（QT）+降低短端政策利率</span>
+                            </li>
+                        </ul>
+                    </div>
+                </div>
+
+                 <!-- Outlook 2 -->
+                 <div class="bg-white rounded-xl md:rounded-2xl shadow-sm hover:shadow-xl transition-all duration-300 overflow-hidden border border-slate-200 group flex flex-col reveal delay-200">
+                    <div class="h-1 bg-gradient-to-r from-fed-900 to-fed-700 group-hover:from-gold-500 group-hover:to-gold-600 transition-all duration-300"></div>
+                    <div class="p-3 md:p-8 flex-grow">
+                         <div class="flex flex-col xl:flex-row items-start xl:items-center justify-between mb-2 md:mb-6 gap-2">
+                            <div class="flex items-center gap-2 md:gap-4">
+                                <div class="p-1.5 md:p-3 bg-fed-50 rounded-lg md:rounded-xl text-fed-900 group-hover:bg-gold-50 group-hover:text-gold-600 transition-colors">
+                                    <i data-lucide="line-chart" class="w-4 h-4 md:w-7 md:h-7"></i>
+                                </div>
+                                <h3 class="text-sm md:text-xl font-bold text-slate-900">美股市场</h3>
+                            </div>
+                        </div>
+                        <ul class="space-y-1 md:space-y-4">
+                            <li class="flex items-start text-slate-600 text-xs md:text-base">
+                                <span class="leading-snug">利好AI硬件、大盘股</span>
+                            </li>
+                            <li class="flex items-start text-slate-600 text-xs md:text-base">
+                                <span class="leading-snug">利好区域性银行</span>
+                            </li>
+                                                            <li class="flex items-start text-slate-600 text-xs md:text-base">
+                                <span class="leading-snug">波动率上升，回归基本面定价</span>
+                            </li>
+                        </ul>
+                    </div>
+                </div>
+
+                 <!-- Outlook 3 -->
+                 <div class="bg-white rounded-xl md:rounded-2xl shadow-sm hover:shadow-xl transition-all duration-300 overflow-hidden border border-slate-200 group flex flex-col reveal delay-300">
+                    <div class="h-1 bg-gradient-to-r from-fed-900 to-fed-700 group-hover:from-gold-500 group-hover:to-gold-600 transition-all duration-300"></div>
+                    <div class="p-3 md:p-8 flex-grow">
+                         <div class="flex flex-col xl:flex-row items-start xl:items-center justify-between mb-2 md:mb-6 gap-2">
+                            <div class="flex items-center gap-2 md:gap-4">
+                                <div class="p-1.5 md:p-3 bg-fed-50 rounded-lg md:rounded-xl text-fed-900 group-hover:bg-gold-50 group-hover:text-gold-600 transition-colors">
+                                    <i data-lucide="dollar-sign" class="w-4 h-4 md:w-7 md:h-7"></i>
+                                </div>
+                                <h3 class="text-sm md:text-xl font-bold text-slate-900">美债与货币</h3>
+                            </div>
+                        </div>
+                        <ul class="space-y-1 md:space-y-4">
+                            <li class="flex items-start text-slate-600 text-xs md:text-base">
+                                <span class="leading-snug">美元走强，10Y美债中枢上移</span>
+                            </li>
+                            <li class="flex items-start text-slate-600 text-xs md:text-base">
+                                <span class="leading-snug">缩表增加长端供给，通胀溢价上升</span>
+                            </li>
+                                    <li class="flex items-start text-slate-600 text-xs md:text-base">
+                                <span class="leading-snug">减少货币干预强化美元购买力</span>
+                            </li>
+                        </ul>
+                    </div>
+                </div>
+
+                 <!-- Outlook 4 -->
+                 <div class="bg-white rounded-xl md:rounded-2xl shadow-sm hover:shadow-xl transition-all duration-300 overflow-hidden border border-slate-200 group flex flex-col reveal delay-100">
+                    <div class="h-1 bg-gradient-to-r from-fed-900 to-fed-700 group-hover:from-gold-500 group-hover:to-gold-600 transition-all duration-300"></div>
+                    <div class="p-3 md:p-8 flex-grow">
+                         <div class="flex flex-col xl:flex-row items-start xl:items-center justify-between mb-2 md:mb-6 gap-2">
+                            <div class="flex items-center gap-2 md:gap-4">
+                                <div class="p-1.5 md:p-3 bg-fed-50 rounded-lg md:rounded-xl text-fed-900 group-hover:bg-gold-50 group-hover:text-gold-600 transition-colors">
+                                    <i data-lucide="coins" class="w-4 h-4 md:w-7 md:h-7"></i>
+                                </div>
+                                <h3 class="text-sm md:text-xl font-bold text-slate-900">大宗商品</h3>
+                            </div>
+                        </div>
+                        <ul class="space-y-1 md:space-y-4">
+                            <li class="flex items-start text-slate-600 text-xs md:text-base">
+                                <span class="leading-snug">黄金失去部分贬值交易支撑</span>
+                            </li>
+                            <li class="flex items-start text-slate-600 text-xs md:text-base">
+                                <span class="leading-snug">回归纯粹的抗通胀属性</span>
+                            </li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+    </section>
+
+    <!-- Agency View - Updated with New Content -->
+    <section id="agency" class="py-16 md:py-24 bg-slate-100 border-t border-slate-200">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <!-- Header -->
+            <div class="text-center mb-12 reveal">
+                 <h2 class="text-3xl md:text-4xl font-black text-slate-900 mt-2">机构观点一览</h2>
+                 <p class="mt-4 text-slate-600 max-w-3xl mx-auto text-base md:text-lg">
+                    沃什若执掌美联储，市场将面临什么？
+                 </p>
+            </div>
+
+            <!-- New 5-Card Grid Layout -->
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 reveal delay-100">
+                
+                <!-- Viewpoint 1: Morgan Stanley -->
+                <div class="bg-white p-6 rounded-xl shadow-sm border-t-4 border-slate-600 flex flex-col hover:shadow-lg transition-shadow">
+                     <div class="flex items-center justify-between mb-4">
+                        <span class="text-xs font-bold text-slate-700 bg-slate-100 px-2 py-1 rounded border border-slate-200">Morgan Stanley</span>
+                        <i data-lucide="activity" class="w-5 h-5 text-slate-600"></i>
+                    </div>
+                    <div class="flex flex-wrap gap-2 mb-4">
+                        <span class="px-2 py-0.5 bg-slate-100 text-slate-600 text-xs font-bold rounded">波动加剧</span>
+                        <span class="px-2 py-0.5 bg-slate-100 text-slate-600 text-xs font-bold rounded">沟通减少</span>
+                        <span class="px-2 py-0.5 bg-slate-100 text-slate-600 text-xs font-bold rounded">曲线趋陡</span>
+                    </div>
+                    <ul class="space-y-3">
+                        <li class="text-slate-600 text-sm leading-relaxed">
+                            <strong class="block text-slate-800 mb-1">沟通风格突变：</strong>
+                            沃什不喜欢市场被美联储的观点“绑架”，预计将减少前瞻指引（如点阵图），这将导致市场对政策路径的共识减少。
+                        </li>
+                        <li class="text-slate-600 text-sm leading-relaxed">
+                            <strong class="block text-slate-800 mb-1">市场后果：</strong>
+                            政策透明度的降低将推升实际波动率，尤其是在国债市场。
+                        </li>
+                        <li class="text-slate-600 text-sm leading-relaxed">
+                            <strong class="block text-slate-800 mb-1">收益率曲线：</strong>
+                            沃什偏好更小的资产负债表，这可能推高长期国债收益率，导致收益率曲线“趋陡”。
+                        </li>
+                    </ul>
+                </div>
+
+                <!-- Viewpoint 2: Soochow Securities -->
+                <div class="bg-white p-6 rounded-xl shadow-sm border-t-4 border-gold-500 flex flex-col hover:shadow-lg transition-shadow">
+                     <div class="flex items-center justify-between mb-4">
+                        <span class="text-xs font-bold text-gold-700 bg-gold-50 px-2 py-1 rounded border border-gold-100">东吴证券 (Soochow)</span>
+                        <i data-lucide="arrow-left-right" class="w-5 h-5 text-gold-600"></i>
+                    </div>
+                    <div class="flex flex-wrap gap-2 mb-4">
+                        <span class="px-2 py-0.5 bg-gold-50 text-gold-700 text-xs font-bold rounded">误读的鹰派</span>
+                        <span class="px-2 py-0.5 bg-gold-50 text-gold-700 text-xs font-bold rounded">以缩表换降息</span>
+                        <span class="px-2 py-0.5 bg-gold-50 text-gold-700 text-xs font-bold rounded">反转博弈</span>
+                    </div>
+                    <ul class="space-y-3">
+                         <li class="text-slate-600 text-sm leading-relaxed">
+                            <strong class="block text-slate-800 mb-1">鹰派是误区：</strong>
+                            市场误判了沃什。预计他就任后，将在“泰勒规则”范围内执行比市场预期更多的降息，以配合特朗普政府。
+                        </li>
+                        <li class="text-slate-600 text-sm leading-relaxed">
+                            <strong class="block text-slate-800 mb-1">缩表难落地：</strong>
+                            虽然沃什口头上反对资产负债表膨胀，但当前的美元流动性环境（逆回购耗尽）并不具备缩表条件，强行缩表会引发危机。
+                        </li>
+                        <li class="text-slate-600 text-sm leading-relaxed">
+                            <strong class="block text-slate-800 mb-1">政策逻辑：</strong>
+                            他的“缩表”言论更多是为了以此为筹码，换取更低的利率环境来支持实体经济。
+                        </li>
+                    </ul>
+                </div>
+
+                <!-- Viewpoint 3: TS Lombard -->
+                <div class="bg-white p-6 rounded-xl shadow-sm border-t-4 border-fed-600 flex flex-col hover:shadow-lg transition-shadow">
+                    <div class="flex items-center justify-between mb-4">
+                        <span class="text-xs font-bold text-fed-600 bg-fed-50 px-2 py-1 rounded border border-fed-100">TS Lombard</span>
+                        <i data-lucide="chart-pie" class="w-5 h-5 text-fed-600"></i>
+                    </div>
+                    <div class="flex flex-wrap gap-2 mb-4">
+                        <span class="px-2 py-0.5 bg-fed-50 text-fed-700 text-xs font-bold rounded">脱钩效应</span>
+                        <span class="px-2 py-0.5 bg-fed-50 text-fed-700 text-xs font-bold rounded">技术性阻碍</span>
+                    </div>
+                    <ul class="space-y-3">
+                         <li class="text-slate-600 text-sm leading-relaxed">
+                            <strong class="block text-slate-800 mb-1">市场脱敏：</strong>
+                            量化宽松（QE）与股市的机械性联系已瓦解（如2022年后的行情），因此即便沃什尝试缩表，对股市的威胁也被高估了。
+                        </li>
+                         <li class="text-slate-600 text-sm leading-relaxed">
+                            <strong class="block text-slate-800 mb-1">执行风险：</strong>
+                            缩表可能迅速遭遇技术性阻梗（如流动性枯竭），若因此被迫放弃，沃什的个人信誉将是主要牺牲品。
+                        </li>
+                    </ul>
+                </div>
+
+                <!-- Viewpoint 4: MUFG -->
+                <div class="bg-white p-6 rounded-xl shadow-sm border-t-4 border-red-500 flex flex-col hover:shadow-lg transition-shadow">
+                    <div class="flex items-center justify-between mb-4">
+                        <span class="text-xs font-bold text-red-600 bg-red-50 px-2 py-1 rounded border border-red-100">MUFG</span>
+                        <i data-lucide="landmark" class="w-5 h-5 text-red-600"></i>
+                    </div>
+                    <div class="flex flex-wrap gap-2 mb-4">
+                        <span class="px-2 py-0.5 bg-red-50 text-red-700 text-xs font-bold rounded">监管掣肘</span>
+                        <span class="px-2 py-0.5 bg-red-50 text-red-700 text-xs font-bold rounded">制度优先</span>
+                    </div>
+                    <ul class="space-y-3">
+                         <li class="text-slate-600 text-sm leading-relaxed">
+                            <strong class="block text-slate-800 mb-1">现实骨感：</strong>
+                            沃什虽然倡导“制度变革”和迅速缩表，但在现行银行监管框架改变之前，他无法迅速行动。
+                        </li>
+                        <li class="text-slate-600 text-sm leading-relaxed">
+                            <strong class="block text-slate-800 mb-1">先决条件：</strong>
+                            只有先解决了银行准备金需求和资产构成的监管问题，才有可能大规模收缩资产负债表。
+                        </li>
+                    </ul>
+                </div>
+
+                <!-- Viewpoint 5: Cohen & Steers Inc. -->
+                <div class="bg-white p-6 rounded-xl shadow-sm border-t-4 border-green-500 flex flex-col hover:shadow-lg transition-shadow">
+                    <div class="flex items-center justify-between mb-4">
+                        <span class="text-xs font-bold text-green-600 bg-green-50 px-2 py-1 rounded border border-green-100">Cohen & Steers Inc.</span>
+                        <i data-lucide="users" class="w-5 h-5 text-green-600"></i>
+                    </div>
+                    <div class="flex flex-wrap gap-2 mb-4">
+                        <span class="px-2 py-0.5 bg-green-50 text-green-700 text-xs font-bold rounded">凝聚共识</span>
+                        <span class="px-2 py-0.5 bg-green-50 text-green-700 text-xs font-bold rounded">拒绝意识形态</span>
+                    </div>
+                    <ul class="space-y-3">
+                         <li class="text-slate-600 text-sm leading-relaxed">
+                            <strong class="block text-slate-800 mb-1">务实派：</strong>
+                            与市场担忧相反，沃什可能是近期候选人中最能凝聚美联储内部共识的一位。
+                        </li>
+                         <li class="text-slate-600 text-sm leading-relaxed">
+                            <strong class="block text-slate-800 mb-1">数据导向：</strong>
+                            他更倾向于对数据做出反应，而非过度意识形态化，这未必意味着国债市场的动荡。
+                        </li>
+                    </ul>
+                </div>
+
+            </div>
+        </div>
+    </section>
+
+</main>
+
+<!-- Footer -->
+<footer class="bg-slate-950 text-slate-400 py-16 border-t border-slate-900 mb-safe-bottom">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div class="grid md:grid-cols-2 gap-12 mb-12">
+            <!-- Sources -->
+            <div>
+                <h4 class="text-white font-bold mb-4 uppercase text-sm tracking-wider">资料来源</h4>
+                <div class="flex flex-wrap gap-2">
+                    <span class="text-xs bg-slate-900 px-2 py-1 rounded border border-slate-800 hover:border-slate-700 transition-colors">东吴证券</span>
+                    <span class="text-xs bg-slate-900 px-2 py-1 rounded border border-slate-800 hover:border-slate-700 transition-colors">华尔街日报</span>
+                    <span class="text-xs bg-slate-900 px-2 py-1 rounded border border-slate-800 hover:border-slate-700 transition-colors">Morgan Stanley</span>
+                    <span class="text-xs bg-slate-900 px-2 py-1 rounded border border-slate-800 hover:border-slate-700 transition-colors">TS Lombard</span>
+                    <span class="text-xs bg-slate-900 px-2 py-1 rounded border border-slate-800 hover:border-slate-700 transition-colors">Bloomberg</span>
+                </div>
+            </div>
+
+            <!-- About -->
+            <div class="text-left md:text-right">
+                <div class="text-gold-600 font-black text-2xl tracking-tighter mb-2">
+                    金十期货APP
+                </div>
+                <p class="text-xs text-slate-500">
+                    独家整理 · 深度洞察
+                </p>
+            </div>
+        </div>
+
+        <div class="border-t border-slate-900 pt-8 text-xs text-slate-600 text-justify md:text-center leading-relaxed">
+            <p class="mb-4 font-bold text-slate-500">免责声明</p>
+            <p>
+                本专题页内容仅供参考，不构成任何投资建议。文中观点基于公开资料整理，不代表本平台立场。文中图片及部分内容由AI辅助生成。
+                市场有风险，投资需谨慎。投资者据此操作，风险自担。历史业绩不代表未来表现。
+            </p>
+            <p class="mt-4">
+                &copy; <span id="year"></span> 金十期货 APP. All Rights Reserved.
+            </p>
+        </div>
+    </div>
+</footer>
+
+<!-- Fixed Bottom Actions (Sticky) -->
+<div class="fixed bottom-0 left-0 w-full z-40 bg-white/95 backdrop-blur-md border-t border-slate-200 shadow-[0_-5px_20px_-5px_rgba(0,0,0,0.1)] pb-safe-bottom">
+    <div class="max-w-7xl mx-auto px-4 py-3 flex gap-3 md:gap-4 items-center">
+        <!-- Share Button (Left) -->
+        <button onclick="openModal('share-modal')" class="flex-1 h-11 bg-fed-950 text-gold-500 border border-gold-500/50 hover:bg-fed-900 hover:border-gold-400 rounded-lg flex items-center justify-center gap-2 font-medium transition-all active:scale-95 text-sm md:text-base">
+            <i data-lucide="share-2" class="w-4 h-4 md:w-5 md:h-5"></i>
+            分享专题
+        </button>
+
+        <!-- Download Button (Right) - Updated Link -->
+        <a href="https://qihuo.jin10.com/app/index.html" target="_blank" class="flex-1 h-11 bg-gradient-to-r from-gold-600 via-gold-400 to-gold-600 text-fed-950 rounded-lg flex flex-col items-center justify-center font-bold shadow-lg shadow-gold-500/20 active:scale-95 transition-all hover:brightness-110 text-decoration-none leading-none">
+            <span class="text-sm md:text-base">下载金十期货APP</span>
+            <span class="text-[10px] md:text-xs font-normal opacity-80 scale-90">获取完整美联储资讯</span>
+        </a>
+    </div>
+</div>
+
+<!-- Share Modal (Dark Theme matched to Screenshot) -->
+<div id="share-modal" class="modal-hidden fixed inset-0 z-[60] flex items-end justify-center">
+    <!-- Overlay -->
+    <div class="modal-backdrop absolute inset-0 bg-black/60 backdrop-blur-sm" onclick="closeModal('share-modal')"></div>
+    
+    <!-- Content (Bottom Sheet) -->
+    <div class="modal-content-wrapper relative w-full max-w-lg bg-[#1a1a1a] rounded-t-2xl shadow-2xl p-6 pb-safe-bottom text-white">
+        
+        <div class="mb-6">
+            <h3 class="text-base font-medium text-white/90">分享本专题</h3>
+        </div>
+        
+        <hr class="border-white/10 mb-8" />
+        
+        <!-- Grid Icons -->
+        <div class="grid grid-cols-4 gap-y-6 gap-x-2 mb-10">
+            <!-- WeChat -->
+            <div class="flex flex-col items-center gap-2 cursor-pointer group" onclick="handleShare('wx')">
+                <div class="w-12 h-12 rounded-full bg-[#2a2a2a] text-white/80 flex items-center justify-center text-2xl group-hover:bg-[#3a3a3a] transition-all duration-300">
+                    <i class="fab fa-weixin"></i>
+                </div>
+                <span class="text-xs text-white/50">微信好友</span>
+            </div>
+            
+            <!-- Moments -->
+            <div class="flex flex-col items-center gap-2 cursor-pointer group" onclick="handleShare('pyq')">
+                <div class="w-12 h-12 rounded-full bg-[#2a2a2a] text-white/80 flex items-center justify-center text-2xl group-hover:bg-[#3a3a3a] transition-all duration-300">
+                    <i class="fas fa-camera-retro"></i>
+                </div>
+                <span class="text-xs text-white/50">微信朋友圈</span>
+            </div>
+
+            <!-- QQ -->
+            <div class="flex flex-col items-center gap-2 cursor-pointer group" onclick="handleShare('qq')">
+                <div class="w-12 h-12 rounded-full bg-[#2a2a2a] text-white/80 flex items-center justify-center text-2xl group-hover:bg-[#3a3a3a] transition-all duration-300">
+                    <i class="fab fa-qq"></i>
+                </div>
+                <span class="text-xs text-white/50">QQ好友</span>
+            </div>
+
+            <!-- Weibo -->
+            <div class="flex flex-col items-center gap-2 cursor-pointer group" onclick="handleShare('wb')">
+                <div class="w-12 h-12 rounded-full bg-[#2a2a2a] text-white/80 flex items-center justify-center text-2xl group-hover:bg-[#3a3a3a] transition-all duration-300">
+                    <i class="fab fa-weibo"></i>
+                </div>
+                <span class="text-xs text-white/50">新浪微博</span>
+            </div>
+
+            <!-- DingTalk -->
+            <div class="flex flex-col items-center gap-2 cursor-pointer group" onclick="handleShare('dd')">
+                <div class="w-12 h-12 rounded-full bg-[#2a2a2a] text-white/80 flex items-center justify-center text-xl group-hover:bg-[#3a3a3a] transition-all duration-300">
+                    <i class="fas fa-paper-plane"></i>
+                </div>
+                <span class="text-xs text-white/50">钉钉</span>
+            </div>
+
+            <!-- Copy Link -->
+            <div class="flex flex-col items-center gap-2 cursor-pointer group" onclick="handleShare('link')">
+                <div class="w-12 h-12 rounded-full bg-[#2a2a2a] text-white/80 flex items-center justify-center text-xl group-hover:bg-[#3a3a3a] transition-all duration-300">
+                    <i class="fas fa-link"></i>
+                </div>
+                <span class="text-xs text-white/50">复制链接</span>
+            </div>
+        </div>
+
+        <button class="w-full py-3.5 rounded-xl bg-[#2a2a2a] text-white/60 text-sm font-medium hover:bg-[#3a3a3a] hover:text-white transition-colors" onclick="closeModal('share-modal')">
+            取消
+        </button>
+    </div>
+</div>
+
+<!-- Scripts -->
+<script>
+    // 1. Initialize Icons
+    lucide.createIcons();
+
+    // 2. Set Current Year in Footer
+    document.getElementById('year').textContent = new Date().getFullYear();
+
+    // 3. Native Sticky Nav & Scroll Spy
+    const navbar = document.getElementById('navbar');
+    const navLogo = document.getElementById('nav-logo');
+    const mobileMenuBtn = document.getElementById('mobile-menu-btn');
+    const navLinks = document.querySelectorAll('.nav-link');
+    const sections = document.querySelectorAll('section');
+    const mobileMenu = document.getElementById('mobile-menu');
+
+    window.addEventListener('scroll', () => {
+        // Sticky Background
+        if (window.scrollY > 20) {
+            navbar.classList.add('bg-fed-900/95', 'backdrop-blur-md', 'shadow-lg', 'py-2');
+            navbar.classList.remove('bg-transparent', 'py-4', 'md:py-5');
+            navLogo.classList.remove('text-fed-900');
+            navLogo.classList.add('text-white');
+            mobileMenuBtn.classList.remove('text-fed-900');
+            mobileMenuBtn.classList.add('text-white');
+            
+            navLinks.forEach(link => {
+               if(!link.classList.contains('text-gold-500')) {
+                   link.classList.remove('text-slate-600', 'hover:text-fed-900');
+                   link.classList.add('text-gray-300', 'hover:text-white');
+               }
+            });
+
+        } else {
+            navbar.classList.remove('bg-fed-900/95', 'backdrop-blur-md', 'shadow-lg', 'py-2');
+            navbar.classList.add('bg-transparent', 'py-4', 'md:py-5');
+            navLogo.classList.add('text-fed-900');
+            navLogo.classList.remove('text-white');
+            mobileMenuBtn.classList.add('text-fed-900');
+            mobileMenuBtn.classList.remove('text-white');
+
+            navLinks.forEach(link => {
+                if(!link.classList.contains('text-gold-500')) {
+                    link.classList.add('text-slate-600', 'hover:text-fed-900');
+                    link.classList.remove('text-gray-300', 'hover:text-white');
+                }
+            });
+        }
+
+        // Scroll Spy
+        let current = '';
+        sections.forEach(section => {
+            const sectionTop = section.offsetTop;
+            if (scrollY >= sectionTop - 150) {
+                current = section.getAttribute('id');
+            }
+        });
+
+        navLinks.forEach(link => {
+            link.classList.remove('text-gold-500');
+            // Restore default colors based on scroll state
+            if (window.scrollY > 20) {
+                link.classList.add('text-gray-300');
+            } else {
+                link.classList.add('text-slate-600');
+            }
+
+            if (link.getAttribute('data-target') === current) {
+                link.classList.remove('text-slate-600', 'text-gray-300');
+                link.classList.add('text-gold-500');
+            }
+        });
+    });
+
+    // 4. Mobile Menu Toggle
+    let isMenuOpen = false;
+    mobileMenuBtn.addEventListener('click', () => {
+        isMenuOpen = !isMenuOpen;
+        if (isMenuOpen) {
+            mobileMenu.classList.remove('hidden');
+            document.body.style.overflow = 'hidden'; // Lock scroll
+        } else {
+            mobileMenu.classList.add('hidden');
+            document.body.style.overflow = ''; // Unlock scroll
+        }
+    });
+
+    // Close mobile menu on click link
+    document.querySelectorAll('.mobile-nav-link').forEach(link => {
+        link.addEventListener('click', () => {
+            isMenuOpen = false;
+            mobileMenu.classList.add('hidden');
+            document.body.style.overflow = '';
+        });
+    });
+
+    // 5. Scroll Animations (Intersection Observer)
+    const observerOptions = {
+        threshold: 0.1,
+        rootMargin: "0px 0px -20px 0px"
+    };
+
+    const observer = new IntersectionObserver((entries) => {
+        entries.forEach(entry => {
+            if (entry.isIntersecting) {
+                entry.target.classList.add('active');
+                observer.unobserve(entry.target); 
+            }
+        });
+    }, observerOptions);
+
+    document.querySelectorAll('.reveal, .reveal-left, .reveal-right').forEach(el => {
+        observer.observe(el);
+    });
+
+    // 6. Modal & Share Logic
+    function openModal(modalId) {
+        const modal = document.getElementById(modalId);
+        modal.classList.remove('modal-hidden');
+        // Small delay to allow display:block to apply before opacity transition
+        requestAnimationFrame(() => {
+            modal.classList.add('modal-visible');
+        });
+        document.body.style.overflow = 'hidden';
+    }
+
+    function closeModal(modalId) {
+        const modal = document.getElementById(modalId);
+        modal.classList.remove('modal-visible');
+        
+        // Wait for transition to finish before hiding
+        setTimeout(() => {
+            modal.classList.add('modal-hidden');
+            document.body.style.overflow = '';
+        }, 300);
+    }
+
+    function handleShare(platform) {
+        const url = encodeURIComponent(window.location.href);
+        const title = encodeURIComponent(document.title);
+        
+        let targetUrl = '';
+
+        if(platform === 'link') {
+            // Copy to clipboard logic
+            navigator.clipboard.writeText(window.location.href).then(() => {
+                alert('链接已复制到剪贴板');
+                closeModal('share-modal');
+            });
+            return;
+        }
+
+        // Attempt basic URL schemes for jumping (Best effort for static H5)
+        switch(platform) {
+            case 'wx':
+            case 'pyq':
+                // WeChat doesn't support direct URL scheme jumping for sharing from web
+                // Usually requires native bridge. Showing alert for simulation.
+                alert('请使用浏览器自带的分享功能分享至微信');
+                break;
+            case 'qq':
+                // Try jumping to QQ (PC/Mobile web share)
+                targetUrl = `mqqapi://share/to_fri?src_type=web&version=1&file_type=news&url=${url}&title=${title}`;
+                // Fallback for PC
+                if(!/Android|iPhone/i.test(navigator.userAgent)) {
+                    targetUrl = `http://connect.qq.com/widget/shareqq/index.html?url=${url}&title=${title}`;
+                    window.open(targetUrl, '_blank');
+                } else {
+                    window.location.href = targetUrl;
+                }
+                break;
+            case 'wb':
+                // Weibo Web Share
+                targetUrl = `http://service.weibo.com/share/share.php?url=${url}&title=${title}`;
+                window.open(targetUrl, '_blank');
+                break;
+            case 'dd':
+                // DingTalk
+                targetUrl = `dingtalk://dingtalkclient/page/link?url=${url}&pc_slide=false`;
+                window.location.href = targetUrl;
+                break;
+        }
+        
+        setTimeout(() => {
+             closeModal('share-modal');
+        }, 500);
+    }
+</script>
+</body>
+</html>
