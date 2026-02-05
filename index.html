@@ -1,0 +1,999 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+    <title>MPOB 1月数据前瞻 - 金十期货独家</title>
+    
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    
+    <!-- Font Awesome (For Share Icons) -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
+    <!-- ECharts -->
+    <script src="https://cdn.jsdelivr.net/npm/echarts@5.4.3/dist/echarts.min.js"></script>
+
+    <!-- Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+SC:wght@300;400;500;700;900&family=Source+Han+Sans:wght@400;700&display=swap" rel="stylesheet">
+    
+    <!-- Icons -->
+    <script src="https://unpkg.com/lucide@latest"></script>
+
+    <!-- Configuration & Styles -->
+    <script>
+      tailwind.config = {
+        theme: {
+          extend: {
+            fontFamily: {
+              sans: ['"Source Han Sans"', '"Noto Sans SC"', '"Noto Sans CJK SC"', 'sans-serif'],
+            },
+            colors: {
+              marketRed: '#ef4444', // Red for Rise/Bullish
+              marketGreen: '#10b981', // Green for Fall/Bearish
+              palmGold: '#d97706',
+              // Custom colors for Bottom Bar
+              fed: {
+                  900: '#1e293b',
+                  950: '#0f172a',
+              },
+              gold: {
+                  400: '#fbbf24',
+                  500: '#f59e0b',
+                  600: '#d97706',
+              }
+            },
+            spacing: {
+                'safe-bottom': 'env(safe-area-inset-bottom)',
+            }
+          }
+        }
+      }
+    </script>
+    
+    <style>
+        body {
+            background-color: #f8fafc;
+            /* Prevent content jump on tab switch */
+            overflow-y: scroll; 
+            padding-bottom: calc(80px + env(safe-area-inset-bottom)); /* Space for fixed footer */
+        }
+
+        /* Custom scrollbar */
+        ::-webkit-scrollbar {
+            width: 6px;
+        }
+        ::-webkit-scrollbar-track {
+            background: #f1f1f1; 
+        }
+        ::-webkit-scrollbar-thumb {
+            background: #cbd5e1; 
+            border-radius: 3px;
+        }
+        ::-webkit-scrollbar-thumb:hover {
+            background: #94a3b8; 
+        }
+
+        /* Tab Transitions */
+        .tab-btn {
+            transition: all 0.3s ease;
+        }
+        
+        /* Views */
+        .view-section {
+            display: none;
+            animation: fadeIn 0.4s ease-out;
+        }
+        .view-section.active {
+            display: block;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        /* Bar Chart Tooltip Animation (CSS Chart) */
+        .chart-bar:hover .chart-tooltip {
+            opacity: 1;
+            transform: translateX(-50%) translateY(-10px);
+        }
+
+        /* Modal Styles */
+        .modal-hidden {
+            visibility: hidden;
+            opacity: 0;
+            pointer-events: none;
+            transition: opacity 0.3s ease, visibility 0.3s ease;
+        }
+        .modal-visible {
+            visibility: visible;
+            opacity: 1;
+            pointer-events: auto;
+        }
+        .modal-content-wrapper {
+            transform: translateY(100%);
+            transition: transform 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+        }
+        .modal-visible .modal-content-wrapper {
+            transform: translateY(0);
+        }
+    </style>
+</head>
+<body class="min-h-screen flex flex-col font-sans text-slate-800 selection:bg-palmGold/20">
+
+    <!-- Header Section -->
+    <header class="bg-slate-900 text-white pt-12 pb-20 px-4 relative overflow-hidden">
+        <!-- Background Image with Overlay -->
+        <div class="absolute inset-0 z-0">
+            <img src="https://img.jin10.com/news/26/02/KF8duLYvoG3tNzGo-T2Fc.jpg/lite" alt="Background" class="w-full h-full object-cover opacity-140 mix-blend-overlay">
+            <div class="absolute inset-0 bg-gradient-to-b from-slate-900/90 via-slate-900/70 to-slate-900/95"></div>
+        </div>
+
+        <!-- Decorative Circles (Kept but reduced z-index slightly) -->
+        <div class="absolute top-0 right-0 -mr-20 -mt-20 w-80 h-80 rounded-full bg-palmGold/10 blur-3xl z-0"></div>
+        <div class="absolute bottom-0 left-0 -ml-20 -mb-20 w-60 h-60 rounded-full bg-blue-500/10 blur-3xl z-0"></div>
+
+        <div class="container mx-auto text-center relative z-10">
+            <div class="inline-flex items-center gap-2 bg-white/10 backdrop-blur-sm px-3 py-1 rounded-full text-xs font-medium text-palmGold border border-white/5 mb-4">
+                <i data-lucide="alert-circle" class="w-3.5 h-3.5"></i>
+                <span>金十期货独家策划</span>
+            </div>
+            
+            <h1 class="text-3xl md:text-5xl font-black mb-4 tracking-tight drop-shadow-lg">
+                MPOB 1月棕榈油数据前瞻
+            </h1>
+            
+            <p class="text-xl md:text-2xl font-light text-slate-300 mb-6 drop-shadow-md">
+                库存拐点或将显现
+            </p>
+            
+            <div class="flex flex-col items-center gap-3">
+                <div class="inline-flex items-center gap-2 text-sm text-slate-400 bg-slate-800/80 px-4 py-2 rounded-lg border border-slate-700/50 backdrop-blur-sm">
+                    <i data-lucide="calendar-days" class="w-4 h-4"></i>
+                    <span>发布日期: 2026年2月10日</span>
+                </div>
+                <!-- JS Countdown Display -->
+                <div id="countdown" class="text-sm font-mono text-palmGold font-bold tracking-wider">
+                    <!-- Countdown injected via JS -->
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <!-- Main Content -->
+    <main class="flex-grow container mx-auto px-4 sm:px-6 lg:px-8 -mt-8 relative z-10 pb-12">
+        
+        <!-- Tab Navigation -->
+        <div class="bg-white rounded-xl shadow-lg p-2 mb-8 flex max-w-md mx-auto sticky top-4 z-30 border border-slate-100/50 backdrop-blur-md bg-white/90">
+            <button
+                id="tab-analysis"
+                onclick="switchTab('analysis')"
+                class="tab-btn flex-1 flex items-center justify-center gap-2 py-3 rounded-lg text-sm font-bold bg-gradient-to-r from-slate-800 to-slate-700 text-white shadow-md transform scale-105"
+            >
+                <i data-lucide="trending-up" class="w-4.5 h-4.5"></i>
+                深度梳理
+            </button>
+            <button
+                id="tab-education"
+                onclick="switchTab('education')"
+                class="tab-btn flex-1 flex items-center justify-center gap-2 py-3 rounded-lg text-sm font-bold text-slate-500 hover:bg-slate-50 hover:text-slate-700"
+            >
+                <i data-lucide="book-open" class="w-4.5 h-4.5"></i>
+                新手科普
+            </button>
+        </div>
+
+        <!-- ANALYSIS VIEW -->
+        <div id="view-analysis" class="view-section active space-y-8">
+            
+            <!-- Summary Card -->
+            <div class="bg-white rounded-2xl p-6 md:p-8 shadow-sm border border-slate-100">
+                <div class="prose prose-slate max-w-none">
+                    <h3 class="text-xl font-bold text-slate-900 border-l-4 border-palmGold pl-4 mb-4">
+                        核心摘要
+                    </h3>
+                    <p class="text-slate-600 leading-relaxed">
+                        即将于2026年2月10日公布的MPOB报告将揭示1月份的马来西亚棕榈油供需真相。目前市场核心共识是：
+                        <span class="font-bold text-marketRed">产量进入季节性减产周期</span>，叠加部分地区降雨影响，供应端收缩明显；
+                        而出口端受<span class="font-bold text-marketRed">印度斋月备货需求</span>提振有所改善。
+                        市场正屏息以待库存是否会打破连续数月的增长，迎来年度首个“<span class="font-bold text-slate-900">拐点</span>”。
+                    </p>
+                </div>
+            </div>
+
+            <!-- Data Visualization Chart -->
+            <div class="bg-white rounded-2xl overflow-hidden shadow-sm border border-slate-100 p-4 md:p-6">
+                <div class="flex items-center justify-between mb-4">
+                    <h3 class="text-lg font-bold text-slate-800 flex items-center gap-2">
+                        <i data-lucide="bar-chart-big" class="w-5 h-5 text-palmGold"></i>
+                        MPOB 1月月报数据前瞻
+                    </h3>
+                    <span class="text-xs text-slate-400">来源: 路透预期 vs MPOB历史</span>
+                </div>
+                <!-- ECharts Container -->
+                <div id="mpob-chart" class="w-full h-[350px]"></div>
+            </div>
+
+            <!-- Section 1: Production -->
+            <div class="bg-white rounded-2xl overflow-hidden shadow-sm border border-slate-100">
+                <div class="bg-slate-50 p-4 border-b border-slate-100 flex items-center justify-between">
+                    <h2 class="text-lg font-bold flex items-center gap-2 text-slate-800">
+                        <span class="bg-slate-800 text-white w-6 h-6 rounded-full flex items-center justify-center text-xs">1</span>
+                        产量预估：市场预计减产
+                    </h2>
+                    <span class="text-xs font-medium px-2 py-1 bg-marketRed/10 text-marketRed rounded">预计减产</span>
+                </div>
+                
+                <div class="p-6 grid grid-cols-1 md:grid-cols-2 gap-8">
+                    <div class="space-y-4">
+                        <div class="flex gap-4">
+                            <div class="mt-1 bg-green-100 text-green-700 p-2 rounded-lg h-fit">
+                                <i data-lucide="factory" class="w-5 h-5"></i>
+                            </div>
+                            <div>
+                                <h4 class="font-bold text-slate-800 mb-1">生物学规律</h4>
+                                <p class="text-sm text-slate-600 leading-relaxed">
+                                    棕榈树经历2025年末产量高峰后进入“修整期”。历史规律显示，1月通常是全年产量的次低点，环比降幅中值往往在 <span class="font-bold text-marketGreen">10%以上</span>。
+                                </p>
+                            </div>
+                        </div>
+
+                        <div class="flex gap-4">
+                            <div class="mt-1 bg-blue-100 text-blue-700 p-2 rounded-lg h-fit">
+                                <i data-lucide="users" class="w-5 h-5"></i>
+                            </div>
+                            <div>
+                                <h4 class="font-bold text-slate-800 mb-1">劳动力瓶颈</h4>
+                                <p class="text-sm text-slate-600 leading-relaxed">
+                                    缺口约12万人。外劳配额冻结及新税制预期，导致熟果采摘不及时，酸化率上升。
+                                </p>
+                            </div>
+                        </div>
+
+                        <div class="flex gap-4">
+                            <div class="mt-1 bg-slate-200 text-slate-700 p-2 rounded-lg h-fit">
+                                <i data-lucide="cloud-rain" class="w-5 h-5"></i>
+                            </div>
+                            <div>
+                                <h4 class="font-bold text-slate-800 mb-1">降雨与物流</h4>
+                                <p class="text-sm text-slate-600 leading-relaxed">
+                                    西马东海岸及东马部分产区集中降雨，运输道路淹没导致延期，且雨水稀释果实含油量(OER)。
+                                </p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="bg-slate-50 rounded-xl p-5 border border-slate-100 flex flex-col justify-center">
+                        <h4 class="font-bold text-slate-800 mb-3 flex items-center gap-2">
+                            <i data-lucide="trending-up" class="w-4 h-4 text-palmGold"></i>
+                            特别关注：寻找预期差
+                        </h4>
+                        <ul class="space-y-3 text-sm">
+                            <li class="flex items-start gap-2">
+                                <span class="text-slate-600">产量降幅 > 12% + 强出口 = <span class="text-marketRed font-bold">理论上对价格构成支撑</span></span>
+                            </li>
+                            <li class="flex items-start gap-2">
+                                <span class="text-slate-600">产量降幅 ≈ 5% = <span class="text-slate-800 font-medium">高产动能仍在，拐点存疑</span></span>
+                            </li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Section 2: Exports -->
+            <div class="bg-white rounded-2xl overflow-hidden shadow-sm border border-slate-100">
+                <div class="bg-slate-50 p-4 border-b border-slate-100 flex items-center justify-between">
+                    <h2 class="text-lg font-bold flex items-center gap-2 text-slate-800">
+                        <span class="bg-slate-800 text-white w-6 h-6 rounded-full flex items-center justify-center text-xs">2</span>
+                        出口动能：印度买盘逆转局势
+                    </h2>
+                    <span class="text-xs font-medium px-2 py-1 bg-marketRed/10 text-marketRed rounded">预计大增</span>
+                </div>
+
+                <div class="p-6 space-y-6">
+                    <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+                        <div class="bg-gradient-to-br from-indigo-50 to-white p-4 rounded-xl border border-indigo-100">
+                            <div class="text-xs text-indigo-500 font-bold uppercase mb-1">ITS 1月数据</div>
+                            <div class="text-2xl font-black text-slate-800">146 万吨</div>
+                            <div class="text-sm font-bold text-marketRed flex items-center gap-1">
+                                <i data-lucide="trending-up" class="w-3.5 h-3.5"></i> +17.93% (环比)
+                            </div>
+                        </div>
+                        <div class="bg-gradient-to-br from-indigo-50 to-white p-4 rounded-xl border border-indigo-100">
+                            <div class="text-xs text-indigo-500 font-bold uppercase mb-1">AmSpec 1月数据</div>
+                            <div class="text-2xl font-black text-slate-800">137.6 万吨</div>
+                            <div class="text-sm font-bold text-marketRed flex items-center gap-1">
+                                <i data-lucide="trending-up" class="w-3.5 h-3.5"></i> +14.89% (环比)
+                            </div>
+                        </div>
+                        <div class="bg-gradient-to-br from-indigo-50 to-white p-4 rounded-xl border border-indigo-100">
+                            <div class="text-xs text-indigo-500 font-bold uppercase mb-1">SGS 1月数据</div>
+                            <div class="text-2xl font-black text-slate-800">94.5 万吨</div>
+                            <div class="text-sm font-bold text-marketGreen flex items-center gap-1">
+                                <i data-lucide="trending-down" class="w-3.5 h-3.5"></i> -5.6% (环比)
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="grid grid-cols-1 lg:grid-cols-2 gap-8 pt-2">
+                        <div>
+                            <h4 class="font-bold text-slate-800 mb-2 flex items-center gap-2">
+                                <i data-lucide="anchor" class="w-4.5 h-4.5 text-indigo-600"></i>
+                                印度：核心推手
+                            </h4>
+                            <p class="text-sm text-slate-600 mb-3 text-justify">
+                                1月豆油对棕榈油升水拉大至 <span class="font-mono text-marketRed">$145/吨</span>，促使印度削减45%豆油进口，转而补库棕榈油备战斋月。1月进口量激增51%至76.6万吨。
+                            </p>
+                            <div class="w-full h-1 bg-slate-100 rounded-full overflow-hidden">
+                                <div class="h-full bg-indigo-500 w-[75%]"></div>
+                            </div>
+                            <div class="text-xs text-slate-400 mt-1">印度进口量激增示意</div>
+                        </div>
+                        
+                        <div>
+                            <h4 class="font-bold text-slate-800 mb-2 flex items-center gap-2">
+                                <i data-lucide="ship" class="w-4.5 h-4.5 text-indigo-600"></i>
+                                印尼税收抢跑效应
+                            </h4>
+                            <p class="text-sm text-slate-600 mb-3 text-justify">
+                                印尼宣布3月1日起上调出口税至12.5%，引发买家“提前抢跑”。原本3月的订单提前至1-2月，马棕承接了大量外溢订单。
+                            </p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Section 3: Stocks -->
+            <div class="bg-white rounded-2xl overflow-hidden shadow-sm border border-slate-100">
+                <div class="bg-slate-50 p-4 border-b border-slate-100 flex items-center justify-between">
+                    <h2 class="text-lg font-bold flex items-center gap-2 text-slate-800">
+                        <span class="bg-slate-800 text-white w-6 h-6 rounded-full flex items-center justify-center text-xs">3</span>
+                        库存博弈：300万吨之上的拉锯
+                    </h2>
+                    <span class="text-xs font-medium px-2 py-1 bg-blue-100 text-blue-700 rounded">关键指标</span>
+                </div>
+
+                <div class="p-6">
+                    <div class="flex flex-col md:flex-row items-center gap-8 mb-6">
+                        <div class="w-full md:w-1/2">
+                            <div class="flex justify-between items-end mb-2">
+                                <span class="text-sm text-slate-500">当前库存 （2025年12月）</span>
+                                <span class="text-lg font-bold text-marketRed">305.1 万吨</span>
+                            </div>
+                            <div class="w-full bg-slate-100 h-4 rounded-full overflow-hidden relative">
+                                <div class="absolute top-0 bottom-0 left-0 bg-gradient-to-r from-marketRed to-orange-500 w-[90%]"></div>
+                            </div>
+                            <div class="flex justify-between items-start mt-2">
+                                <span class="text-xs text-slate-400">7年高位</span>
+                                <span class="text-xs text-slate-400">心理关口: 300万</span>
+                            </div>
+                        </div>
+
+                        <div class="w-full md:w-1/2 bg-slate-50 rounded-xl p-4 border border-slate-100">
+                            <h4 class="font-bold text-slate-800 mb-2">市场核心预期</h4>
+                            <div class="flex items-center justify-between text-sm mb-2">
+                                <span class="text-slate-600">1月库存预测区间</span>
+                                <span class="font-mono font-bold text-slate-800">289 - 295万吨</span>
+                            </div>
+                            <div class="flex items-center justify-between text-sm">
+                                <span class="text-slate-600">环比降幅</span>
+                                <span class="font-mono font-bold text-marketGreen">-3.3% ~ -5.2%</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="border-t border-slate-100 pt-6 mt-2">
+                        <h4 class="font-bold text-slate-800 mb-4 flex items-center gap-2">
+                            <i data-lucide="bar-chart-3" class="w-4.5 h-4.5 text-slate-600"></i>
+                            MPOB 如何影响大连棕榈油？
+                        </h4>
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                            <div class="group p-4 rounded-xl border border-marketRed/20 bg-marketRed/5 hover:bg-marketRed/10 transition-colors cursor-default">
+                                <h5 class="font-bold text-marketRed mb-2 flex items-center gap-2">
+                                    <i data-lucide="trending-up" class="w-4 h-4"></i> 数据利多 (意外去库)
+                                </h5>
+                                <p class="text-xs text-slate-700">
+                                    马棕BMD上涨 <i data-lucide="arrow-right" class="w-2.5 h-2.5 inline mx-1"></i> 进口成本CNF增加 <i data-lucide="arrow-right" class="w-2.5 h-2.5 inline mx-1"></i> 进口利润倒挂 <i data-lucide="arrow-right" class="w-2.5 h-2.5 inline mx-1"></i> <span class="font-bold">大商所棕榈油跟涨</span>
+                                </p>
+                            </div>
+                            
+                            <div class="group p-4 rounded-xl border border-marketGreen/20 bg-marketGreen/5 hover:bg-marketGreen/10 transition-colors cursor-default">
+                                <h5 class="font-bold text-marketGreen mb-2 flex items-center gap-2">
+                                    <i data-lucide="trending-down" class="w-4 h-4"></i> 数据利空 (大幅累库)
+                                </h5>
+                                <p class="text-xs text-slate-700">
+                                    马棕BMD下跌 <i data-lucide="arrow-right" class="w-2.5 h-2.5 inline mx-1"></i> 进口成本降低 <i data-lucide="arrow-right" class="w-2.5 h-2.5 inline mx-1"></i> 远月采购预期增加 <i data-lucide="arrow-right" class="w-2.5 h-2.5 inline mx-1"></i> <span class="font-bold">大商所棕榈油下挫</span>
+                                </p>
+                            </div>
+                        </div>
+                        
+                        <div class="mt-4 p-3 bg-slate-800 text-slate-300 rounded-lg text-xs md:text-sm font-mono flex flex-col md:flex-row justify-between gap-2">
+                            <div class="flex items-center gap-2">
+                                <span class="w-2 h-2 bg-yellow-400 rounded-full animate-pulse"></span>
+                                12:30 发布 MPOB 报告
+                            </div>
+                            <div class="flex items-center gap-2">
+                                <span class="text-slate-500">>>></span>
+                                <span>13:30 大商所开盘 (修正期)</span>
+                            </div>
+                            <div class="flex items-center gap-2">
+                                <span class="text-slate-500">>>></span>
+                                <span>夜盘 (美豆油联动)</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- EDUCATION VIEW -->
+        <div id="view-education" class="view-section max-w-4xl mx-auto space-y-6">
+            
+            <div class="text-center mb-10">
+                <h2 class="text-2xl font-black text-slate-900 mb-2">什么是MPOB 月报？</h2>
+                <p class="text-slate-500">全球油脂市场的“风向标”</p>
+            </div>
+
+            <!-- Expanded Card 1 -->
+            <div class="border border-slate-200 rounded-xl overflow-hidden bg-white shadow-sm">
+                <div class="w-full flex items-center justify-between p-4 bg-white border-b border-slate-100">
+                    <div class="flex items-center gap-3">
+                        <div class="text-palmGold bg-orange-50 p-2 rounded-lg">
+                            <i data-lucide="globe" class="w-5 h-5"></i>
+                        </div>
+                        <span class="font-bold text-slate-800 text-lg">报告全维度解析</span>
+                    </div>
+                </div>
+                <div class="block p-4 md:p-6 text-slate-600 leading-relaxed bg-slate-50/50">
+                    <div class="grid md:grid-cols-2 gap-6">
+                        <div>
+                            <h4 class="font-bold text-slate-800 mb-2">报告名片</h4>
+                            <ul class="list-disc list-inside space-y-2 text-sm">
+                                <li><span class="font-medium">机构:</span> 马来西亚棕榈油局 (MPOB)</li>
+                                <li><span class="font-medium">时间:</span> 每月10号 12:30 (遇节假日顺延)</li>
+                                <li><span class="font-medium">来源:</span> 强制性申报系统 (e-Submission)</li>
+                            </ul>
+                        </div>
+                        <div>
+                            <h4 class="font-bold text-slate-800 mb-2">权威性基石</h4>
+                            <p class="text-sm">根据MPOB官方介绍，MPOB 的数据并非抽样调查，而是基于全行业的强制性申报系统。所有在马来西亚境内运营的棕榈油相关主体（MyLesen持牌机构）必须通过 e-Submission 申报每月产销存存报表。这确保了报告数据的完整性和极高的法律约束力，从而支撑了其作为全球定价基准的权威性。</p>
+                        </div>
+                    </div>
+                    <div class="mt-6">
+                        <h4 class="font-bold text-slate-800 mb-4">四大支柱指标</h4>
+                        <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+                            <div class="bg-white p-3 rounded-lg border border-slate-200 shadow-sm">
+                                <div class="text-marketGreen font-bold mb-1">产量</div>
+                                <div class="text-xs text-slate-500">上月毛棕榈油(CPO)总产出。供应端变量，决定底部</div>
+                            </div>
+                            <div class="bg-white p-3 rounded-lg border border-slate-200 shadow-sm ring-1 ring-palmGold/50">
+                                <div class="text-palmGold font-bold mb-1">库存</div>
+                                <div class="text-xs text-slate-500">月末在港口、炼厂的总剩余。核心锚点，判断供需松紧</div>
+                            </div>
+                            <div class="bg-white p-3 rounded-lg border border-slate-200 shadow-sm">
+                                <div class="text-blue-600 font-bold mb-1">出口</div>
+                                <div class="text-xs text-slate-500">销售至印度、中国等国的总量。需求驱动，去库动力</div>
+                            </div>
+                            <div class="bg-white p-3 rounded-lg border border-slate-200 shadow-sm">
+                                <div class="text-slate-600 font-bold mb-1">进口</div>
+                                <div class="text-xs text-slate-500">从印尼等国流入的棕榈油。反映马印两国的价差套利流量</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Expanded Card 2 -->
+            <div class="border border-slate-200 rounded-xl overflow-hidden bg-white shadow-sm">
+                <div class="w-full flex items-center justify-between p-4 bg-white border-b border-slate-100">
+                    <div class="flex items-center gap-3">
+                        <div class="text-palmGold bg-orange-50 p-2 rounded-lg">
+                            <i data-lucide="database" class="w-5 h-5"></i>
+                        </div>
+                        <span class="font-bold text-slate-800 text-lg">专业名词速查</span>
+                    </div>
+                </div>
+                <div class="block p-4 md:p-6 text-slate-600 leading-relaxed bg-slate-50/50">
+                    <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                        <div class="p-3 bg-white rounded border border-slate-100">
+                            <span class="font-bold text-slate-800 block">FFB (Fresh Fruit Bunch)</span>
+                            <span class="text-sm text-slate-500">油棕鲜果串。单产(Yield)的基础单位。</span>
+                        </div>
+                        <div class="p-3 bg-white rounded border border-slate-100">
+                            <span class="font-bold text-slate-800 block">CPO (Crude Palm Oil)</span>
+                            <span class="text-sm text-slate-500">毛棕榈油。从果肉中压榨出的初级油脂，期货盘面的基准。</span>
+                        </div>
+                        <div class="p-3 bg-white rounded border border-slate-100">
+                            <span class="font-bold text-slate-800 block">OER (Oil Extraction Rate)</span>
+                            <span class="text-sm text-slate-500">出油率。每吨FFB能压榨出多少CPO，直接影响最终产量。</span>
+                        </div>
+                        <div class="p-3 bg-white rounded border border-slate-100">
+                            <span class="font-bold text-slate-800 block">PPO (Processed Palm Oil)</span>
+                            <span class="text-sm text-slate-500">精炼棕榈油。马棕出口和库存中包含很大比例的精炼油。</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+             <!-- Expanded Card 3 -->
+             <div class="border border-slate-200 rounded-xl overflow-hidden bg-white shadow-sm">
+                <div class="w-full flex items-center justify-between p-4 bg-white border-b border-slate-100">
+                    <div class="flex items-center gap-3">
+                        <div class="text-palmGold bg-orange-50 p-2 rounded-lg">
+                            <i data-lucide="pie-chart" class="w-5 h-5"></i>
+                        </div>
+                        <span class="font-bold text-slate-800 text-lg">如何看懂平衡表</span>
+                    </div>
+                </div>
+                <div class="block p-4 md:p-6 text-slate-600 leading-relaxed bg-slate-50/50">
+                    <div class="bg-slate-900 text-white p-4 rounded-lg font-mono text-sm md:text-base mb-4 shadow-inner">
+                        期末库存 = (期初库存 + <span class="text-marketGreen">产量</span> + 进口) - (<span class="text-marketRed">出口</span> + 国内消费)
+                    </div>
+                    <p class="mb-4 text-sm">若 (产量+进口) > (出口+消费) <span class="text-slate-400">→</span> 库存增加 <span class="text-marketGreen font-bold">(利空)</span>。反之则去库<span class="text-marketRed font-bold">(利多)</span>。</p>
+                    
+                    <h4 class="font-bold text-slate-800 mb-2">常见逻辑陷阱</h4>
+                    <ul class="space-y-2 text-sm">
+                        <li class="flex gap-2">
+                            <span class="text-marketRed font-bold">!</span>
+                            <span>孤立看产量：产量环比下降不一定是利多，如果出口降得更多，库存依然会增加。</span>
+                        </li>
+                        <li class="flex gap-2">
+                            <span class="text-marketRed font-bold">!</span>
+                            <span>忽视预期：库存增加不一定利空，若此时处于增产周期且增幅不及预期，盘面反而会涨。</span>
+                        </li>
+                        <li class="flex gap-3">
+                            <span class="text-marketRed font-bold">!</span>
+                            <span>忽略修正值：MPOB 偶尔会对上月数据进行修正，这会改变期初基数，需注意修正幅度。</span>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+
+            <!-- Expanded Card 4 (Seasonality Chart) -->
+            <div class="border border-slate-200 rounded-xl overflow-hidden bg-white shadow-sm">
+                <div class="w-full flex items-center justify-between p-4 bg-white border-b border-slate-100">
+                    <div class="flex items-center gap-3">
+                        <div class="text-palmGold bg-orange-50 p-2 rounded-lg">
+                            <i data-lucide="calendar" class="w-5 h-5"></i>
+                        </div>
+                        <span class="font-bold text-slate-800 text-lg">棕榈油季节性规律</span>
+                    </div>
+                </div>
+                <div class="block p-4 md:p-6 text-slate-600 leading-relaxed bg-slate-50/50">
+                    <!-- Pure CSS Bar Chart Construction -->
+                    <div class="mb-6 select-none">
+                        <div class="flex items-end justify-between h-64 w-full gap-1 pt-6 px-2 relative">
+                            <!-- Grid Lines -->
+                            <div class="absolute w-full h-full top-0 left-0 flex flex-col justify-between pointer-events-none opacity-10">
+                                <div class="w-full border-t border-slate-800"></div>
+                                <div class="w-full border-t border-slate-800"></div>
+                                <div class="w-full border-t border-slate-800"></div>
+                                <div class="w-full border-t border-slate-800"></div>
+                            </div>
+                            
+                            <!-- Bars (Data simulated from React State) -->
+                            <!-- 1月: 65 (Low) -->
+                            <div class="chart-bar w-full bg-marketGreen/80 rounded-t hover:bg-marketGreen transition-all relative group h-[65%]">
+                                <div class="chart-tooltip absolute -top-8 left-1/2 -translate-x-1/2 bg-slate-800 text-white text-xs px-2 py-1 rounded opacity-0 transition-opacity pointer-events-none whitespace-nowrap z-10">1月: 65 (低)</div>
+                                <span class="absolute -bottom-6 left-1/2 -translate-x-1/2 text-xs text-slate-500">1月</span>
+                            </div>
+                            <!-- 2月: 60 (Low) -->
+                            <div class="chart-bar w-full bg-marketGreen/80 rounded-t hover:bg-marketGreen transition-all relative group h-[60%]">
+                                <div class="chart-tooltip absolute -top-8 left-1/2 -translate-x-1/2 bg-slate-800 text-white text-xs px-2 py-1 rounded opacity-0 transition-opacity pointer-events-none whitespace-nowrap z-10">2月: 60 (低)</div>
+                                <span class="absolute -bottom-6 left-1/2 -translate-x-1/2 text-xs text-slate-500">2月</span>
+                            </div>
+                            <!-- 3月: 70 (Normal) -->
+                            <div class="chart-bar w-full bg-slate-300 rounded-t hover:bg-slate-400 transition-all relative group h-[70%]">
+                                <div class="chart-tooltip absolute -top-8 left-1/2 -translate-x-1/2 bg-slate-800 text-white text-xs px-2 py-1 rounded opacity-0 transition-opacity pointer-events-none whitespace-nowrap z-10">3月: 70</div>
+                                <span class="absolute -bottom-6 left-1/2 -translate-x-1/2 text-xs text-slate-500">3月</span>
+                            </div>
+                            <!-- 4月: 75 (Normal) -->
+                            <div class="chart-bar w-full bg-slate-300 rounded-t hover:bg-slate-400 transition-all relative group h-[75%]">
+                                <div class="chart-tooltip absolute -top-8 left-1/2 -translate-x-1/2 bg-slate-800 text-white text-xs px-2 py-1 rounded opacity-0 transition-opacity pointer-events-none whitespace-nowrap z-10">4月: 75</div>
+                                <span class="absolute -bottom-6 left-1/2 -translate-x-1/2 text-xs text-slate-500">4月</span>
+                            </div>
+                            <!-- 5月: 80 (Normal) -->
+                            <div class="chart-bar w-full bg-slate-300 rounded-t hover:bg-slate-400 transition-all relative group h-[80%]">
+                                <div class="chart-tooltip absolute -top-8 left-1/2 -translate-x-1/2 bg-slate-800 text-white text-xs px-2 py-1 rounded opacity-0 transition-opacity pointer-events-none whitespace-nowrap z-10">5月: 80</div>
+                                <span class="absolute -bottom-6 left-1/2 -translate-x-1/2 text-xs text-slate-500">5月</span>
+                            </div>
+                            <!-- 6月: 82 (Normal) -->
+                            <div class="chart-bar w-full bg-slate-300 rounded-t hover:bg-slate-400 transition-all relative group h-[82%]">
+                                <div class="chart-tooltip absolute -top-8 left-1/2 -translate-x-1/2 bg-slate-800 text-white text-xs px-2 py-1 rounded opacity-0 transition-opacity pointer-events-none whitespace-nowrap z-10">6月: 82</div>
+                                <span class="absolute -bottom-6 left-1/2 -translate-x-1/2 text-xs text-slate-500">6月</span>
+                            </div>
+                            <!-- 7月: 85 (Normal) -->
+                            <div class="chart-bar w-full bg-slate-300 rounded-t hover:bg-slate-400 transition-all relative group h-[85%]">
+                                <div class="chart-tooltip absolute -top-8 left-1/2 -translate-x-1/2 bg-slate-800 text-white text-xs px-2 py-1 rounded opacity-0 transition-opacity pointer-events-none whitespace-nowrap z-10">7月: 85</div>
+                                <span class="absolute -bottom-6 left-1/2 -translate-x-1/2 text-xs text-slate-500">7月</span>
+                            </div>
+                            <!-- 8月: 92 (High) -->
+                            <div class="chart-bar w-full bg-marketRed/80 rounded-t hover:bg-marketRed transition-all relative group h-[92%]">
+                                <div class="chart-tooltip absolute -top-8 left-1/2 -translate-x-1/2 bg-slate-800 text-white text-xs px-2 py-1 rounded opacity-0 transition-opacity pointer-events-none whitespace-nowrap z-10">8月: 92 (高)</div>
+                                <span class="absolute -bottom-6 left-1/2 -translate-x-1/2 text-xs text-slate-500">8月</span>
+                            </div>
+                            <!-- 9月: 98 (High) -->
+                            <div class="chart-bar w-full bg-marketRed/80 rounded-t hover:bg-marketRed transition-all relative group h-[98%]">
+                                <div class="chart-tooltip absolute -top-8 left-1/2 -translate-x-1/2 bg-slate-800 text-white text-xs px-2 py-1 rounded opacity-0 transition-opacity pointer-events-none whitespace-nowrap z-10">9月: 98 (高)</div>
+                                <span class="absolute -bottom-6 left-1/2 -translate-x-1/2 text-xs text-slate-500">9月</span>
+                            </div>
+                            <!-- 10月: 100 (High) -->
+                            <div class="chart-bar w-full bg-marketRed/80 rounded-t hover:bg-marketRed transition-all relative group h-[100%]">
+                                <div class="chart-tooltip absolute -top-8 left-1/2 -translate-x-1/2 bg-slate-800 text-white text-xs px-2 py-1 rounded opacity-0 transition-opacity pointer-events-none whitespace-nowrap z-10">10月: 100 (峰值)</div>
+                                <span class="absolute -bottom-6 left-1/2 -translate-x-1/2 text-xs text-slate-500">10月</span>
+                            </div>
+                            <!-- 11月: 90 (High) -->
+                            <div class="chart-bar w-full bg-marketRed/80 rounded-t hover:bg-marketRed transition-all relative group h-[90%]">
+                                <div class="chart-tooltip absolute -top-8 left-1/2 -translate-x-1/2 bg-slate-800 text-white text-xs px-2 py-1 rounded opacity-0 transition-opacity pointer-events-none whitespace-nowrap z-10">11月: 90 (高)</div>
+                                <span class="absolute -bottom-6 left-1/2 -translate-x-1/2 text-xs text-slate-500">11月</span>
+                            </div>
+                            <!-- 12月: 75 (Low/Normal) -->
+                            <div class="chart-bar w-full bg-marketGreen/80 rounded-t hover:bg-marketGreen transition-all relative group h-[75%]">
+                                <div class="chart-tooltip absolute -top-8 left-1/2 -translate-x-1/2 bg-slate-800 text-white text-xs px-2 py-1 rounded opacity-0 transition-opacity pointer-events-none whitespace-nowrap z-10">12月: 75 (转低)</div>
+                                <span class="absolute -bottom-6 left-1/2 -translate-x-1/2 text-xs text-slate-500">12月</span>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="flex justify-center gap-4 text-xs mt-8">
+                            <div class="flex items-center gap-1"><span class="w-3 h-3 bg-marketRed opacity-80 rounded-sm"></span> 高峰期 (8-10月)</div>
+                            <div class="flex items-center gap-1"><span class="w-3 h-3 bg-marketGreen opacity-80 rounded-sm"></span> 低谷期 (12-2月)</div>
+                    </div>
+
+                    <div class="grid md:grid-cols-2 gap-6 mt-6">
+                        <div class="bg-red-50 p-4 rounded-xl">
+                            <div class="flex items-center gap-2 mb-2 text-marketRed font-bold">
+                                <i data-lucide="sun" class="w-4.5 h-4.5"></i> 产出高峰期
+                            </div>
+                            <p class="text-xs text-slate-600 mb-2">通常 9-10月。果实成熟，天气适宜。</p>
+                            <div class="text-xs font-medium text-slate-800">交易特征：供应压力大，易承压。</div>
+                        </div>
+                        <div class="bg-emerald-50 p-4 rounded-xl">
+                            <div class="flex items-center gap-2 mb-2 text-marketGreen font-bold">
+                                <i data-lucide="cloud-lightning" class="w-4.5 h-4.5"></i> 产出低谷期
+                            </div>
+                            <p class="text-xs text-slate-600 mb-2">通常 1-2月。生理歇枝 + 季风降雨。</p>
+                            <div class="text-xs font-medium text-slate-800">交易特征：去库概率高，支撑走强。</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+    </main>
+
+    <!-- Footer -->
+    <footer class="bg-slate-900 text-slate-500 py-12 px-4 mt-auto">
+        <div class="container mx-auto max-w-4xl text-center space-y-6">
+            <div class="flex flex-col md:flex-row justify-center items-center gap-4 text-sm font-medium text-slate-400">
+                <span>金十期货APP独家整理</span>
+                <span class="hidden md:block w-1 h-1 bg-slate-600 rounded-full"></span>
+                <span>资料来源: MPOB, ITS, AmSpec, SGS</span>
+            </div>
+            
+            <div class="text-xs leading-relaxed max-w-2xl mx-auto text-slate-600">
+                <p class="font-bold mb-2">免责声明</p>
+                <p>
+                    本页内容仅供参考，不构成任何投资建议。市场有风险，投资需谨慎。
+                    文中引用的数据来源于市场公开信息，我们力求但不保证数据的准确性与完整性。
+                    投资者据此操作，风险自担。金十期货APP对使用本内容所引发的任何直接或间接损失不承担法律责任。
+                </p>
+            </div>
+            
+            <div class="pt-8 border-t border-slate-800 w-full flex justify-center">
+                <span class="text-xs text-slate-700 font-mono">© 2026 Jin10 Futures. All rights reserved.</span>
+            </div>
+        </div>
+    </footer>
+
+    <!-- Fixed Bottom Actions (Sticky) -->
+    <div class="fixed bottom-0 left-0 w-full z-40 bg-white/95 backdrop-blur-md border-t border-slate-200 shadow-[0_-5px_20px_-5px_rgba(0,0,0,0.1)] pb-safe-bottom">
+        <div class="max-w-7xl mx-auto px-4 py-3 flex gap-3 md:gap-4 items-center">
+            <!-- Share Button (Left) -->
+            <button onclick="openModal('share-modal')" class="flex-1 h-11 bg-fed-950 text-gold-500 border border-gold-500/50 hover:bg-fed-900 hover:border-gold-400 rounded-lg flex items-center justify-center gap-2 font-medium transition-all active:scale-95 text-sm md:text-base">
+                <i data-lucide="share-2" class="w-4 h-4 md:w-5 md:h-5"></i>
+                分享专题
+            </button>
+
+            <!-- Download Button (Right) -->
+            <a href="https://qihuo.jin10.com/app/index.html" target="_blank" class="flex-1 h-11 bg-gradient-to-r from-gold-600 via-gold-400 to-gold-600 text-fed-950 rounded-lg flex flex-col items-center justify-center font-bold shadow-lg shadow-gold-500/20 active:scale-95 transition-all hover:brightness-110 text-decoration-none leading-none">
+                <span class="text-sm md:text-base">下载金十期货APP</span>
+                <span class="text-[10px] md:text-xs font-normal opacity-80 scale-90">获取完整油脂资讯</span>
+            </a>
+        </div>
+    </div>
+
+    <!-- Share Modal -->
+    <div id="share-modal" class="modal-hidden fixed inset-0 z-[60] flex items-end justify-center">
+        <!-- Overlay -->
+        <div class="modal-backdrop absolute inset-0 bg-black/60 backdrop-blur-sm" onclick="closeModal('share-modal')"></div>
+        
+        <!-- Content (Bottom Sheet) -->
+        <div class="modal-content-wrapper relative w-full max-w-lg bg-[#1a1a1a] rounded-t-2xl shadow-2xl p-6 pb-safe-bottom text-white">
+            
+            <div class="mb-6">
+                <h3 class="text-base font-medium text-white/90">分享本专题</h3>
+            </div>
+            
+            <hr class="border-white/10 mb-8" />
+            
+            <!-- Grid Icons -->
+            <div class="grid grid-cols-4 gap-y-6 gap-x-2 mb-10">
+                <!-- WeChat -->
+                <div class="flex flex-col items-center gap-2 cursor-pointer group" onclick="handleShare('wx')">
+                    <div class="w-12 h-12 rounded-full bg-[#2a2a2a] text-white/80 flex items-center justify-center text-2xl group-hover:bg-[#3a3a3a] transition-all duration-300">
+                        <i class="fab fa-weixin"></i>
+                    </div>
+                    <span class="text-xs text-white/50">微信好友</span>
+                </div>
+                
+                <!-- Moments -->
+                <div class="flex flex-col items-center gap-2 cursor-pointer group" onclick="handleShare('pyq')">
+                    <div class="w-12 h-12 rounded-full bg-[#2a2a2a] text-white/80 flex items-center justify-center text-2xl group-hover:bg-[#3a3a3a] transition-all duration-300">
+                        <i class="fas fa-camera-retro"></i>
+                    </div>
+                    <span class="text-xs text-white/50">微信朋友圈</span>
+                </div>
+
+                <!-- QQ -->
+                <div class="flex flex-col items-center gap-2 cursor-pointer group" onclick="handleShare('qq')">
+                    <div class="w-12 h-12 rounded-full bg-[#2a2a2a] text-white/80 flex items-center justify-center text-2xl group-hover:bg-[#3a3a3a] transition-all duration-300">
+                        <i class="fab fa-qq"></i>
+                    </div>
+                    <span class="text-xs text-white/50">QQ好友</span>
+                </div>
+
+                <!-- Weibo -->
+                <div class="flex flex-col items-center gap-2 cursor-pointer group" onclick="handleShare('wb')">
+                    <div class="w-12 h-12 rounded-full bg-[#2a2a2a] text-white/80 flex items-center justify-center text-2xl group-hover:bg-[#3a3a3a] transition-all duration-300">
+                        <i class="fab fa-weibo"></i>
+                    </div>
+                    <span class="text-xs text-white/50">新浪微博</span>
+                </div>
+
+                <!-- DingTalk -->
+                <div class="flex flex-col items-center gap-2 cursor-pointer group" onclick="handleShare('dd')">
+                    <div class="w-12 h-12 rounded-full bg-[#2a2a2a] text-white/80 flex items-center justify-center text-xl group-hover:bg-[#3a3a3a] transition-all duration-300">
+                        <i class="fas fa-paper-plane"></i>
+                    </div>
+                    <span class="text-xs text-white/50">钉钉</span>
+                </div>
+
+                <!-- Copy Link -->
+                <div class="flex flex-col items-center gap-2 cursor-pointer group" onclick="handleShare('link')">
+                    <div class="w-12 h-12 rounded-full bg-[#2a2a2a] text-white/80 flex items-center justify-center text-xl group-hover:bg-[#3a3a3a] transition-all duration-300">
+                        <i class="fas fa-link"></i>
+                    </div>
+                    <span class="text-xs text-white/50">复制链接</span>
+                </div>
+            </div>
+
+            <button class="w-full py-3.5 rounded-xl bg-[#2a2a2a] text-white/60 text-sm font-medium hover:bg-[#3a3a3a] hover:text-white transition-colors" onclick="closeModal('share-modal')">
+                取消
+            </button>
+        </div>
+    </div>
+
+    <!-- Logic Script -->
+    <script>
+        // 1. Initialize Icons
+        lucide.createIcons();
+
+        // 2. Tab Logic
+        const tabs = {
+            analysis: document.getElementById('tab-analysis'),
+            education: document.getElementById('tab-education')
+        };
+        const views = {
+            analysis: document.getElementById('view-analysis'),
+            education: document.getElementById('view-education')
+        };
+
+        // Classes for active vs inactive state
+        const activeClasses = ['bg-gradient-to-r', 'from-slate-800', 'to-slate-700', 'text-white', 'shadow-md', 'transform', 'scale-105'];
+        const inactiveClasses = ['text-slate-500', 'hover:bg-slate-50', 'hover:text-slate-700'];
+
+        function switchTab(tabId) {
+            // Reset both tabs to inactive
+            Object.keys(tabs).forEach(key => {
+                const btn = tabs[key];
+                btn.classList.remove(...activeClasses);
+                btn.classList.add(...inactiveClasses);
+                views[key].classList.remove('active');
+            });
+
+            // Set active tab
+            const activeBtn = tabs[tabId];
+            activeBtn.classList.remove(...inactiveClasses);
+            activeBtn.classList.add(...activeClasses);
+            views[tabId].classList.add('active');
+            
+            // Scroll to top of content slightly to ensure user sees change
+            window.scrollTo({ top: 100, behavior: 'smooth' });
+        }
+
+        // 3. Countdown Logic (Native JS)
+        function startCountdown() {
+            // Target: Feb 10, 2026 12:30:00 (Assuming Malaysia/China time, or local)
+            const targetDate = new Date('2026-02-10T12:30:00+08:00').getTime();
+            const el = document.getElementById('countdown');
+
+            function update() {
+                const now = new Date().getTime();
+                const distance = targetDate - now;
+
+                if (distance < 0) {
+                    el.innerHTML = "数据已发布";
+                    return;
+                }
+
+                const days = Math.floor(distance / (1000 * 60 * 60 * 24));
+                const hours = Math.floor((distance % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+                const minutes = Math.floor((distance % (1000 * 60 * 60)) / (1000 * 60));
+                const seconds = Math.floor((distance % (1000 * 60)) / 1000);
+
+                el.innerHTML = `倒计时: ${days}天 ${hours.toString().padStart(2, '0')}时 ${minutes.toString().padStart(2, '0')}分 ${seconds.toString().padStart(2, '0')}秒`;
+            }
+
+            setInterval(update, 1000);
+            update(); // Initial call
+        }
+
+        // 4. ECharts Initialization
+        function initChart() {
+            var chartDom = document.getElementById('mpob-chart');
+            var myChart = echarts.init(chartDom);
+            var option;
+
+            option = {
+                tooltip: {
+                    trigger: 'axis',
+                    axisPointer: { type: 'shadow' }
+                },
+                legend: {
+                    data: ['2025年12月数据', '路透预期'],
+                    bottom: 0
+                },
+                grid: {
+                    left: '3%',
+                    right: '4%',
+                    bottom: '10%',
+                    top: '10%',
+                    containLabel: true
+                },
+                xAxis: [
+                    {
+                        type: 'category',
+                        data: ['产量', '进口量', '出口量', '期末库存'],
+                        axisTick: { alignWithLabel: true }
+                    }
+                ],
+                yAxis: [
+                    {
+                        type: 'value',
+                        name: '万吨'
+                    }
+                ],
+                series: [
+                    {
+                        name: '2025年12月数据',
+                        type: 'bar',
+                        data: [183, 3.3, 131.65, 305],
+                        itemStyle: { color: '#64748b' } // Slate-500
+                    },
+                    {
+                        name: '路透预期',
+                        type: 'bar',
+                        data: [161, null, 142, 291], // Import null as per image
+                        itemStyle: { 
+                            color: function(params) {
+                                // Color logic based on rise/fall sentiment
+                                if(params.dataIndex === 0) return '#10b981'; // Production Down (Green in image)
+                                if(params.dataIndex === 2) return '#ef4444'; // Export Up (Red in image)
+                                if(params.dataIndex === 3) return '#10b981'; // Stock Down (Green in image)
+                                return '#d97706';
+                            }
+                        },
+                        label: {
+                            show: true,
+                            position: 'top',
+                            formatter: function(params) {
+                                // Add % labels based on image data
+                                const changes = ['-12%', '', '+7.48%', '-4.64%'];
+                                if(changes[params.dataIndex]) {
+                                    return params.value + '\n(' + changes[params.dataIndex] + ')';
+                                }
+                                return params.value;
+                            },
+                            fontSize: 10,
+                            lineHeight: 14
+                        }
+                    }
+                ]
+            };
+
+            myChart.setOption(option);
+
+            // Responsive Resize
+            window.addEventListener('resize', function() {
+                myChart.resize();
+            });
+        }
+
+        // 5. Modal & Share Logic
+        function openModal(modalId) {
+            const modal = document.getElementById(modalId);
+            modal.classList.remove('modal-hidden');
+            // Small delay to allow display:block to apply before opacity transition
+            requestAnimationFrame(() => {
+                modal.classList.add('modal-visible');
+            });
+            document.body.style.overflow = 'hidden';
+        }
+
+        function closeModal(modalId) {
+            const modal = document.getElementById(modalId);
+            modal.classList.remove('modal-visible');
+            
+            // Wait for transition to finish before hiding
+            setTimeout(() => {
+                modal.classList.add('modal-hidden');
+                document.body.style.overflow = '';
+            }, 300);
+        }
+
+        function handleShare(platform) {
+            const url = encodeURIComponent(window.location.href);
+            const title = encodeURIComponent(document.title);
+            
+            let targetUrl = '';
+
+            if(platform === 'link') {
+                // Copy to clipboard logic
+                navigator.clipboard.writeText(window.location.href).then(() => {
+                    alert('链接已复制到剪贴板');
+                    closeModal('share-modal');
+                });
+                return;
+            }
+
+            // Attempt basic URL schemes for jumping (Best effort for static H5)
+            switch(platform) {
+                case 'wx':
+                case 'pyq':
+                    // WeChat doesn't support direct URL scheme jumping for sharing from web
+                    alert('请使用浏览器自带的分享功能分享至微信');
+                    break;
+                case 'qq':
+                    targetUrl = `mqqapi://share/to_fri?src_type=web&version=1&file_type=news&url=${url}&title=${title}`;
+                    if(!/Android|iPhone/i.test(navigator.userAgent)) {
+                        targetUrl = `http://connect.qq.com/widget/shareqq/index.html?url=${url}&title=${title}`;
+                        window.open(targetUrl, '_blank');
+                    } else {
+                        window.location.href = targetUrl;
+                    }
+                    break;
+                case 'wb':
+                    targetUrl = `http://service.weibo.com/share/share.php?url=${url}&title=${title}`;
+                    window.open(targetUrl, '_blank');
+                    break;
+                case 'dd':
+                    targetUrl = `dingtalk://dingtalkclient/page/link?url=${url}&pc_slide=false`;
+                    window.location.href = targetUrl;
+                    break;
+            }
+            
+            setTimeout(() => {
+                 closeModal('share-modal');
+            }, 500);
+        }
+
+        // Initialize Everything on Load
+        startCountdown();
+        initChart();
+
+    </script>
+</body>
+</html>
