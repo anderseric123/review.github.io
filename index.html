@@ -1,0 +1,1974 @@
+<!doctype html>
+<html lang="zh-CN">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>全球大宗商品产量版图</title>
+    <style>
+      :root {
+        --bg: #f3f7fc;
+        --panel: #ffffff;
+        --line: #d9e5f2;
+        --text: #0f2239;
+        --sub: #54708f;
+        --accent: #1959b8;
+        --accent-soft: #d9e9ff;
+        --warn: #a65f00;
+      }
+
+      * {
+        box-sizing: border-box;
+      }
+
+      body {
+        margin: 0;
+        font-family: 'Source Han Sans', 'Noto Sans CJK SC', sans-serif;
+        color: var(--text);
+        background:
+          radial-gradient(circle at 92% 12%, #deedff 0, transparent 35%),
+          radial-gradient(circle at 8% 88%, #deefff 0, transparent 30%),
+          var(--bg);
+      }
+
+      .layout {
+        min-height: 100vh;
+        display: grid;
+        grid-template-columns: 340px 1fr;
+      }
+
+      .sidebar {
+        border-right: 1px solid var(--line);
+        background: linear-gradient(180deg, #f9fcff 0%, #ffffff 100%);
+        padding: 18px;
+        display: flex;
+        flex-direction: column;
+        gap: 14px;
+      }
+
+      .title {
+        margin: 0;
+        font-size: 22px;
+      }
+
+      .desc {
+        margin: 0;
+        font-size: 13px;
+        color: var(--sub);
+        line-height: 1.6;
+      }
+
+      .field {
+        display: flex;
+        flex-direction: column;
+        gap: 8px;
+      }
+
+      .label {
+        font-size: 12px;
+        color: var(--sub);
+      }
+
+      select,
+      input[type="text"] {
+        width: 100%;
+        height: 40px;
+        border: 1px solid #c5d8ec;
+        border-radius: 10px;
+        padding: 0 10px;
+        font-size: 14px;
+      }
+
+      .radio-group {
+        display: flex;
+        gap: 8px;
+      }
+
+      .radio-group label {
+        flex: 1;
+        border: 1px solid #c5d8ec;
+        border-radius: 999px;
+        padding: 8px 10px;
+        font-size: 12px;
+        text-align: center;
+        cursor: pointer;
+        user-select: none;
+      }
+
+      .radio-group input {
+        display: none;
+      }
+
+      .radio-group input:checked + span {
+        color: #fff;
+        background: var(--accent);
+        border-radius: 999px;
+        padding: 8px 10px;
+        margin: -8px -10px;
+        display: block;
+      }
+
+      .summary-grid {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 10px;
+      }
+
+      .card {
+        background: var(--panel);
+        border: 1px solid var(--line);
+        border-radius: 12px;
+        padding: 10px;
+      }
+
+      .card .k {
+        font-size: 11px;
+        color: var(--sub);
+        margin-bottom: 4px;
+      }
+
+      .card .v {
+        font-size: 16px;
+        font-weight: 700;
+      }
+
+      .main {
+        padding: 16px 18px 22px;
+        display: flex;
+        flex-direction: column;
+        gap: 10px;
+      }
+
+      .header-row {
+        display: flex;
+        justify-content: space-between;
+        gap: 8px;
+        align-items: flex-end;
+      }
+
+      .title-stack {
+        display: flex;
+        flex-direction: column;
+        gap: 6px;
+      }
+
+      .headline-row {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        flex-wrap: wrap;
+      }
+
+      .header-row h2 {
+        margin: 0;
+        font-size: 20px;
+      }
+
+      .header-row p {
+        margin: 0;
+        color: var(--sub);
+        font-size: 12px;
+      }
+
+      .board {
+        background: var(--panel);
+        border: 1px solid var(--line);
+        border-radius: 14px;
+        padding: 14px;
+      }
+
+      .event-panel {
+        display: grid;
+        grid-template-columns: minmax(0, 1.2fr) minmax(260px, 0.8fr);
+        gap: 14px;
+      }
+
+      .event-card {
+        background:
+          radial-gradient(circle at right top, rgba(255, 219, 165, 0.38), transparent 35%),
+          linear-gradient(180deg, #fffdf8 0%, #ffffff 100%);
+        border: 1px solid #ecd9bc;
+        border-radius: 14px;
+        padding: 14px;
+      }
+
+      .event-card-fallback {
+        border-style: dashed;
+        background: linear-gradient(180deg, #f9fbff 0%, #ffffff 100%);
+        border-color: #d8e3f1;
+      }
+
+      .event-topline {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 10px;
+        flex-wrap: wrap;
+        margin-bottom: 10px;
+      }
+
+      .event-eyebrow {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        flex-wrap: wrap;
+      }
+
+      .event-kicker {
+        font-size: 12px;
+        font-weight: 700;
+        color: #9a4e00;
+      }
+
+      .event-date {
+        font-size: 12px;
+        color: var(--sub);
+      }
+
+      .event-type {
+        display: inline-flex;
+        align-items: center;
+        padding: 5px 9px;
+        border-radius: 999px;
+        background: #fff0dd;
+        border: 1px solid #f0c38b;
+        color: #9a4e00;
+        font-size: 11px;
+        font-weight: 700;
+        line-height: 1;
+      }
+
+      .event-card h3 {
+        margin: 0 0 8px;
+        font-size: 18px;
+      }
+
+      .event-summary {
+        margin: 0;
+        font-size: 13px;
+        line-height: 1.7;
+        color: #28415f;
+      }
+
+      .event-impact {
+        margin-top: 12px;
+        padding: 12px;
+        border-radius: 12px;
+        background: #fff1ef;
+        border: 1px solid #f2c5c0;
+      }
+
+      .event-impact-label {
+        font-size: 11px;
+        color: #a9362d;
+        font-weight: 700;
+        margin-bottom: 4px;
+      }
+
+      .event-impact-text {
+        font-size: 13px;
+        line-height: 1.7;
+        color: #8d2f28;
+      }
+
+      .event-metrics {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 8px;
+        margin-top: 12px;
+      }
+
+      .event-metric {
+        display: inline-flex;
+        align-items: center;
+        padding: 6px 10px;
+        border-radius: 999px;
+        background: #eef5ff;
+        border: 1px solid #d5e6fb;
+        color: #1f5a92;
+        font-size: 12px;
+        font-weight: 700;
+      }
+
+      .event-actions {
+        margin-top: 12px;
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        flex-wrap: wrap;
+      }
+
+      .event-btn {
+        height: 36px;
+        border: 0;
+        border-radius: 999px;
+        padding: 0 14px;
+        background: linear-gradient(90deg, #f59f00, #db6c00);
+        color: #fff;
+        font-size: 13px;
+        font-weight: 700;
+        font-family: inherit;
+        cursor: pointer;
+      }
+
+      .event-btn:disabled {
+        opacity: 0.55;
+        cursor: not-allowed;
+      }
+
+      .event-hint {
+        font-size: 12px;
+        color: var(--sub);
+      }
+
+      .event-source {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 10px;
+        flex-wrap: wrap;
+        margin-top: 12px;
+        padding-top: 12px;
+        border-top: 1px dashed #e2d3bd;
+      }
+
+      .event-source-label {
+        font-size: 12px;
+        color: var(--sub);
+      }
+
+      .event-source a {
+        color: var(--accent);
+        text-decoration: none;
+        font-size: 12px;
+        font-weight: 700;
+      }
+
+      .event-side-title {
+        margin: 0 0 10px;
+        font-size: 15px;
+      }
+
+      .event-side-copy {
+        font-size: 13px;
+        line-height: 1.7;
+        color: #28415f;
+      }
+
+      .event-country-pills {
+        margin-top: 10px;
+        display: flex;
+        flex-wrap: wrap;
+        gap: 8px;
+      }
+
+      .event-country-pill {
+        display: inline-flex;
+        align-items: center;
+        padding: 5px 9px;
+        border-radius: 999px;
+        background: #edf6ff;
+        border: 1px solid #d3e5fb;
+        color: #18558e;
+        font-size: 12px;
+        font-weight: 700;
+      }
+
+      .event-side-note {
+        margin-top: 12px;
+        padding: 10px 12px;
+        border-radius: 12px;
+        background: #f7fbff;
+        border: 1px solid #d8e7f7;
+        color: var(--sub);
+        font-size: 12px;
+        line-height: 1.6;
+      }
+
+      .row {
+        display: grid;
+        grid-template-columns: 46px 1fr 130px;
+        gap: 12px;
+        align-items: center;
+        margin-bottom: 10px;
+      }
+
+      .rank {
+        font-weight: 700;
+        color: #33537a;
+        text-align: right;
+      }
+
+      .country-label {
+        display: flex;
+        justify-content: space-between;
+        align-items: flex-start;
+        gap: 8px;
+        font-size: 14px;
+        margin-bottom: 4px;
+      }
+
+      .label-main {
+        min-width: 0;
+        flex: 1;
+      }
+
+      .label-title {
+        display: flex;
+        align-items: center;
+        gap: 6px;
+        flex-wrap: wrap;
+      }
+
+      .label-name {
+        font-weight: 700;
+      }
+
+      .label-sub {
+        margin-top: 3px;
+        font-size: 12px;
+        color: var(--sub);
+      }
+
+      .label-actions {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        flex-shrink: 0;
+      }
+
+      .country-en {
+        font-size: 12px;
+        color: var(--sub);
+      }
+
+      .topic-tags {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 6px;
+      }
+
+      .topic-tag {
+        display: inline-flex;
+        align-items: center;
+        padding: 4px 8px;
+        border-radius: 999px;
+        border: 1px solid #f0c286;
+        background: linear-gradient(180deg, #fff3df 0%, #ffe0b8 100%);
+        color: #9a4e00;
+        font-size: 11px;
+        font-weight: 700;
+        line-height: 1;
+        white-space: nowrap;
+      }
+
+      .topic-tag-cool {
+        border-color: #b7dafc;
+        background: linear-gradient(180deg, #edf6ff 0%, #d9ebff 100%);
+        color: #13548d;
+      }
+
+      .topic-tag-inline {
+        padding: 3px 7px;
+        font-size: 10px;
+      }
+
+      .bar-wrap {
+        width: 100%;
+        height: 16px;
+        border-radius: 999px;
+        background: #e5eef8;
+        overflow: hidden;
+        border: 1px solid #d4e3f3;
+      }
+
+      .bar {
+        height: 100%;
+        background: linear-gradient(90deg, #86b9ff, #2e75cf 62%, #1b57a9);
+      }
+
+      .value {
+        text-align: right;
+        font-size: 13px;
+        font-weight: 600;
+        color: #183b67;
+      }
+
+      .value-sub {
+        margin-top: 2px;
+        font-size: 11px;
+        font-weight: 500;
+        color: var(--sub);
+      }
+
+      .highlight .bar {
+        background: linear-gradient(90deg, #ffd08a, #f59f00);
+      }
+
+      .highlight .rank,
+      .highlight .value {
+        color: #a65f00;
+      }
+
+      .row.offline .bar {
+        background: linear-gradient(90deg, #f7c2bc, #d95c50 68%, #a9362d);
+      }
+
+      .row.offline .value {
+        color: #a9362d;
+      }
+
+      .sim-toggle {
+        border: 1px solid #c7d8ec;
+        border-radius: 999px;
+        padding: 5px 10px;
+        background: #fff;
+        color: #215387;
+        font-size: 12px;
+        font-family: inherit;
+        cursor: pointer;
+        transition:
+          background 0.2s ease,
+          border-color 0.2s ease,
+          color 0.2s ease;
+      }
+
+      .sim-toggle:hover {
+        border-color: var(--accent);
+        background: #eef5ff;
+        color: var(--accent);
+      }
+
+      .sim-toggle-active {
+        border-color: #f0b777;
+        background: #fff2e3;
+        color: #9f4b00;
+      }
+
+      .sim-card {
+        background: linear-gradient(180deg, #fff8f2 0%, #ffffff 100%);
+      }
+
+      .sim-card-head {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 8px;
+        margin-bottom: 8px;
+      }
+
+      .sim-card-title {
+        font-size: 12px;
+        color: var(--sub);
+      }
+
+      .sim-reset {
+        border: 0;
+        background: transparent;
+        color: var(--accent);
+        font-size: 12px;
+        font-family: inherit;
+        cursor: pointer;
+        padding: 0;
+      }
+
+      .sim-empty {
+        font-size: 12px;
+        color: var(--sub);
+        line-height: 1.6;
+      }
+
+      .sim-alert {
+        padding: 10px 12px;
+        border-radius: 12px;
+        border: 1px solid #f1c1bb;
+        background: #fff1ef;
+        color: #a9362d;
+        font-size: 12px;
+        line-height: 1.6;
+      }
+
+      .sim-meta {
+        margin-top: 8px;
+        font-size: 12px;
+        color: var(--sub);
+      }
+
+      .sim-pills {
+        margin-top: 10px;
+        display: flex;
+        flex-wrap: wrap;
+        gap: 6px;
+      }
+
+      .sim-pill {
+        display: inline-flex;
+        align-items: center;
+        padding: 4px 8px;
+        border-radius: 999px;
+        background: #fff3f1;
+        border: 1px solid #f2c8c3;
+        color: #9b3c34;
+        font-size: 11px;
+        font-weight: 700;
+      }
+
+      .section-label {
+        margin: 14px 0 8px;
+        color: var(--sub);
+        font-size: 12px;
+        font-weight: 700;
+      }
+
+      .footnote {
+        margin-top: 8px;
+        color: var(--sub);
+        font-size: 12px;
+        line-height: 1.5;
+      }
+
+      .footnote-aux {
+        margin-top: 4px;
+      }
+
+      @media (max-width: 1040px) {
+        .layout {
+          grid-template-columns: 1fr;
+        }
+
+        .sidebar {
+          border-right: 0;
+          border-bottom: 1px solid var(--line);
+        }
+
+        .row {
+          grid-template-columns: 40px 1fr 100px;
+          gap: 8px;
+        }
+
+        .event-panel {
+          grid-template-columns: 1fr;
+        }
+
+        .headline-row {
+          align-items: flex-start;
+        }
+
+        .country-label {
+          flex-direction: column;
+        }
+
+        .label-actions {
+          width: 100%;
+          justify-content: flex-start;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <div class="layout">
+      <aside class="sidebar">
+        <h1 class="title">全球大宗商品产量版图</h1>
+
+        <div class="field">
+          <span class="label">数据范围</span>
+          <select id="majorCategorySelect">
+            <option value="all" selected>全部（矿产 + 能化 + 农产品）</option>
+            <option value="矿产">仅矿产</option>
+            <option value="能化">仅能化</option>
+            <option value="农产品">仅农产品</option>
+          </select>
+        </div>
+
+        <div class="field">
+          <span class="label">大类视角</span>
+          <div class="radio-group">
+            <label>
+              <input type="radio" name="viewMode" value="commodity" checked />
+              <span>按品种</span>
+            </label>
+            <label>
+              <input type="radio" name="viewMode" value="country" />
+              <span>按国家/地区</span>
+            </label>
+          </div>
+        </div>
+
+        <div class="field" id="commodityField">
+          <span class="label">品种</span>
+          <select id="commoditySelect"></select>
+        </div>
+
+        <div class="field" id="countryField" style="display: none">
+          <span class="label">核心国家/地区</span>
+          <select id="coreCountrySelect"></select>
+        </div>
+
+        <div class="field">
+          <span class="label">排序口径</span>
+          <div class="radio-group">
+            <label>
+              <input type="radio" name="metric" value="share" checked />
+              <span>全球占比 %</span>
+            </label>
+            <label>
+              <input type="radio" name="metric" value="value" />
+              <span>绝对值</span>
+            </label>
+          </div>
+        </div>
+
+        <div class="field">
+          <span class="label">显示条数</span>
+          <select id="topNSelect">
+            <option value="5">前 5 名</option>
+            <option value="10" selected>前 10 名</option>
+            <option value="15">前 15 名</option>
+          </select>
+        </div>
+
+        <div class="field">
+          <span class="label" id="searchLabel">国家/地区高亮（中文）</span>
+          <input id="countrySearch" type="text" placeholder="例如：缅甸 / 巴西 / 欧盟" />
+        </div>
+
+        <div class="summary-grid">
+          <div class="card">
+            <div class="k" id="summaryLabel1">全球总量</div>
+            <div class="v" id="worldTotal">-</div>
+          </div>
+          <div class="card">
+            <div class="k" id="summaryLabel2">第一名占比</div>
+            <div class="v" id="top1Share">-</div>
+          </div>
+          <div class="card">
+            <div class="k" id="summaryLabel3">前三集中度</div>
+            <div class="v" id="cr3Share">-</div>
+          </div>
+          <div class="card">
+            <div class="k" id="summaryLabel4">统计国家/地区数</div>
+            <div class="v" id="countryCount">-</div>
+          </div>
+        </div>
+
+        <div class="card sim-card" id="simulationCard">
+          <div class="sim-card-head">
+            <div class="sim-card-title">断供/制裁推演</div>
+            <button class="sim-reset" id="resetSimulationBtn" type="button">清空模拟</button>
+          </div>
+          <div id="simulationBody" class="sim-empty">
+            点击榜单中的“模拟停产”，即可推演单国/地区或多国/地区断供后的供应缺口与剩余份额变化。
+          </div>
+        </div>
+
+      </aside>
+
+      <main class="main">
+        <div class="header-row">
+          <div class="title-stack">
+            <div class="headline-row">
+              <h2 id="boardTitle">-</h2>
+              <div class="topic-tags" id="boardTags"></div>
+            </div>
+            <p id="boardSubTitle">-</p>
+          </div>
+        </div>
+
+        <section class="event-panel" id="eventPanel"></section>
+
+        <section class="board" id="board"></section>
+
+        <p class="footnote">
+          说明：矿产数据主要参考美国地质调查局（USGS）发布的2025年估算数据。能化品种中，原油数据采用 OPEC 2026年2月月报口径，煤炭数据参考 Energy Institute 与 IEA 公开资料；纯碱、燃料油、甲醇、PTA、乙二醇、苯乙烯、LPG、LNG、沥青、聚丙烯、PX、纯苯等品种，综合整理自 USGS、EI、IGU、WLGA、ICIS、Argus、中国国家统计局等公开市场信息。农产品数据主要来自 USDA 月报。由于不同机构统计口径、统计周期及更新节奏存在差异，部分数据可能与实际情况或其他来源略有偏差，相关内容仅供市场研究与信息参考。
+        </p>
+        <p class="footnote footnote-aux">
+          免责声明：本页面信息不构成任何投资建议、交易建议或风险担保，使用者应独立判断并自行承担相关风险。<br>
+          金十数据制作
+        </p>
+      </main>
+    </div>
+
+    <script src="./commodity-ranking-data.js"></script>
+    <script>
+      const DATA = window.COMMODITY_RANKING_DATA;
+      if (!DATA || !Array.isArray(DATA.products)) {
+        document.body.innerHTML =
+          "<div style=\"padding:24px;font-family:'Source Han Sans','Noto Sans CJK SC',sans-serif\">未读取到数据文件 `commodity-ranking-data.js`。</div>";
+      }
+
+      const majorCategorySelect = document.getElementById("majorCategorySelect");
+      const commoditySelect = document.getElementById("commoditySelect");
+      const coreCountrySelect = document.getElementById("coreCountrySelect");
+      const topNSelect = document.getElementById("topNSelect");
+      const countrySearch = document.getElementById("countrySearch");
+      const searchLabelEl = document.getElementById("searchLabel");
+      const commodityFieldEl = document.getElementById("commodityField");
+      const countryFieldEl = document.getElementById("countryField");
+      const boardEl = document.getElementById("board");
+      const boardTitleEl = document.getElementById("boardTitle");
+      const boardSubTitleEl = document.getElementById("boardSubTitle");
+      const boardTagsEl = document.getElementById("boardTags");
+      const eventPanelEl = document.getElementById("eventPanel");
+      const worldTotalEl = document.getElementById("worldTotal");
+      const top1ShareEl = document.getElementById("top1Share");
+      const cr3ShareEl = document.getElementById("cr3Share");
+      const countryCountEl = document.getElementById("countryCount");
+      const summaryLabel1El = document.getElementById("summaryLabel1");
+      const summaryLabel2El = document.getElementById("summaryLabel2");
+      const summaryLabel3El = document.getElementById("summaryLabel3");
+      const summaryLabel4El = document.getElementById("summaryLabel4");
+      const simulationCardEl = document.getElementById("simulationCard");
+      const simulationBodyEl = document.getElementById("simulationBody");
+      const resetSimulationBtn = document.getElementById("resetSimulationBtn");
+      const allProducts = DATA.products;
+      const metricRadios = Array.from(document.querySelectorAll("input[name='metric']"));
+      const viewModeRadios = Array.from(document.querySelectorAll("input[name='viewMode']"));
+      const metricValueRadio = metricRadios.find((n) => n.value === "value");
+      const metricShareRadio = metricRadios.find((n) => n.value === "share");
+      const metricValueLabel = metricValueRadio ? metricValueRadio.closest("label") : null;
+      const simulatedShutdowns = new Map();
+
+      const CORE_COUNTRIES = [
+        "China",
+        "United States",
+        "European Union",
+        "Argentina",
+        "Bangladesh",
+        "Belarus",
+        "Bolivia",
+        "Belgium",
+        "Gabon",
+        "Ghana",
+        "Guinea",
+        "Jordan",
+        "Kazakhstan",
+        "Mongolia",
+        "Mexico",
+        "Morocco",
+        "Philippines",
+        "Algeria",
+        "Brunei",
+        "Chinese Taipei",
+        "Germany",
+        "Greece",
+        "Italy",
+        "Japan",
+        "Kuwait",
+        "Singapore",
+        "United Kingdom",
+        "Thailand",
+        "Turkey",
+        "Malaysia",
+        "Colombia",
+        "Nigeria",
+        "Vietnam",
+        "Saudi Arabia",
+        "United Arab Emirates",
+        "Qatar",
+        "Iran",
+        "Iraq",
+        "Libya",
+        "Norway",
+        "Poland",
+        "India",
+        "Bahrain",
+        "South Korea",
+        "Netherlands",
+        "Trinidad and Tobago",
+        "Oman",
+        "Chile",
+        "Australia",
+        "Indonesia",
+        "Congo (Kinshasa)",
+        "Peru",
+        "Russia",
+        "Canada",
+        "South Africa",
+        "Burma",
+        "Brazil",
+        "Zimbabwe"
+      ];
+
+      const COUNTRY_ZH_PATCH = {
+        "Burkina Faso": "布基纳法索",
+        "Côte d’Ivoire": "科特迪瓦",
+        Algeria: "阿尔及利亚",
+        Belgium: "比利时",
+        Brunei: "文莱",
+        "Chinese Taipei": "中国台湾",
+        Egypt: "埃及",
+        "European Union": "欧盟",
+        Germany: "德国",
+        Greece: "希腊",
+        Guatemala: "危地马拉",
+        Israel: "以色列",
+        Jamaica: "牙买加",
+        Italy: "意大利",
+        Japan: "日本",
+        Kuwait: "科威特",
+        Libya: "利比亚",
+        "Korea, North": "朝鲜",
+        "Korea, Republic of": "韩国",
+        Kyrgyzstan: "吉尔吉斯斯坦",
+        Malaysia: "马来西亚",
+        Mali: "马里",
+        Mongolia: "蒙古",
+        Norway: "挪威",
+        Pakistan: "巴基斯坦",
+        "Papua New Guinea": "巴布亚新几内亚",
+        Poland: "波兰",
+        Portugal: "葡萄牙",
+        Rwanda: "卢旺达",
+        Senegal: "塞内加尔",
+        Singapore: "新加坡",
+        Spain: "西班牙",
+        "Sri Lanka": "斯里兰卡",
+        Tanzania: "坦桑尼亚",
+        Tunisia: "突尼斯",
+        "United Kingdom": "英国",
+        Uzbekistan: "乌兹别克斯坦",
+        Vietnam: "越南",
+        Zambia: "赞比亚"
+      };
+
+      const HOT_TOPIC_TAGS = {
+        锡: ["半导体咽喉", "消费电子命脉"],
+        镓: ["芯片材料卡点", "军工半导体"],
+        锗: ["红外光学关键", "光纤通信材料"],
+        锂: ["新能源车核心", "储能链支点"],
+        钴: ["动力电池核心", "高镍三元材料"],
+        镍: ["不锈钢核心", "动力电池材料"],
+        铜: ["电网升级核心", "制造业血液"],
+        铝: ["轻量化骨架", "电力成本锚"],
+        铝土矿: ["电解铝上游命门", "氧化铝核心原料"],
+        电解铝: ["轻量化基石", "电力成本锚"],
+        铁矿石: ["黑色产业龙头", "钢铁成本命脉"],
+        石墨: ["负极材料核心", "电池链关键矿物"],
+        磷矿石: ["磷肥原料根基", "农业安全要素"],
+        钾盐: ["钾肥供应核心", "农化成本锚点"],
+        锰: ["钢铁合金基础", "电池正极辅材"],
+        钼: ["特钢强化关键", "高端制造合金"],
+        稀土: ["永磁材料核心", "军工高端制造"],
+        锑: ["阻燃剂核心", "光伏玻璃辅材"],
+        铅: ["铅酸电池基础", "储能备电材料"],
+        锌: ["镀锌防腐核心", "基建周期风向"],
+        白银: ["光伏导电核心", "避险贵金属"],
+        黄金: ["全球避险锚", "央行储备资产"],
+        原油: ["地缘政治核心", "工业血液"],
+        煤炭: ["电力保供支点", "工业燃料底盘"],
+        LNG: ["天然气贸易锚点", "欧洲能源安全"],
+        LPG: ["民生燃料", "化工裂解原料"],
+        "LNG（液化天然气）": ["天然气贸易锚点", "欧洲能源安全"],
+        "LPG（液化石油气）": ["民生燃料", "化工裂解原料"],
+        甲醇: ["煤化工枢纽", "烯烃链核心"],
+        PTA: ["涤纶产业中枢", "纺服化纤核心"],
+        乙二醇: ["聚酯链关键", "瓶片纤维原料"],
+        苯乙烯: ["家电塑料核心", "ABS产业链关键"],
+        纯苯: ["芳烃基础原料", "化工母体"],
+        PX: ["聚酯链咽喉", "芳烃核心中间体"],
+        "对二甲苯（PX）": ["聚酯链咽喉", "芳烃核心中间体"],
+        聚丙烯: ["包装材料核心", "家电汽车塑料"],
+        沥青: ["基建施工温度计", "道路建设关键"],
+        燃料油: ["船燃关键", "炼厂平衡变量"],
+        纯碱: ["玻璃成本锚", "光伏玻璃核心"],
+        大豆: ["饲料蛋白核心", "油脂定价锚"],
+        白糖: ["食品工业刚需", "天气题材高敏"],
+        棕榈油: ["全球植物油锚", "生柴原料"],
+        油菜籽: ["菜系油脂核心", "加菜链关键"],
+        苹果: ["鲜果消费代表", "天气敏感品"],
+        小麦: ["粮食安全主粮", "全球贸易敏感"],
+        玉米: ["饲料能源双属性", "农业链核心"],
+        棉花: ["纺织工业基石", "服装链风向"],
+        稻米: ["口粮安全底盘", "亚洲主粮"]
+      };
+
+      const EVENT_CASES = {
+        原油: {
+          date: "2019-09-14",
+          type: "军事袭击",
+          title: "沙特 Abqaiq / Khurais 遇袭",
+          summary:
+            "中东最关键的原油处理枢纽遭袭后，市场几乎在一个交易日内重新定价全球备用产能与地缘风险。",
+          impact:
+            "EIA 记录，这次袭击打到了全球最大的原油稳定处理设施之一。Abqaiq 单体处理能力约 700 万桶/日，约相当于全球原油处理能力的 7%；Brent 与 WTI 在首个完整交易日录得过去十年最大单日涨幅。",
+          metrics: ["Abqaiq 处理能力约 700 万桶/日", "约相当于全球产能 7%", "十年来最大单日涨幅"],
+          trigger_countries: ["Saudi Arabia"],
+          simulation_note: "代入沙特阿拉伯，可快速体感中东核心产油国受扰时的绝对缺口。",
+          source_name: "EIA",
+          source_url: "https://www.eia.gov/todayinenergy/detail.php?id=41413"
+        },
+        LNG: {
+          date: "2022-06-08",
+          type: "装置事故",
+          title: "美国 Freeport LNG 火灾停摆",
+          summary:
+            "美国关键 LNG 出口终端突发停摆，全球市场立刻意识到“出口能力”本身就是稀缺资源。",
+          impact:
+            "EIA 指出，该事故使美国 LNG 出口能力减少约 2.0 Bcf/d，导致 2022 年 6 月美国 LNG 出口较 5 月减少约 1.5 Bcf/d。对于依赖美国现货补充的买家来说，这是一记非常直观的供给警报。",
+          metrics: ["约 2.0 Bcf/d 出口能力受影响", "6 月出口较 5 月少约 1.5 Bcf/d", "美国外供弹性被迅速重估"],
+          trigger_countries: ["United States"],
+          simulation_note: "代入美国，可感受单一核心 LNG 出口源受扰时，全球剩余供应份额如何重排。",
+          source_name: "EIA",
+          source_url: "https://www.eia.gov/TODAYINENERGY/detail.php?id=53079"
+        },
+        锡: {
+          date: "2023-04-17",
+          type: "政策停采",
+          title: "缅甸佤邦宣布锡矿停采",
+          summary:
+            "全球锡精矿链条最敏感的不是需求，而是上游少数矿区的突然停摆；佤邦事件把这一点暴露得非常彻底。",
+          impact:
+            "International Tin Association 估算，佤邦停采相当于约 10% 的全球锡精矿供应，消息发布当日 LME 三个月锡价一度上涨约 9%。这类上游集中度冲击，通常会迅速传导到冶炼和焊料链。",
+          metrics: ["约占全球锡精矿供应 10%", "LME 3 月锡一度涨约 9%", "中国进口矿端高度受扰"],
+          trigger_countries: ["Burma"],
+          simulation_note: "代入缅甸，可近似推演佤邦矿区停摆对全球锡供给的冲击。",
+          source_name: "International Tin Association",
+          source_url: "https://www.internationaltin.org/wa-state-reveals-further-details-on-mining-suspension/"
+        },
+        镍: {
+          date: "2019-09-02",
+          type: "出口禁令",
+          title: "印尼提前禁运镍矿",
+          summary:
+            "全球最大镍矿供应国一旦提前禁运，市场不是慢慢消化，而是会立刻冲着未来几年冶炼原料缺口去定价。",
+          impact:
+            "Reuters 报道，印尼宣布自 2020 年 1 月起提前两年实施镍矿出口禁令后，LME 三个月镍当日上涨 3%，并在叠加前一交易日大涨后升至近五年高位。供给约束直接重塑了后续不锈钢与电池材料预期。",
+          metrics: ["LME 镍当日涨约 3%", "叠加前一交易日涨幅后升至近五年高位", "印尼禁运提前两年实施"],
+          trigger_countries: ["Indonesia"],
+          simulation_note: "代入印尼，可快速感受全球镍链对单一资源国政策变化的敏感度。",
+          source_name: "Reuters / Al Jazeera",
+          source_url: "https://www.aljazeera.com/economy/2019/9/2/worlds-biggest-nickel-ore-maker-bans-exports-from-january-2020"
+        },
+        煤炭: {
+          date: "2022-01-01",
+          type: "出口禁令",
+          title: "印尼突然暂停煤炭出口",
+          summary:
+            "动力煤最怕的不是长期短缺，而是冬季或旺季里头部出口国突然“锁港”。印尼禁运就是标准范本。",
+          impact:
+            "Reuters 报道，该禁令震动全球能源市场，中国动力煤期货首日一度上涨 7.8%；中国、印度、日本和韩国合计占印尼 2021 年煤炭出口约 73%，亚洲电力链的脆弱性被瞬间放大。",
+          metrics: ["中国动力煤期货一度涨约 7.8%", "中印日韩合计占印尼出口约 73%", "全球能源市场被迅速扰动"],
+          trigger_countries: ["Indonesia"],
+          simulation_note: "代入印尼，可直观看到亚洲买家高度依赖单一煤炭出口源时的供应缺口。",
+          source_name: "Reuters / Al Jazeera",
+          source_url: "https://www.aljazeera.com/economy/2022/1/5/indonesia-secures-coal-supplies-amid-hopes-of-end-to-export-ban"
+        },
+        大豆: {
+          date: "2018-07",
+          type: "贸易制裁",
+          title: "中美贸易战改写全球大豆流向",
+          summary:
+            "大豆是最典型的“流向重塑型”冲击：不是全球没豆，而是最核心的买家与卖家突然断开。",
+          impact:
+            "USDA ERS 显示，2018/19 市场年度前半程，中国自美国进口大豆减少近 2200 万吨，同比下降 89%；来自巴西和加拿大的增量也只能填补其中一部分。这次事件永久改变了全球大豆贸易地图。",
+          metrics: ["中国自美国进口减少近 2200 万吨", "同比下降 89%", "中国总进口仍少约 900 万吨"],
+          trigger_countries: ["United States"],
+          simulation_note: "代入美国，可近似感受大豆链在买卖两端脱钩时的供应与流向重排。",
+          source_name: "USDA ERS",
+          source_url: "https://ers.usda.gov/data-products/charts-of-note/chart-detail?chartId=93371"
+        },
+        小麦: {
+          date: "2022-02",
+          type: "战争冲击",
+          title: "俄乌冲突打断黑海粮食通道",
+          summary:
+            "小麦一旦从“主粮”转成“地缘资产”，它对通胀和粮安的外溢冲击会远超一般农产品。",
+          impact:
+            "FAO 披露，乌克兰谷物出口平时约 600 万吨/月，但 2022 年 3 月仅约 32.2 万吨；世界银行随后预计 2022 年小麦价格将上涨超过 40%。黑海供应受阻把全球小麦重新推回了危机资产的位置。",
+          metrics: ["乌克兰谷物出口从常态 600 万吨/月降至 32.2 万吨", "世界银行预计小麦价格年内涨超 40%", "粮食安全议题快速升温"],
+          trigger_countries: ["Russia"],
+          simulation_note: "当前页面用俄罗斯近似映射黑海供给冲击源，方便直观看主产区受阻时的紧张程度。",
+          source_name: "FAO / World Bank",
+          source_url: "https://openknowledge.worldbank.org/entities/publication/4f55f6a4-a780-5119-8bbf-be6990042c4b"
+        },
+        玉米: {
+          date: "2022-02",
+          type: "战争冲击",
+          title: "黑海冲击波外溢到全球玉米链",
+          summary:
+            "玉米既是粮，也是饲料和工业原料，所以黑海冲击打到它时，传导速度往往比小麦更广。",
+          impact:
+            "世界银行在 2022 年食品安全更新中指出，受俄乌冲突扰动，玉米价格较 2021 年 1 月高出约 16%；到 2022 年 9 月，这一涨幅一度扩大到约 34%。玉米从粮食问题迅速变成了通胀问题。",
+          metrics: ["较 2021 年 1 月高约 16%", "2022 年 9 月一度高约 34%", "饲料与粮安双重传导"],
+          trigger_countries: ["Russia"],
+          simulation_note: "当前以俄罗斯近似映射黑海冲击源，用来体感主产区受扰时的玉米链压力。",
+          source_name: "World Bank",
+          source_url: "https://www.worldbank.org/en/topic/agriculture/brief/food-security-update/overview"
+        },
+        稻米: {
+          date: "2023-07-20",
+          type: "出口限制",
+          title: "印度限制白米出口，全球米价冲上 15 年高位",
+          summary:
+            "稻米平时看起来最稳，但只要印度这种头号出口国突然收紧，亚洲和非洲进口国会立刻感到压力。",
+          impact:
+            "USDA FAS 指出，印度对白米与碎米的限制合计覆盖其 2022 年约 45% 的大米出口；随后 FAS 追踪到全球出口报价冲上 2008 年以来最高水平。米价上涨往往最直接刺痛民生。",
+          metrics: ["覆盖印度约 45% 大米出口", "全球出口报价升至 2008 年以来高位", "进口依赖国补库成本骤升"],
+          trigger_countries: ["India"],
+          simulation_note: "代入印度，可快速感受全球稻米链对最大出口国政策变化的脆弱性。",
+          source_name: "USDA FAS",
+          source_url: "https://www.fas.usda.gov/data/india-india-imposes-20-percent-export-duty-parboiled-rice-and-reviews-basmati-rices-minimum"
+        },
+        棕榈油: {
+          date: "2022-04-28",
+          type: "出口禁令",
+          title: "印尼棕榈油禁运掀翻全球植物油定价",
+          summary:
+            "棕榈油的震撼之处在于，它不是孤立品种，禁运会把整个植物油板块一起拽上去。",
+          impact:
+            "Reuters 报道，印尼禁运后全球买家几乎“没有 Plan B”，并推高棕榈油、豆油、葵花籽油和菜籽油等主要植物油价格。印尼又占全球棕榈油供应一半以上，冲击极具外溢性。",
+          metrics: ["全球买家“没有 Plan B”", "推高主要植物油价格", "印尼占全球棕榈油供应一半以上"],
+          trigger_countries: ["Indonesia"],
+          simulation_note: "代入印尼，可快速推演全球植物油龙头出口国受限时的供应收缩。",
+          source_name: "Reuters / Investing",
+          source_url: "https://www.investing.com/news/economic-indicators/indonesias-palm-oil-export-ban-leaves-global-buyers-with-no-plan-b-2809497"
+        },
+        白糖: {
+          date: "2022-05-24",
+          type: "出口限制",
+          title: "印度限制糖出口，糖价被重新点燃",
+          summary:
+            "当巴西减产、高油价和乙醇分流叠加时，印度的出口限制会把糖从软商品变成高弹性风险资产。",
+          impact:
+            "Reuters 报道，印度将当季糖出口限制在 1000 万吨，这是六年来首次收紧出口；消息公布后 ICE 原糖价格继续维持在高位附近，市场迅速把全球可流通余量重新估值。",
+          metrics: ["出口上限 1000 万吨", "六年来首次限制出口", "ICE 原糖维持高位震荡"],
+          trigger_countries: ["India"],
+          simulation_note: "代入印度，可直接观察第二大出口源收紧时全球糖链的缺口压力。",
+          source_name: "Reuters / Times of India",
+          source_url: "https://timesofindia.indiatimes.com/business/india-business/raw-sugar-edges-up-as-india-restricts-exports/articleshow/91773584.cms"
+        },
+        稀土: {
+          date: "2010",
+          type: "出口收紧",
+          title: "中国收紧稀土出口，全球首次真正感到“卡脖子”",
+          summary:
+            "稀土并不是用量最大的商品，但它把“关键矿产”这个概念从行业内问题推成了全球产业安全问题。",
+          impact:
+            "USGS 指出，自 1990 年代末以来中国提供了全球约 85% 到 95% 的稀土供应；2010 年宣布收紧出口后，全球迅速转向囤货、替代、回收和海外找矿。供应安全第一次被真正金融化、政治化。",
+          metrics: ["中国供应全球约 85%-95%", "2010 年出口收紧触发全球替代投资", "稀土成为战略资源代表"],
+          trigger_countries: ["China"],
+          simulation_note: "代入中国，可近似推演稀土政策收紧时全球高端制造链的压力。",
+          source_name: "USGS",
+          source_url: "https://pubs.usgs.gov/fs/2014/3078/pdf/fs2014-3078.pdf"
+        },
+        电解铝: {
+          date: "2021-2024",
+          type: "限电减产",
+          title: "云南水电波动反噬“绿色铝”产能",
+          summary:
+            "电解铝最核心的成本不是矿，而是电。云南限电让市场第一次深刻意识到“绿色铝”同样会受天气与电网约束。",
+          impact:
+            "Reuters 报道，云南铝厂过去两年多次因水电不足被迫减产，部分企业减产幅度达到 10% 到 40%；中国铝行业又占全球近 60% 产出，这种电力约束会迅速传导至全球铝价和绿色金属溢价。",
+          metrics: ["部分企业减产 10%-40%", "中国铝产量约占全球近 60%", "电力约束直接影响全球铝价"],
+          trigger_countries: ["China"],
+          simulation_note: "代入中国，可感受高耗能金属在电力短缺场景下的供应弹性风险。",
+          source_name: "Reuters / Asahi",
+          source_url: "https://www.asahi.com/ajw/articles/15261836"
+        }
+      };
+
+      const UNIT_ZH_MAP = {
+        "metric tons": "吨",
+        "thousand metric tons": "千吨",
+        "thousand metric dry tons": "千干吨",
+        "ten thousand metric tons": "万吨",
+        "million metric tons": "百万吨",
+        "million 480-lb bales": "百万包（480磅/包）",
+        "million barrels per day": "百万桶/日",
+        kilograms: "千克",
+        "thousand carats": "千克拉",
+        "million carats": "百万克拉",
+        "terawatt-hours": "太瓦时（TWh）",
+        "US dollars": "美元"
+      };
+
+      const VALUE_TYPE_ZH_MAP = {
+        Production: "产量",
+        "Production (primary energy)": "产量（一次能源口径）",
+        "Production (daily average, OPEC MOMR Feb 2026, top 15 countries)":
+          "产量（日均，OPEC 2026年2月月报，前15国/地区样本）",
+        "Mine production": "矿山产量",
+        "Mine production, antimony content": "矿山产量（锑含量）",
+        "Mine production, bauxite, dry tons": "矿山产量（铝土矿，干吨）",
+        "Mine production, cobalt content, estimated": "矿山产量（钴含量，估算）",
+        "Mine production, lead content": "矿山产量（铅含量）",
+        "Mine production, lithium content": "矿山产量（锂含量）",
+        "Mine production, manganese content": "矿山产量（锰含量）",
+        "Mine production, marketable phosphate rock": "矿山产量（可销售磷矿石）",
+        "Mine production, molybdenum content": "矿山产量（钼含量）",
+        "Mine production, nickel content": "矿山产量（镍含量）",
+        "Mine production, potassium oxide (K2O) equivalent": "矿山产量（氧化钾 K2O 当量）",
+        "Mine production, rare-earth-oxide equivalent": "矿山产量（稀土氧化物当量）",
+        "Mine production, recoverable copper content": "矿山产量（可回收铜含量）",
+        "Mine production, silver content": "矿山产量（银含量）",
+        "Smelter production, aluminum": "冶炼产量（电解铝）",
+        "Mine production, tin content": "矿山产量（锡含量）",
+        "Mine production, usable ore": "矿山产量（可用矿石）",
+        "Mine production, zinc content": "矿山产量（锌含量）",
+        "mine production, gold content": "矿山产量（金含量）"
+      };
+
+      function toCountryZh(countryEn, countryZh) {
+        if (countryZh && countryZh !== countryEn) return countryZh;
+        return COUNTRY_ZH_PATCH[countryEn] || countryZh || countryEn;
+      }
+
+      function escapeHtml(text) {
+        return String(text ?? "")
+          .replace(/&/g, "&amp;")
+          .replace(/</g, "&lt;")
+          .replace(/>/g, "&gt;")
+          .replace(/"/g, "&quot;")
+          .replace(/'/g, "&#39;");
+      }
+
+      function translateUnit(unit) {
+        return UNIT_ZH_MAP[unit] || unit;
+      }
+
+      function translateValueType(valueType) {
+        if (VALUE_TYPE_ZH_MAP[valueType]) return VALUE_TYPE_ZH_MAP[valueType];
+        if (String(valueType || "").startsWith("Exports trade value")) {
+          return "出口额（" + String(valueType).replace("Exports trade value (", "").replace(")", "") + "）";
+        }
+        if (String(valueType || "").startsWith("Export quantity")) {
+          return "出口量（物理量，" + String(valueType).replace("Export quantity (physical volume, ", "").replace(")", "") + "）";
+        }
+        return String(valueType || "")
+          .replace(/^mine production/i, "矿山产量")
+          .replace("estimated", "估算")
+          .replace("content", "含量");
+      }
+
+      function getTopicTags(name) {
+        return HOT_TOPIC_TAGS[name] || ["全球供应链焦点", "宏观扰动敏感"];
+      }
+
+      function renderTopicTagsHtml(tags, extraClass) {
+        if (!tags || !tags.length) return "";
+        const extra = extraClass ? " " + extraClass : "";
+        return tags
+          .map(
+            (tag, idx) =>
+              "<span class='topic-tag" +
+              (idx % 2 === 1 ? " topic-tag-cool" : "") +
+              extra +
+              "'>" +
+              escapeHtml(tag) +
+              "</span>"
+          )
+          .join("");
+      }
+
+      function setBoardTags(tags) {
+        if (!boardTagsEl) return;
+        if (!tags || !tags.length) {
+          boardTagsEl.innerHTML = "";
+          boardTagsEl.style.display = "none";
+          return;
+        }
+        boardTagsEl.innerHTML = renderTopicTagsHtml(tags);
+        boardTagsEl.style.display = "flex";
+      }
+
+      function getDisruptionSet(commodityCode) {
+        if (!simulatedShutdowns.has(commodityCode)) {
+          simulatedShutdowns.set(commodityCode, new Set());
+        }
+        return simulatedShutdowns.get(commodityCode);
+      }
+
+      function toggleDisruption(commodityCode, countryCode) {
+        const disruptionSet = getDisruptionSet(commodityCode);
+        if (disruptionSet.has(countryCode)) {
+          disruptionSet.delete(countryCode);
+        } else {
+          disruptionSet.add(countryCode);
+        }
+      }
+
+      function clearDisruptions(commodityCode) {
+        getDisruptionSet(commodityCode).clear();
+      }
+
+      function getEventCase(name) {
+        return EVENT_CASES[name] || null;
+      }
+
+      function applyEventCase(commodity, eventCase) {
+        if (!commodity || !eventCase) return;
+        clearDisruptions(commodity.commodity_en);
+        const available = new Set((commodity.entries || []).map((entry) => entry.country_en));
+        (eventCase.trigger_countries || []).forEach((countryCode) => {
+          if (available.has(countryCode)) {
+            getDisruptionSet(commodity.commodity_en).add(countryCode);
+          }
+        });
+      }
+
+      function renderEventPanel(commodity) {
+        if (!eventPanelEl) return;
+
+        if (activeViewMode() !== "commodity" || !commodity) {
+          eventPanelEl.style.display = "none";
+          eventPanelEl.innerHTML = "";
+          return;
+        }
+
+        eventPanelEl.style.display = "grid";
+        const eventCase = getEventCase(commodity.commodity_zh);
+
+        if (!eventCase) {
+          eventPanelEl.innerHTML =
+            "<article class='event-card event-card-fallback'>" +
+            "<div class='event-kicker'>历史冲击案例</div>" +
+            "<h3>该品种的代表事件还在补充中</h3>" +
+            "<p class='event-summary'>当前先提供供应集中度、热点概念和断供推演。后续补入事件后，这里会直接展示“发生了什么”“当时冲击多大”“可否一键代入模拟”。</p>" +
+            "</article>" +
+            "<article class='event-card event-card-fallback'>" +
+            "<h3 class='event-side-title'>当前可用的风险视角</h3>" +
+            "<div class='event-side-copy'>你已经可以通过国家/地区排行、前三集中度和模拟停产，快速判断这个品种在地缘冲突、政策限制或天气冲击下的脆弱点。</div>" +
+            "<div class='event-side-note'>建议先试试榜单右侧的“模拟停产”，把头部国家/地区逐个关掉，体感供应缺口会非常直观。</div>" +
+            "</article>";
+          return;
+        }
+
+        const triggerTargets = (eventCase.trigger_countries || []).filter((countryCode) =>
+          (commodity.entries || []).some((entry) => entry.country_en === countryCode)
+        );
+        const triggerPills = triggerTargets.length
+          ? triggerTargets
+              .map((countryCode) => {
+                const entry = commodity.entries.find((item) => item.country_en === countryCode);
+                return (
+                  "<span class='event-country-pill'>" +
+                  escapeHtml(toCountryZh(countryCode, entry ? entry.country_zh : "")) +
+                  "</span>"
+                );
+              })
+              .join("")
+          : "<span class='event-country-pill'>当前案例仅作阅读参考</span>";
+        const metricsHtml = (eventCase.metrics || [])
+          .map((metric) => "<span class='event-metric'>" + escapeHtml(metric) + "</span>")
+          .join("");
+
+        eventPanelEl.innerHTML =
+          "<article class='event-card'>" +
+          "<div class='event-topline'>" +
+          "<div class='event-eyebrow'>" +
+          "<span class='event-kicker'>历史冲击案例</span>" +
+          "<span class='event-date'>" +
+          escapeHtml(eventCase.date) +
+          "</span>" +
+          "</div>" +
+          "<span class='event-type'>" +
+          escapeHtml(eventCase.type) +
+          "</span>" +
+          "</div>" +
+          "<h3>" +
+          escapeHtml(eventCase.title) +
+          "</h3>" +
+          "<p class='event-summary'>" +
+          escapeHtml(eventCase.summary) +
+          "</p>" +
+          "<div class='event-impact'>" +
+          "<div class='event-impact-label'>对该品种的冲击</div>" +
+          "<div class='event-impact-text'>" +
+          escapeHtml(eventCase.impact) +
+          "</div></div>" +
+          "<div class='event-metrics'>" +
+          metricsHtml +
+          "</div>" +
+          "<div class='event-source'>" +
+          "<div class='event-source-label'>来源：" +
+          escapeHtml(eventCase.source_name) +
+          "</div>" +
+          "<a href='" +
+          escapeHtml(eventCase.source_url) +
+          "' target='_blank' rel='noreferrer'>查看来源</a>" +
+          "</div>" +
+          "</article>" +
+          "<article class='event-card'>" +
+          "<h3 class='event-side-title'>代入这个事件</h3>" +
+          "<div class='event-side-copy'>" +
+          escapeHtml(eventCase.simulation_note || "点击按钮后，会将相关国家/地区直接代入断供模拟。") +
+          "</div>" +
+          "<div class='event-country-pills'>" +
+          triggerPills +
+          "</div>" +
+          "<div class='event-actions'>" +
+          "<button class='event-btn' type='button' data-apply-event='1' " +
+          (triggerTargets.length
+            ? "data-event-name='" + escapeHtml(commodity.commodity_zh) + "'"
+            : "disabled") +
+          ">代入本事件</button>" +
+          "<div class='event-hint'>" +
+          (triggerTargets.length
+            ? "会自动把关联国家/地区加入“模拟停产”"
+            : "该事件暂不直接映射到榜单中的国家/地区停产") +
+          "</div>" +
+          "</div>" +
+          "</article>";
+      }
+
+      function renderSimulationPanel(commodity, disruptedEntries, remainingTotal, gapPct) {
+        if (!simulationCardEl || !simulationBodyEl || !resetSimulationBtn) return;
+
+        if (activeViewMode() !== "commodity" || !commodity) {
+          simulationCardEl.style.display = "none";
+          return;
+        }
+
+        simulationCardEl.style.display = "block";
+        resetSimulationBtn.style.display = disruptedEntries.length ? "inline-block" : "none";
+
+        if (!disruptedEntries.length) {
+          simulationBodyEl.className = "sim-empty";
+          simulationBodyEl.innerHTML =
+            "点击榜单中的“模拟停产”，即可推演单国/地区或多国/地区断供后的供应缺口与剩余份额变化。";
+          return;
+        }
+
+        const disruptedLabel =
+          disruptedEntries.length === 1 ? "若该国家/地区断供" : "若这些国家/地区断供";
+        const pillsHtml = disruptedEntries
+          .map(
+            (entry) =>
+              "<span class='sim-pill'>" +
+              escapeHtml(toCountryZh(entry.country_en, entry.country_zh)) +
+              "</span>"
+          )
+          .join("");
+
+        simulationBodyEl.className = "";
+        simulationBodyEl.innerHTML =
+          "<div class='sim-alert'>" +
+          disruptedLabel +
+          "，全球将出现 <strong>" +
+          gapPct.toFixed(2) +
+          "%</strong> 的绝对缺口。</div>" +
+          "<div class='sim-meta'>剩余可供量：" +
+          formatNumber(Math.max(remainingTotal, 0)) +
+          " " +
+          escapeHtml(translateUnit(commodity.unit)) +
+          "</div>" +
+          "<div class='sim-pills'>" +
+          pillsHtml +
+          "</div>";
+      }
+
+      function buildCountryProfiles(coreCountries, productList) {
+        const coreSet = new Set(coreCountries);
+        const profileMap = new Map();
+
+        productList.forEach((product) => {
+          product.entries.forEach((entry) => {
+            if (!coreSet.has(entry.country_en)) return;
+            if (!profileMap.has(entry.country_en)) {
+              profileMap.set(entry.country_en, {
+                country_en: entry.country_en,
+                country_zh: toCountryZh(entry.country_en, entry.country_zh),
+                entries: []
+              });
+            }
+            profileMap.get(entry.country_en).entries.push({
+              commodity_en: product.commodity_en,
+              commodity_zh: product.commodity_zh,
+              share_pct: entry.share_pct,
+              value: entry.value,
+              unit: product.unit,
+              value_type: product.value_type,
+              year: product.year,
+              global_rank: entry.rank
+            });
+          });
+        });
+
+        return Array.from(profileMap.values())
+          .map((profile) => ({
+            ...profile,
+            entries: [...profile.entries].sort((a, b) => b.share_pct - a.share_pct)
+          }))
+          .filter((profile) => profile.entries.length > 0)
+          .sort((a, b) => b.entries[0].share_pct - a.entries[0].share_pct);
+      }
+
+      function formatNumber(num) {
+        return new Intl.NumberFormat("zh-CN", { maximumFractionDigits: 2 }).format(num);
+      }
+
+      function formatYearLabel(year) {
+        const text = String(year ?? "");
+        return /^\\d{4}$/.test(text) ? text + "年" : text;
+      }
+
+      function activeMetric() {
+        const checked = metricRadios.find((n) => n.checked);
+        return checked ? checked.value : "share";
+      }
+
+      function activeViewMode() {
+        const checked = viewModeRadios.find((n) => n.checked);
+        return checked ? checked.value : "commodity";
+      }
+
+      function getFilteredProducts() {
+        const scope = majorCategorySelect.value || "all";
+        if (scope === "all") return allProducts;
+        return allProducts.filter((p) => p.group_major === scope);
+      }
+
+      function selectedCommodity() {
+        const products = getFilteredProducts();
+        const code = commoditySelect.value;
+        return products.find((c) => c.commodity_en === code) || products[0] || null;
+      }
+
+      function getCountryProfiles() {
+        return buildCountryProfiles(CORE_COUNTRIES, getFilteredProducts());
+      }
+
+      function selectedCountryProfile() {
+        const countryProfiles = getCountryProfiles();
+        const code = coreCountrySelect.value;
+        return countryProfiles.find((c) => c.country_en === code) || countryProfiles[0] || null;
+      }
+
+      function setSummaryLabels(label1, label2, label3, label4) {
+        summaryLabel1El.textContent = label1;
+        summaryLabel2El.textContent = label2;
+        summaryLabel3El.textContent = label3;
+        summaryLabel4El.textContent = label4;
+      }
+
+      function setMetricValueEnabled(enabled) {
+        if (!metricValueRadio || !metricShareRadio || !metricValueLabel) return;
+        metricValueRadio.disabled = !enabled;
+        metricValueLabel.style.opacity = enabled ? "1" : "0.45";
+        metricValueLabel.style.cursor = enabled ? "pointer" : "not-allowed";
+        if (!enabled && metricValueRadio.checked) {
+          metricShareRadio.checked = true;
+        }
+      }
+
+      function setViewModeUI() {
+        const mode = activeViewMode();
+        const isCommodity = mode === "commodity";
+        commodityFieldEl.style.display = isCommodity ? "flex" : "none";
+        countryFieldEl.style.display = isCommodity ? "none" : "flex";
+        if (isCommodity) {
+          searchLabelEl.textContent = "国家/地区高亮（中文）";
+          countrySearch.placeholder = "例如：缅甸 / 巴西 / 欧盟";
+          setMetricValueEnabled(true);
+        } else {
+          searchLabelEl.textContent = "品种高亮（中文）";
+          countrySearch.placeholder = "例如：铜 / 原油 / 大豆";
+          setMetricValueEnabled(false);
+        }
+      }
+
+      function renderCommodityBoard() {
+        const commodity = selectedCommodity();
+        if (!commodity) {
+          setBoardTags([]);
+          renderEventPanel(null);
+          renderSimulationPanel(null, [], 0, 0);
+          boardTitleEl.textContent = "暂无可显示品种";
+          boardSubTitleEl.textContent = "当前筛选范围没有数据";
+          boardEl.innerHTML = "<div>暂无数据</div>";
+          return;
+        }
+
+        const topN = Number(topNSelect.value) || 10;
+        const metric = activeMetric();
+        const keyword = String(countrySearch.value || "").trim().toLowerCase();
+        const disruptionSet = getDisruptionSet(commodity.commodity_en);
+        const disruptedEntries = commodity.entries.filter((entry) => disruptionSet.has(entry.country_en));
+        const activeEntries = commodity.entries.filter((entry) => !disruptionSet.has(entry.country_en));
+        const disruptedValue = disruptedEntries.reduce((sum, entry) => sum + Number(entry.value || 0), 0);
+        const remainingTotal = Math.max(Number(commodity.world_total || 0) - disruptedValue, 0);
+        const simulationActive = disruptedEntries.length > 0;
+        const rankedEntries = activeEntries.map((entry, idx) => ({
+          ...entry,
+          adjusted_rank: idx + 1,
+          adjusted_share: remainingTotal > 0 ? (Number(entry.value || 0) / remainingTotal) * 100 : 0
+        }));
+        const visibleEntries = rankedEntries.slice(0, topN);
+        const maxMetricValue = Math.max(
+          ...visibleEntries.map((entry) =>
+            metric === "share"
+              ? simulationActive
+                ? entry.adjusted_share
+                : entry.share_pct
+              : entry.value
+          ),
+          1
+        );
+        const gapPct =
+          commodity.world_total > 0 ? (disruptedValue / Number(commodity.world_total)) * 100 : 0;
+
+        boardTitleEl.textContent = commodity.commodity_zh + "供应排行";
+        setBoardTags(getTopicTags(commodity.commodity_zh));
+        renderEventPanel(commodity);
+        boardSubTitleEl.textContent =
+          "口径：" +
+          translateValueType(commodity.value_type) +
+          " | 年份：" +
+          commodity.year +
+          " | 单位：" +
+          translateUnit(commodity.unit) +
+          (simulationActive
+            ? " | 已模拟停产 " +
+              disruptedEntries.length +
+              " 个国家/地区 | 绝对缺口 " +
+              gapPct.toFixed(2) +
+              "%"
+            : "");
+
+        setSummaryLabels(
+          simulationActive ? "剩余可供量" : "全球总量",
+          simulationActive ? "剩余供应第一名占比" : "第一名占比",
+          simulationActive ? "剩余供应前三集中度" : "前三集中度",
+          simulationActive ? "可供国家/地区数" : "统计国家/地区数"
+        );
+        worldTotalEl.textContent =
+          formatNumber(simulationActive ? remainingTotal : commodity.world_total) +
+          " " +
+          translateUnit(commodity.unit);
+        top1ShareEl.textContent = visibleEntries.length
+          ? (simulationActive ? visibleEntries[0].adjusted_share : visibleEntries[0].share_pct).toFixed(2) +
+            "%"
+          : "-";
+        const cr3 = visibleEntries
+          .slice(0, 3)
+          .reduce(
+            (sum, item) => sum + (simulationActive ? item.adjusted_share : item.share_pct),
+            0
+          );
+        cr3ShareEl.textContent = cr3.toFixed(2) + "%";
+        countryCountEl.textContent = simulationActive
+          ? activeEntries.length + " / " + commodity.entries.length
+          : String(commodity.entries.length);
+
+        renderSimulationPanel(commodity, disruptedEntries, remainingTotal, gapPct);
+
+        const rowsHtml = visibleEntries
+          .map((entry, idx) => {
+            const effectiveShare = simulationActive ? entry.adjusted_share : entry.share_pct;
+            const metricValue = metric === "share" ? effectiveShare : entry.value;
+            const widthPct = Math.max(3, (metricValue / maxMetricValue) * 100);
+            const countryZh = toCountryZh(entry.country_en, entry.country_zh);
+            const isHighlight =
+              keyword &&
+              (entry.country_en.toLowerCase().includes(keyword) ||
+                countryZh.toLowerCase().includes(keyword));
+            const valueLabel =
+              metric === "share"
+                ? effectiveShare.toFixed(2) +
+                  "%" +
+                  (simulationActive
+                    ? "<div class='value-sub'>原占比 " + entry.share_pct.toFixed(2) + "%</div>"
+                    : "")
+                : formatNumber(entry.value) + " " + translateUnit(commodity.unit);
+            const rankLabel = simulationActive
+              ? "剩余供应第" + entry.adjusted_rank + "位 | 原全球第" + entry.rank + "位"
+              : "全球第" + entry.rank + "位";
+
+            return (
+              "<div class='row " +
+              (isHighlight ? "highlight" : "") +
+              "'>" +
+              "<div class='rank'>#" +
+              (idx + 1) +
+              "</div>" +
+              "<div>" +
+              "<div class='country-label'>" +
+              "<div class='label-main'>" +
+              "<div class='label-title'><span class='label-name'>" +
+              escapeHtml(countryZh) +
+              "</span></div>" +
+              "<div class='label-sub'>" +
+              rankLabel +
+              "</div></div>" +
+              "<div class='label-actions'>" +
+              "<button class='sim-toggle' type='button' data-sim-commodity='" +
+              escapeHtml(commodity.commodity_en) +
+              "' data-sim-country='" +
+              escapeHtml(entry.country_en) +
+              "'>模拟停产</button>" +
+              "</div></div>" +
+              "<div class='bar-wrap'><div class='bar' style='width:" +
+              widthPct.toFixed(1) +
+              "%'></div></div>" +
+              "</div>" +
+              "<div class='value'>" +
+              valueLabel +
+              "</div>" +
+              "</div>"
+            );
+          })
+          .join("");
+
+        const disruptedRowsHtml = disruptedEntries.length
+          ? "<div class='section-label'>已模拟停产</div>" +
+            disruptedEntries
+              .map((entry) => {
+                const countryZh = toCountryZh(entry.country_en, entry.country_zh);
+                const isHighlight =
+                  keyword &&
+                  (entry.country_en.toLowerCase().includes(keyword) ||
+                    countryZh.toLowerCase().includes(keyword));
+                const disruptedMetricValue = metric === "share" ? entry.share_pct : entry.value;
+                const disruptedWidthPct = Math.max(
+                  3,
+                  (disruptedMetricValue /
+                    Math.max(
+                      ...disruptedEntries.map((item) =>
+                        metric === "share" ? item.share_pct : item.value
+                      ),
+                      1
+                    )) *
+                    100
+                );
+                return (
+                  "<div class='row offline " +
+                  (isHighlight ? "highlight" : "") +
+                  "'>" +
+                  "<div class='rank'>×</div>" +
+                  "<div>" +
+                  "<div class='country-label'>" +
+                  "<div class='label-main'>" +
+                  "<div class='label-title'><span class='label-name'>" +
+                  escapeHtml(countryZh) +
+                  "</span></div>" +
+                  "<div class='label-sub'>已模拟停产 | 原全球第" +
+                  entry.rank +
+                  "位</div></div>" +
+                  "<div class='label-actions'>" +
+                  "<button class='sim-toggle sim-toggle-active' type='button' data-sim-commodity='" +
+                  escapeHtml(commodity.commodity_en) +
+                  "' data-sim-country='" +
+                  escapeHtml(entry.country_en) +
+                  "'>恢复供应</button>" +
+                  "</div></div>" +
+                  "<div class='bar-wrap'><div class='bar' style='width:" +
+                  disruptedWidthPct.toFixed(1) +
+                  "%'></div></div>" +
+                  "</div>" +
+                  "<div class='value'>" +
+                  (metric === "share"
+                    ? "缺口 " +
+                      entry.share_pct.toFixed(2) +
+                      "%<div class='value-sub'>原全球占比</div>"
+                    : formatNumber(entry.value) +
+                      " " +
+                      translateUnit(commodity.unit) +
+                      "<div class='value-sub'>已模拟停产</div>") +
+                  "</div>" +
+                  "</div>"
+                );
+              })
+              .join("")
+          : "";
+
+        boardEl.innerHTML = rowsHtml + disruptedRowsHtml || "<div>暂无数据</div>";
+      }
+
+      function renderCountryBoard() {
+        const profile = selectedCountryProfile();
+        if (!profile) {
+          setBoardTags([]);
+          renderEventPanel(null);
+          renderSimulationPanel(null, [], 0, 0);
+          boardTitleEl.textContent = "暂无可显示国家/地区";
+          boardSubTitleEl.textContent = "当前筛选范围没有数据";
+          boardEl.innerHTML = "<div>暂无数据</div>";
+          return;
+        }
+
+        const topN = Number(topNSelect.value) || 10;
+        const keyword = String(countrySearch.value || "").trim().toLowerCase();
+        const entries = profile.entries.slice(0, topN);
+        const maxShare = Math.max(...entries.map((e) => e.share_pct), 1);
+
+        boardTitleEl.textContent = profile.country_zh + "核心品种贡献";
+        setBoardTags([]);
+        renderEventPanel(null);
+        renderSimulationPanel(null, [], 0, 0);
+        boardSubTitleEl.textContent = "按该国家/地区在各品种全球占比排序（仅展示核心国家/地区样本）";
+
+        setSummaryLabels("覆盖品种数", "第一品种占比", "前三品种占比", "展示品种数");
+        worldTotalEl.textContent = String(profile.entries.length);
+        top1ShareEl.textContent = entries.length ? entries[0].share_pct.toFixed(2) + "%" : "-";
+        const cr3 = entries.slice(0, 3).reduce((sum, item) => sum + item.share_pct, 0);
+        cr3ShareEl.textContent = cr3.toFixed(2) + "%";
+        countryCountEl.textContent = String(entries.length);
+
+        const rowsHtml = entries
+          .map((entry, idx) => {
+            const widthPct = Math.max(3, (entry.share_pct / maxShare) * 100);
+            const isHighlight =
+              keyword &&
+              (entry.commodity_en.toLowerCase().includes(keyword) ||
+                entry.commodity_zh.toLowerCase().includes(keyword));
+            const valueLabel = entry.share_pct.toFixed(2) + "%";
+            const topicTagsHtml = renderTopicTagsHtml(getTopicTags(entry.commodity_zh), "topic-tag-inline");
+            return (
+              "<div class='row " +
+              (isHighlight ? "highlight" : "") +
+              "'>" +
+              "<div class='rank'>#" +
+              (idx + 1) +
+              "</div>" +
+              "<div>" +
+              "<div class='country-label'><div class='label-main'><div class='label-title'><span class='label-name'>" +
+              escapeHtml(entry.commodity_zh) +
+              "</span>" +
+              topicTagsHtml +
+              "</div><div class='label-sub'>" +
+              "全球第" +
+              entry.global_rank +
+              "位" +
+              " | " +
+              translateValueType(entry.value_type) +
+              " | " +
+              translateUnit(entry.unit) +
+              " | " +
+              formatYearLabel(entry.year) +
+              "</div></div></div>" +
+              "<div class='bar-wrap'><div class='bar' style='width:" +
+              widthPct.toFixed(1) +
+              "%'></div></div>" +
+              "</div>" +
+              "<div class='value'>" +
+              valueLabel +
+              "</div>" +
+              "</div>"
+            );
+          })
+          .join("");
+
+        boardEl.innerHTML = rowsHtml || "<div>暂无数据</div>";
+      }
+
+      function renderBoard() {
+        if (activeViewMode() === "country") {
+          renderCountryBoard();
+        } else {
+          renderCommodityBoard();
+        }
+      }
+
+      function initCommoditySelect() {
+        const products = getFilteredProducts();
+        const current = commoditySelect.value;
+
+        commoditySelect.innerHTML = products
+          .map((item) => {
+            return "<option value='" + item.commodity_en + "'>" + item.commodity_zh + "</option>";
+          })
+          .join("");
+
+        if (!products.length) return;
+        if (products.some((p) => p.commodity_en === current)) {
+          commoditySelect.value = current;
+          return;
+        }
+
+        const scope = majorCategorySelect.value || "all";
+        let preferred = null;
+        if (scope === "all") preferred = products.find((p) => p.commodity_zh === "原油");
+        if (scope === "矿产") preferred = products.find((p) => p.commodity_zh === "锡");
+        if (scope === "能化") preferred = products.find((p) => p.commodity_zh === "原油");
+        if (scope === "农产品") preferred = products.find((p) => p.commodity_zh === "大豆");
+        if (!preferred) preferred = products[0];
+        commoditySelect.value = preferred.commodity_en;
+      }
+
+      function initCountrySelect() {
+        const countryProfiles = getCountryProfiles();
+        const current = coreCountrySelect.value;
+
+        coreCountrySelect.innerHTML = countryProfiles
+          .map((item) => {
+            return (
+              "<option value='" +
+              item.country_en +
+              "'>" +
+              toCountryZh(item.country_en, item.country_zh) +
+              "</option>"
+            );
+          })
+          .join("");
+
+        if (!countryProfiles.length) return;
+        if (countryProfiles.some((c) => c.country_en === current)) {
+          coreCountrySelect.value = current;
+          return;
+        }
+
+        let preferred = null;
+        const scope = majorCategorySelect.value || "all";
+        if (scope === "all") preferred = countryProfiles.find((c) => c.country_en === "China");
+        if (scope === "矿产") preferred = countryProfiles.find((c) => c.country_en === "Chile");
+        if (scope === "能化") preferred = countryProfiles.find((c) => c.country_en === "Saudi Arabia");
+        if (scope === "农产品") preferred = countryProfiles.find((c) => c.country_en === "Brazil");
+        if (!preferred) preferred = countryProfiles[0];
+        coreCountrySelect.value = preferred.country_en;
+      }
+
+      function bindEvents() {
+        majorCategorySelect.addEventListener("change", () => {
+          initCommoditySelect();
+          initCountrySelect();
+          renderBoard();
+        });
+        commoditySelect.addEventListener("change", renderBoard);
+        coreCountrySelect.addEventListener("change", renderBoard);
+        topNSelect.addEventListener("change", renderBoard);
+        countrySearch.addEventListener("input", renderBoard);
+        metricRadios.forEach((radio) => radio.addEventListener("change", renderBoard));
+        viewModeRadios.forEach((radio) =>
+          radio.addEventListener("change", () => {
+            setViewModeUI();
+            renderBoard();
+          })
+        );
+        boardEl.addEventListener("click", (event) => {
+          const button = event.target.closest("[data-sim-country]");
+          if (!button) return;
+          const commodityCode = button.getAttribute("data-sim-commodity");
+          const countryCode = button.getAttribute("data-sim-country");
+          if (!commodityCode || !countryCode) return;
+          toggleDisruption(commodityCode, countryCode);
+          renderBoard();
+        });
+        eventPanelEl.addEventListener("click", (event) => {
+          const button = event.target.closest("[data-apply-event]");
+          if (!button) return;
+          const commodity = selectedCommodity();
+          if (!commodity) return;
+          const eventCase = getEventCase(commodity.commodity_zh);
+          if (!eventCase) return;
+          applyEventCase(commodity, eventCase);
+          renderBoard();
+        });
+        resetSimulationBtn.addEventListener("click", () => {
+          const commodity = selectedCommodity();
+          if (!commodity) return;
+          clearDisruptions(commodity.commodity_en);
+          renderBoard();
+        });
+      }
+
+      function init() {
+        initCommoditySelect();
+        initCountrySelect();
+        setViewModeUI();
+        bindEvents();
+        renderBoard();
+      }
+
+      init();
+    </script>
+  </body>
+</html>
