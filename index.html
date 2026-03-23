@@ -1,3 +1,4 @@
+
 <!doctype html>
 <html lang="zh-CN">
   <head>
@@ -32,22 +33,24 @@
 
       .layout {
         min-height: 100vh;
-        display: grid;
-        grid-template-columns: 340px 1fr;
+        display: block;
+        max-width: 100%;
       }
 
       .sidebar {
-        border-right: 1px solid var(--line);
+        border-bottom: 1px solid var(--line);
         background: linear-gradient(180deg, #f9fcff 0%, #ffffff 100%);
-        padding: 18px;
+        padding: 14px;
         display: flex;
         flex-direction: column;
-        gap: 14px;
+        gap: 12px;
       }
 
       .title {
         margin: 0;
-        font-size: 22px;
+        font-size: 28px;
+        line-height: 1.12;
+        letter-spacing: -0.03em;
       }
 
       .desc {
@@ -71,27 +74,32 @@
       select,
       input[type="text"] {
         width: 100%;
-        height: 40px;
+        height: 46px;
         border: 1px solid #c5d8ec;
-        border-radius: 10px;
-        padding: 0 10px;
-        font-size: 14px;
+        border-radius: 12px;
+        padding: 0 12px;
+        font-size: 16px;
+        background: #fff;
+        appearance: none;
       }
 
       .radio-group {
         display: flex;
+        flex-wrap: wrap;
         gap: 8px;
       }
 
       .radio-group label {
         flex: 1;
+        min-width: calc(50% - 4px);
         border: 1px solid #c5d8ec;
         border-radius: 999px;
-        padding: 8px 10px;
-        font-size: 12px;
+        padding: 10px 12px;
+        font-size: 13px;
         text-align: center;
         cursor: pointer;
         user-select: none;
+        background: #fff;
       }
 
       .radio-group input {
@@ -102,8 +110,8 @@
         color: #fff;
         background: var(--accent);
         border-radius: 999px;
-        padding: 8px 10px;
-        margin: -8px -10px;
+        padding: 10px 12px;
+        margin: -10px -12px;
         display: block;
       }
 
@@ -116,8 +124,8 @@
       .card {
         background: var(--panel);
         border: 1px solid var(--line);
-        border-radius: 12px;
-        padding: 10px;
+        border-radius: 14px;
+        padding: 12px;
       }
 
       .card .k {
@@ -132,17 +140,17 @@
       }
 
       .main {
-        padding: 16px 18px 22px;
+        padding: 14px 14px 20px;
         display: flex;
         flex-direction: column;
-        gap: 10px;
+        gap: 12px;
       }
 
       .header-row {
         display: flex;
-        justify-content: space-between;
+        justify-content: flex-start;
         gap: 8px;
-        align-items: flex-end;
+        align-items: flex-start;
       }
 
       .title-stack {
@@ -160,7 +168,8 @@
 
       .header-row h2 {
         margin: 0;
-        font-size: 20px;
+        font-size: 24px;
+        line-height: 1.2;
       }
 
       .header-row p {
@@ -173,12 +182,174 @@
         background: var(--panel);
         border: 1px solid var(--line);
         border-radius: 14px;
+        padding: 12px;
+      }
+
+      .hero-panel {
+        background:
+          radial-gradient(circle at 80% 20%, rgba(79, 113, 255, 0.12), transparent 30%),
+          linear-gradient(180deg, #ffffff 0%, #f7fbff 100%);
+        border: 1px solid var(--line);
+        border-radius: 16px;
         padding: 14px;
+      }
+
+      .hero-kicker {
+        font-size: 12px;
+        color: var(--sub);
+        font-weight: 700;
+        letter-spacing: 0.04em;
+        text-transform: uppercase;
+      }
+
+      .hero-title {
+        margin-top: 8px;
+        font-size: 15px;
+        line-height: 1.5;
+        color: #243f61;
+      }
+
+      .hero-title strong {
+        display: inline-block;
+        font-size: 30px;
+        color: #5470ff;
+        line-height: 1;
+        letter-spacing: -0.03em;
+        margin: 4px 2px;
+      }
+
+      .treemap-shell {
+        margin-top: 16px;
+        display: grid;
+        grid-template-columns: minmax(0, 1fr);
+        gap: 12px;
+      }
+
+      .treemap-head {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 10px;
+        flex-wrap: wrap;
+      }
+
+      .treemap-title {
+        font-size: 14px;
+        font-weight: 700;
+        color: #1b3553;
+      }
+
+      .treemap-sub {
+        font-size: 12px;
+        color: var(--sub);
+      }
+
+      .treemap {
+        position: relative;
+        min-height: 300px;
+        border-radius: 16px;
+        overflow: hidden;
+        background:
+          linear-gradient(180deg, rgba(255, 255, 255, 0.88), rgba(247, 251, 255, 0.96)),
+          #f4f8fc;
+        border: 1px solid #dce7f2;
+      }
+
+      .treemap-block {
+        position: absolute;
+        padding: 11px;
+        border: 1px solid rgba(255, 255, 255, 0.78);
+        overflow: hidden;
+      }
+
+      .treemap-block::after {
+        content: "";
+        position: absolute;
+        inset: 0;
+        background: linear-gradient(145deg, rgba(255, 255, 255, 0.12), transparent 55%);
+        pointer-events: none;
+      }
+
+      .treemap-block-inner {
+        position: relative;
+        z-index: 1;
+        height: 100%;
+        display: flex;
+        flex-direction: column;
+        justify-content: space-between;
+      }
+
+      .treemap-name {
+        font-size: 12px;
+        font-weight: 800;
+        line-height: 1.2;
+      }
+
+      .treemap-value {
+        margin-top: 6px;
+        font-size: 24px;
+        font-weight: 900;
+        line-height: 1;
+        letter-spacing: -0.03em;
+      }
+
+      .treemap-value-sub {
+        margin-top: 4px;
+        font-size: 10px;
+        font-weight: 700;
+        opacity: 0.9;
+        line-height: 1.3;
+      }
+
+      .treemap-block-compact {
+        padding: 9px;
+      }
+
+      .treemap-block-compact .treemap-name {
+        font-size: 11px;
+      }
+
+      .treemap-block-compact .treemap-value {
+        font-size: 18px;
+      }
+
+      .treemap-block-compact .treemap-value-sub {
+        font-size: 9px;
+      }
+
+      .treemap-block-tiny {
+        padding: 7px;
+      }
+
+      .treemap-block-tiny .treemap-name {
+        font-size: 10px;
+      }
+
+      .treemap-block-tiny .treemap-value {
+        font-size: 14px;
+      }
+
+      .treemap-block-tiny .treemap-value-sub {
+        font-size: 8px;
+      }
+
+      .treemap-active {
+        color: #fff;
+      }
+
+      .treemap-gap {
+        color: #1b1b1b;
+        background: linear-gradient(180deg, #d6d6d6 0%, #b7b7b7 100%);
+      }
+
+      .treemap-other {
+        color: #213d5e;
+        background: linear-gradient(180deg, #edf4fb 0%, #dbe8f6 100%);
       }
 
       .event-panel {
         display: grid;
-        grid-template-columns: minmax(0, 1.2fr) minmax(260px, 0.8fr);
+        grid-template-columns: 1fr;
         gap: 14px;
       }
 
@@ -239,7 +410,7 @@
 
       .event-card h3 {
         margin: 0 0 8px;
-        font-size: 18px;
+        font-size: 16px;
       }
 
       .event-summary {
@@ -270,56 +441,6 @@
         color: #8d2f28;
       }
 
-      .event-metrics {
-        display: flex;
-        flex-wrap: wrap;
-        gap: 8px;
-        margin-top: 12px;
-      }
-
-      .event-metric {
-        display: inline-flex;
-        align-items: center;
-        padding: 6px 10px;
-        border-radius: 999px;
-        background: #eef5ff;
-        border: 1px solid #d5e6fb;
-        color: #1f5a92;
-        font-size: 12px;
-        font-weight: 700;
-      }
-
-      .event-actions {
-        margin-top: 12px;
-        display: flex;
-        align-items: center;
-        gap: 10px;
-        flex-wrap: wrap;
-      }
-
-      .event-btn {
-        height: 36px;
-        border: 0;
-        border-radius: 999px;
-        padding: 0 14px;
-        background: linear-gradient(90deg, #f59f00, #db6c00);
-        color: #fff;
-        font-size: 13px;
-        font-weight: 700;
-        font-family: inherit;
-        cursor: pointer;
-      }
-
-      .event-btn:disabled {
-        opacity: 0.55;
-        cursor: not-allowed;
-      }
-
-      .event-hint {
-        font-size: 12px;
-        color: var(--sub);
-      }
-
       .event-source {
         display: flex;
         align-items: center;
@@ -343,64 +464,24 @@
         font-weight: 700;
       }
 
-      .event-side-title {
-        margin: 0 0 10px;
-        font-size: 15px;
-      }
-
-      .event-side-copy {
-        font-size: 13px;
-        line-height: 1.7;
-        color: #28415f;
-      }
-
-      .event-country-pills {
-        margin-top: 10px;
-        display: flex;
-        flex-wrap: wrap;
-        gap: 8px;
-      }
-
-      .event-country-pill {
-        display: inline-flex;
-        align-items: center;
-        padding: 5px 9px;
-        border-radius: 999px;
-        background: #edf6ff;
-        border: 1px solid #d3e5fb;
-        color: #18558e;
-        font-size: 12px;
-        font-weight: 700;
-      }
-
-      .event-side-note {
-        margin-top: 12px;
-        padding: 10px 12px;
-        border-radius: 12px;
-        background: #f7fbff;
-        border: 1px solid #d8e7f7;
-        color: var(--sub);
-        font-size: 12px;
-        line-height: 1.6;
-      }
-
       .row {
         display: grid;
-        grid-template-columns: 46px 1fr 130px;
-        gap: 12px;
-        align-items: center;
-        margin-bottom: 10px;
+        grid-template-columns: 34px minmax(0, 1fr);
+        gap: 8px 10px;
+        align-items: start;
+        margin-bottom: 12px;
       }
 
       .rank {
         font-weight: 700;
         color: #33537a;
         text-align: right;
+        padding-top: 2px;
       }
 
       .country-label {
         display: flex;
-        justify-content: space-between;
+        flex-direction: column;
         align-items: flex-start;
         gap: 8px;
         font-size: 14px;
@@ -434,6 +515,8 @@
         align-items: center;
         gap: 8px;
         flex-shrink: 0;
+        width: 100%;
+        justify-content: flex-start;
       }
 
       .country-en {
@@ -474,7 +557,7 @@
 
       .bar-wrap {
         width: 100%;
-        height: 16px;
+        height: 14px;
         border-radius: 999px;
         background: #e5eef8;
         overflow: hidden;
@@ -487,10 +570,12 @@
       }
 
       .value {
-        text-align: right;
+        grid-column: 2;
+        text-align: left;
         font-size: 13px;
         font-weight: 600;
         color: #183b67;
+        padding-left: 0;
       }
 
       .value-sub {
@@ -520,7 +605,8 @@
       .sim-toggle {
         border: 1px solid #c7d8ec;
         border-radius: 999px;
-        padding: 5px 10px;
+        min-height: 34px;
+        padding: 7px 12px;
         background: #fff;
         color: #215387;
         font-size: 12px;
@@ -630,36 +716,151 @@
         margin-top: 4px;
       }
 
-      @media (max-width: 1040px) {
-        .layout {
-          grid-template-columns: 1fr;
-        }
-
-        .sidebar {
-          border-right: 0;
-          border-bottom: 1px solid var(--line);
-        }
-
-        .row {
-          grid-template-columns: 40px 1fr 100px;
+      @media (max-width: 520px) {
+        .summary-grid {
+          grid-template-columns: 1fr 1fr;
           gap: 8px;
         }
 
+        .title {
+          font-size: 24px;
+        }
+
+        .header-row h2 {
+          font-size: 21px;
+        }
+
+        .hero-title strong {
+          font-size: 24px;
+        }
+
+        .treemap {
+          min-height: 260px;
+        }
+
+        .treemap-title,
+        .treemap-sub {
+          width: 100%;
+        }
+      }
+
+      @media (min-width: 1041px) {
+        .layout {
+          display: grid;
+          grid-template-columns: 340px 1fr;
+          max-width: 1480px;
+          margin: 0 auto;
+        }
+
+        .sidebar {
+          position: sticky;
+          top: 0;
+          align-self: start;
+          min-height: 100vh;
+          border-right: 1px solid var(--line);
+          border-bottom: 0;
+          padding: 18px;
+          gap: 14px;
+        }
+
+        .title {
+          font-size: 22px;
+          line-height: 1.1;
+        }
+
+        select,
+        input[type="text"] {
+          height: 40px;
+          font-size: 14px;
+          border-radius: 10px;
+          padding: 0 10px;
+        }
+
+        .radio-group label {
+          min-width: 0;
+          padding: 8px 10px;
+          font-size: 12px;
+        }
+
+        .radio-group input:checked + span {
+          padding: 8px 10px;
+          margin: -8px -10px;
+        }
+
+        .card {
+          border-radius: 12px;
+          padding: 10px;
+        }
+
+        .main {
+          padding: 16px 18px 22px;
+          gap: 10px;
+        }
+
         .event-panel {
-          grid-template-columns: 1fr;
+          grid-template-columns: minmax(0, 1.2fr) minmax(260px, 0.8fr);
+        }
+
+        .header-row {
+          justify-content: space-between;
+          align-items: flex-end;
+        }
+
+        .header-row h2 {
+          font-size: 20px;
+        }
+
+        .hero-panel {
+          border-radius: 18px;
+          padding: 18px;
+        }
+
+        .hero-title {
+          font-size: 16px;
+        }
+
+        .hero-title strong {
+          font-size: 44px;
+          margin: 0 3px;
+        }
+
+        .treemap {
+          min-height: 390px;
+          border-radius: 18px;
         }
 
         .headline-row {
-          align-items: flex-start;
+          align-items: center;
+        }
+
+        .board {
+          padding: 14px;
+        }
+
+        .row {
+          grid-template-columns: 46px 1fr 130px;
+          gap: 12px;
+          align-items: center;
+          margin-bottom: 10px;
         }
 
         .country-label {
-          flex-direction: column;
+          flex-direction: row;
+          justify-content: space-between;
         }
 
         .label-actions {
-          width: 100%;
-          justify-content: flex-start;
+          width: auto;
+          justify-content: flex-end;
+        }
+
+        .bar-wrap {
+          height: 16px;
+        }
+
+        .value {
+          grid-column: auto;
+          text-align: right;
         }
       }
     </style>
@@ -773,9 +974,11 @@
           </div>
         </div>
 
-        <section class="event-panel" id="eventPanel"></section>
+        <section class="hero-panel" id="heroPanel"></section>
 
         <section class="board" id="board"></section>
+
+        <section class="event-panel" id="eventPanel"></section>
 
         <p class="footnote">
           说明：矿产数据主要参考美国地质调查局（USGS）发布的2025年估算数据。能化品种中，原油数据采用 OPEC 2026年2月月报口径，煤炭数据参考 Energy Institute 与 IEA 公开资料；纯碱、燃料油、甲醇、PTA、乙二醇、苯乙烯、LPG、LNG、沥青、聚丙烯、PX、纯苯等品种，综合整理自 USGS、EI、IGU、WLGA、ICIS、Argus、中国国家统计局等公开市场信息。农产品数据主要来自 USDA 月报。由于不同机构统计口径、统计周期及更新节奏存在差异，部分数据可能与实际情况或其他来源略有偏差，相关内容仅供市场研究与信息参考。
@@ -807,6 +1010,7 @@
       const boardTitleEl = document.getElementById("boardTitle");
       const boardSubTitleEl = document.getElementById("boardSubTitle");
       const boardTagsEl = document.getElementById("boardTags");
+      const heroPanelEl = document.getElementById("heroPanel");
       const eventPanelEl = document.getElementById("eventPanel");
       const worldTotalEl = document.getElementById("worldTotal");
       const top1ShareEl = document.getElementById("top1Share");
@@ -826,6 +1030,15 @@
       const metricShareRadio = metricRadios.find((n) => n.value === "share");
       const metricValueLabel = metricValueRadio ? metricValueRadio.closest("label") : null;
       const simulatedShutdowns = new Map();
+      const TREEMAP_COLORS = [
+        "linear-gradient(145deg, #6d8bff 0%, #4d6cff 100%)",
+        "linear-gradient(145deg, #19bfd1 0%, #11a5bd 100%)",
+        "linear-gradient(145deg, #ffb020 0%, #ff8a3d 100%)",
+        "linear-gradient(145deg, #ff6279 0%, #ff4d65 100%)",
+        "linear-gradient(145deg, #c267ff 0%, #925cff 100%)",
+        "linear-gradient(145deg, #2cc487 0%, #149c73 100%)",
+        "linear-gradient(145deg, #5a7b99 0%, #3b5977 100%)"
+      ];
 
       const CORE_COUNTRIES = [
         "China",
@@ -1294,17 +1507,6 @@
         return EVENT_CASES[name] || null;
       }
 
-      function applyEventCase(commodity, eventCase) {
-        if (!commodity || !eventCase) return;
-        clearDisruptions(commodity.commodity_en);
-        const available = new Set((commodity.entries || []).map((entry) => entry.country_en));
-        (eventCase.trigger_countries || []).forEach((countryCode) => {
-          if (available.has(countryCode)) {
-            getDisruptionSet(commodity.commodity_en).add(countryCode);
-          }
-        });
-      }
-
       function renderEventPanel(commodity) {
         if (!eventPanelEl) return;
 
@@ -1323,33 +1525,9 @@
             "<div class='event-kicker'>历史冲击案例</div>" +
             "<h3>该品种的代表事件还在补充中</h3>" +
             "<p class='event-summary'>当前先提供供应集中度、热点概念和断供推演。后续补入事件后，这里会直接展示“发生了什么”“当时冲击多大”“可否一键代入模拟”。</p>" +
-            "</article>" +
-            "<article class='event-card event-card-fallback'>" +
-            "<h3 class='event-side-title'>当前可用的风险视角</h3>" +
-            "<div class='event-side-copy'>你已经可以通过国家/地区排行、前三集中度和模拟停产，快速判断这个品种在地缘冲突、政策限制或天气冲击下的脆弱点。</div>" +
-            "<div class='event-side-note'>建议先试试榜单右侧的“模拟停产”，把头部国家/地区逐个关掉，体感供应缺口会非常直观。</div>" +
             "</article>";
           return;
         }
-
-        const triggerTargets = (eventCase.trigger_countries || []).filter((countryCode) =>
-          (commodity.entries || []).some((entry) => entry.country_en === countryCode)
-        );
-        const triggerPills = triggerTargets.length
-          ? triggerTargets
-              .map((countryCode) => {
-                const entry = commodity.entries.find((item) => item.country_en === countryCode);
-                return (
-                  "<span class='event-country-pill'>" +
-                  escapeHtml(toCountryZh(countryCode, entry ? entry.country_zh : "")) +
-                  "</span>"
-                );
-              })
-              .join("")
-          : "<span class='event-country-pill'>当前案例仅作阅读参考</span>";
-        const metricsHtml = (eventCase.metrics || [])
-          .map((metric) => "<span class='event-metric'>" + escapeHtml(metric) + "</span>")
-          .join("");
 
         eventPanelEl.innerHTML =
           "<article class='event-card'>" +
@@ -1375,9 +1553,6 @@
           "<div class='event-impact-text'>" +
           escapeHtml(eventCase.impact) +
           "</div></div>" +
-          "<div class='event-metrics'>" +
-          metricsHtml +
-          "</div>" +
           "<div class='event-source'>" +
           "<div class='event-source-label'>来源：" +
           escapeHtml(eventCase.source_name) +
@@ -1386,28 +1561,201 @@
           escapeHtml(eventCase.source_url) +
           "' target='_blank' rel='noreferrer'>查看来源</a>" +
           "</div>" +
-          "</article>" +
-          "<article class='event-card'>" +
-          "<h3 class='event-side-title'>代入这个事件</h3>" +
-          "<div class='event-side-copy'>" +
-          escapeHtml(eventCase.simulation_note || "点击按钮后，会将相关国家/地区直接代入断供模拟。") +
-          "</div>" +
-          "<div class='event-country-pills'>" +
-          triggerPills +
-          "</div>" +
-          "<div class='event-actions'>" +
-          "<button class='event-btn' type='button' data-apply-event='1' " +
-          (triggerTargets.length
-            ? "data-event-name='" + escapeHtml(commodity.commodity_zh) + "'"
-            : "disabled") +
-          ">代入本事件</button>" +
-          "<div class='event-hint'>" +
-          (triggerTargets.length
-            ? "会自动把关联国家/地区加入“模拟停产”"
-            : "该事件暂不直接映射到榜单中的国家/地区停产") +
-          "</div>" +
-          "</div>" +
           "</article>";
+      }
+
+      function splitTreemapNodes(nodes) {
+        const total = nodes.reduce((sum, node) => sum + node.value, 0);
+        let running = 0;
+        let bestIndex = 1;
+        let smallestDiff = Infinity;
+        for (let index = 0; index < nodes.length - 1; index += 1) {
+          running += nodes[index].value;
+          const diff = Math.abs(total / 2 - running);
+          if (diff < smallestDiff) {
+            smallestDiff = diff;
+            bestIndex = index + 1;
+          }
+        }
+        return [nodes.slice(0, bestIndex), nodes.slice(bestIndex)];
+      }
+
+      function layoutTreemap(nodes, x, y, width, height) {
+        if (!nodes.length || width <= 0 || height <= 0) return [];
+        if (nodes.length === 1) {
+          return [{ ...nodes[0], x, y, width, height }];
+        }
+
+        const orderedNodes = [...nodes].sort((a, b) => b.value - a.value);
+        const total = orderedNodes.reduce((sum, node) => sum + node.value, 0);
+        const [groupA, groupB] = splitTreemapNodes(orderedNodes);
+        const sumA = groupA.reduce((sum, node) => sum + node.value, 0);
+        const ratioA = total > 0 ? sumA / total : 0.5;
+
+        if (width >= height) {
+          const widthA = width * ratioA;
+          return [
+            ...layoutTreemap(groupA, x, y, widthA, height),
+            ...layoutTreemap(groupB, x + widthA, y, width - widthA, height)
+          ];
+        }
+
+        const heightA = height * ratioA;
+        return [
+          ...layoutTreemap(groupA, x, y, width, heightA),
+          ...layoutTreemap(groupB, x, y + heightA, width, height - heightA)
+        ];
+      }
+
+      function buildTreemapNodes(commodity, simState) {
+        const simulationActive = simState.simulationActive;
+        const activeTop = simState.rankedEntries.slice(0, 5).map((entry, idx) => ({
+          key: entry.country_en,
+          label: toCountryZh(entry.country_en, entry.country_zh),
+          value: Number(entry.value || 0),
+          shareLabel:
+            (simulationActive ? entry.adjusted_share : entry.share_pct).toFixed(2) + "%",
+          kind: "active",
+          color: TREEMAP_COLORS[idx % TREEMAP_COLORS.length]
+        }));
+
+        const otherValue = simState.rankedEntries
+          .slice(5)
+          .reduce((sum, entry) => sum + Number(entry.value || 0), 0);
+
+        const nodes = [];
+        if (simulationActive && simState.disruptedValue > 0) {
+          const gapLabel =
+            simState.disruptedEntries.length === 1
+              ? "若" +
+                toCountryZh(
+                  simState.disruptedEntries[0].country_en,
+                  simState.disruptedEntries[0].country_zh
+                ) +
+                "停产"
+              : "若多国停产";
+          nodes.push({
+            key: "gap",
+            label: gapLabel,
+            value: simState.disruptedValue,
+            shareLabel: simState.gapPct.toFixed(2) + "%",
+            kind: "gap"
+          });
+        }
+
+        nodes.push(...activeTop);
+
+        if (otherValue > 0) {
+          const otherShare =
+            commodity.world_total > 0 ? (otherValue / Number(commodity.world_total)) * 100 : 0;
+          nodes.push({
+            key: "other",
+            label: "其他供应",
+            value: otherValue,
+            shareLabel: otherShare.toFixed(2) + "%",
+            kind: "other"
+          });
+        }
+
+        return nodes.filter((node) => node.value > 0);
+      }
+
+      function renderHeroPanel(commodity, simState) {
+        if (!heroPanelEl) return;
+
+        if (activeViewMode() !== "commodity" || !commodity) {
+          heroPanelEl.style.display = "none";
+          heroPanelEl.innerHTML = "";
+          return;
+        }
+
+        heroPanelEl.style.display = "block";
+        const nodes = buildTreemapNodes(commodity, simState);
+        const layout = layoutTreemap(nodes, 0, 0, 100, 100);
+        const treemapHtml = layout
+          .map((node) => {
+            const extraClass =
+              node.kind === "gap"
+                ? " treemap-gap"
+                : node.kind === "other"
+                  ? " treemap-other"
+                  : " treemap-active";
+            const sizeClass =
+              node.width < 18 || node.height < 22
+                ? " treemap-block-tiny"
+                : node.width < 28 || node.height < 30
+                  ? " treemap-block-compact"
+                  : "";
+            const backgroundStyle =
+              node.kind === "active" ? "background:" + node.color + ";" : "";
+            return (
+              "<div class='treemap-block" +
+              extraClass +
+              sizeClass +
+              "' style='left:" +
+              node.x.toFixed(2) +
+              "%;top:" +
+              node.y.toFixed(2) +
+              "%;width:" +
+              node.width.toFixed(2) +
+              "%;height:" +
+              node.height.toFixed(2) +
+              "%;" +
+              backgroundStyle +
+              "'>" +
+              "<div class='treemap-block-inner'>" +
+              "<div><div class='treemap-name'>" +
+              escapeHtml(node.label) +
+              "</div></div>" +
+              "<div><div class='treemap-value'>" +
+              escapeHtml(
+                node.kind === "gap"
+                  ? node.shareLabel.replace("%", "") + "%"
+                  : formatNumber(Math.round(node.value * 100) / 100)
+              ) +
+              "</div><div class='treemap-value-sub'>" +
+              escapeHtml(
+                node.kind === "gap"
+                  ? "全球缺口"
+                  : node.kind === "other"
+                    ? "未展开部分"
+                    : node.shareLabel + " 供应占比"
+              ) +
+              "</div></div>" +
+              "</div></div>"
+            );
+          })
+          .join("");
+
+        heroPanelEl.innerHTML =
+          "<div class='hero-kicker'>供应冲击版图</div>" +
+          "<div class='hero-title'>" +
+          formatYearLabel(commodity.year) +
+          "全球" +
+          escapeHtml(commodity.commodity_zh) +
+          (simState.simulationActive ? "可供总量 " : "供应总量 ") +
+          "<strong>" +
+          escapeHtml(
+            formatNumber(simState.simulationActive ? simState.remainingTotal : commodity.world_total)
+          ) +
+          "</strong>" +
+          escapeHtml(translateUnit(commodity.unit)) +
+          "</div>" +
+          "<div class='treemap-shell'>" +
+          "<div class='treemap-head'><div class='treemap-title'>" +
+          escapeHtml(
+            simState.simulationActive ? "停产推演后的剩余供应版图" : "当前全球供应版图"
+          ) +
+          "</div><div class='treemap-sub'>" +
+          escapeHtml(
+            simState.simulationActive
+              ? "灰块表示已形成的供应缺口"
+              : "面积按绝对供应量绘制"
+          ) +
+          "</div></div>" +
+          "<div class='treemap'>" +
+          treemapHtml +
+          "</div></div>";
       }
 
       function renderSimulationPanel(commodity, disruptedEntries, remainingTotal, gapPct) {
@@ -1533,6 +1881,45 @@
         return countryProfiles.find((c) => c.country_en === code) || countryProfiles[0] || null;
       }
 
+      function getCommoditySimulationState(commodity) {
+        if (!commodity) {
+          return {
+            disruptionSet: new Set(),
+            disruptedEntries: [],
+            activeEntries: [],
+            disruptedValue: 0,
+            remainingTotal: 0,
+            simulationActive: false,
+            gapPct: 0,
+            rankedEntries: []
+          };
+        }
+
+        const disruptionSet = getDisruptionSet(commodity.commodity_en);
+        const disruptedEntries = commodity.entries.filter((entry) => disruptionSet.has(entry.country_en));
+        const activeEntries = commodity.entries.filter((entry) => !disruptionSet.has(entry.country_en));
+        const disruptedValue = disruptedEntries.reduce((sum, entry) => sum + Number(entry.value || 0), 0);
+        const remainingTotal = Math.max(Number(commodity.world_total || 0) - disruptedValue, 0);
+        const simulationActive = disruptedEntries.length > 0;
+        const rankedEntries = activeEntries.map((entry, idx) => ({
+          ...entry,
+          adjusted_rank: idx + 1,
+          adjusted_share: remainingTotal > 0 ? (Number(entry.value || 0) / remainingTotal) * 100 : 0
+        }));
+
+        return {
+          disruptionSet,
+          disruptedEntries,
+          activeEntries,
+          disruptedValue,
+          remainingTotal,
+          simulationActive,
+          gapPct:
+            commodity.world_total > 0 ? (disruptedValue / Number(commodity.world_total)) * 100 : 0,
+          rankedEntries
+        };
+      }
+
       function setSummaryLabels(label1, label2, label3, label4) {
         summaryLabel1El.textContent = label1;
         summaryLabel2El.textContent = label2;
@@ -1570,6 +1957,7 @@
         const commodity = selectedCommodity();
         if (!commodity) {
           setBoardTags([]);
+          renderHeroPanel(null, null);
           renderEventPanel(null);
           renderSimulationPanel(null, [], 0, 0);
           boardTitleEl.textContent = "暂无可显示品种";
@@ -1581,17 +1969,12 @@
         const topN = Number(topNSelect.value) || 10;
         const metric = activeMetric();
         const keyword = String(countrySearch.value || "").trim().toLowerCase();
-        const disruptionSet = getDisruptionSet(commodity.commodity_en);
-        const disruptedEntries = commodity.entries.filter((entry) => disruptionSet.has(entry.country_en));
-        const activeEntries = commodity.entries.filter((entry) => !disruptionSet.has(entry.country_en));
-        const disruptedValue = disruptedEntries.reduce((sum, entry) => sum + Number(entry.value || 0), 0);
-        const remainingTotal = Math.max(Number(commodity.world_total || 0) - disruptedValue, 0);
-        const simulationActive = disruptedEntries.length > 0;
-        const rankedEntries = activeEntries.map((entry, idx) => ({
-          ...entry,
-          adjusted_rank: idx + 1,
-          adjusted_share: remainingTotal > 0 ? (Number(entry.value || 0) / remainingTotal) * 100 : 0
-        }));
+        const simState = getCommoditySimulationState(commodity);
+        const disruptedEntries = simState.disruptedEntries;
+        const activeEntries = simState.activeEntries;
+        const remainingTotal = simState.remainingTotal;
+        const simulationActive = simState.simulationActive;
+        const rankedEntries = simState.rankedEntries;
         const visibleEntries = rankedEntries.slice(0, topN);
         const maxMetricValue = Math.max(
           ...visibleEntries.map((entry) =>
@@ -1603,11 +1986,9 @@
           ),
           1
         );
-        const gapPct =
-          commodity.world_total > 0 ? (disruptedValue / Number(commodity.world_total)) * 100 : 0;
-
         boardTitleEl.textContent = commodity.commodity_zh + "供应排行";
         setBoardTags(getTopicTags(commodity.commodity_zh));
+        renderHeroPanel(commodity, simState);
         renderEventPanel(commodity);
         boardSubTitleEl.textContent =
           "口径：" +
@@ -1620,7 +2001,7 @@
             ? " | 已模拟停产 " +
               disruptedEntries.length +
               " 个国家/地区 | 绝对缺口 " +
-              gapPct.toFixed(2) +
+              simState.gapPct.toFixed(2) +
               "%"
             : "");
 
@@ -1649,7 +2030,7 @@
           ? activeEntries.length + " / " + commodity.entries.length
           : String(commodity.entries.length);
 
-        renderSimulationPanel(commodity, disruptedEntries, remainingTotal, gapPct);
+        renderSimulationPanel(commodity, disruptedEntries, remainingTotal, simState.gapPct);
 
         const rowsHtml = visibleEntries
           .map((entry, idx) => {
@@ -1777,6 +2158,7 @@
         const profile = selectedCountryProfile();
         if (!profile) {
           setBoardTags([]);
+          renderHeroPanel(null, null);
           renderEventPanel(null);
           renderSimulationPanel(null, [], 0, 0);
           boardTitleEl.textContent = "暂无可显示国家/地区";
@@ -1792,6 +2174,7 @@
 
         boardTitleEl.textContent = profile.country_zh + "核心品种贡献";
         setBoardTags([]);
+        renderHeroPanel(null, null);
         renderEventPanel(null);
         renderSimulationPanel(null, [], 0, 0);
         boardSubTitleEl.textContent = "按该国家/地区在各品种全球占比排序（仅展示核心国家/地区样本）";
@@ -1940,16 +2323,6 @@
           const countryCode = button.getAttribute("data-sim-country");
           if (!commodityCode || !countryCode) return;
           toggleDisruption(commodityCode, countryCode);
-          renderBoard();
-        });
-        eventPanelEl.addEventListener("click", (event) => {
-          const button = event.target.closest("[data-apply-event]");
-          if (!button) return;
-          const commodity = selectedCommodity();
-          if (!commodity) return;
-          const eventCase = getEventCase(commodity.commodity_zh);
-          if (!eventCase) return;
-          applyEventCase(commodity, eventCase);
           renderBoard();
         });
         resetSimulationBtn.addEventListener("click", () => {
