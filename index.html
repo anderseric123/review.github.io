@@ -1,3 +1,4 @@
+
 <!doctype html>
 <html lang="zh-CN">
   <head>
@@ -6,13 +7,13 @@
     <title>全球大宗商品产量版图</title>
     <style>
       :root {
-        --primary: #235de6; 
+        --primary: #5A82E6; 
         --secondary: #E02424;
         --tertiary: #057A55;
-        --primary-rgb: 35, 93, 230;
+        --primary-rgb: 90, 130, 230; 
         --secondary-rgb: 224, 36, 36;
         --tertiary-rgb: 5, 122, 85;
-        --bg: #FFFFFF; /* 强制绝对白底 */
+        --bg: #FFFFFF;
         --text: #111111;
         --sub: rgba(17, 17, 17, 0.58);
         --page-max-width: 500px;
@@ -24,34 +25,54 @@
         margin: 0;
         font-family: "Inter", "Roboto", "Noto Sans CJK SC", sans-serif;
         color: var(--text);
-        background: #FFFFFF; /* 强制白底 */
+        background: #FFFFFF;
       }
 
       .layout { min-height: 100vh; display: block; width: 100%; max-width: 100%; margin: 0 auto; background: #FFFFFF; }
 
       .sidebar {
-        border-bottom: 1px solid rgba(35, 93, 230, 0.12);
-        background: #FFFFFF; /* 去除渐变，强制白底 */
-        padding: 18px 14px 12px;
+        border-bottom: 1px solid rgba(90, 130, 230, 0.12);
+        background:
+          linear-gradient(90deg, rgba(255, 255, 255, 0.98) 0%, rgba(255, 255, 255, 0.95) 42%, rgba(255, 255, 255, 0.76) 68%, rgba(255, 255, 255, 0.18) 100%),
+          url("https://img.jin10.com/news/26/03/KPzoWe1P4RF2Xv1JFyV_F.png");
+        background-repeat: no-repeat;
+        background-position: right center;
+        background-size: auto 100%;
+        padding: 28px 16px 18px;
         display: flex; flex-direction: column; gap: 12px;
       }
 
-      .masthead { display: flex; flex-direction: column; gap: 4px; }
+      .masthead { display: flex; flex-direction: column; gap: 6px; position: relative; z-index: 1; max-width: 68%; }
       .brand-lockup { display: inline-flex; align-items: center; margin-bottom: 4px; }
       .brand-logo { display: block; width: 104px; height: auto; }
-      .title { margin: 0; font-size: 31px; line-height: 1.08; letter-spacing: -0.045em; font-weight: 800; }
+      
+      .title-wrapper { display: flex; align-items: center; justify-content: space-between; width: 100%; gap: 8px; }
+      .title { 
+        margin: 0; 
+        font-size: 31px; 
+        line-height: 1.08; 
+        color: var(--text);
+        letter-spacing: -0.045em; 
+        font-weight: 900; 
+        font-family: "Source Han Serif Heavy", "Source Han Serif SC", "Noto Serif CJK SC", "思源宋体", serif;
+      }
+      .header-icon { 
+        width: 36px; 
+        height: 36px; 
+        object-fit: contain; 
+        flex-shrink: 0; 
+        display: none;
+      }
 
-      /* === 顶部双按钮 === */
-      .mode-toolbar { display: flex; gap: 10px; margin-top: 4px; }
+      .mode-toolbar { display: flex; gap: 10px; margin-top: 10px; position: relative; z-index: 1; }
       .mode-btn {
         flex: 1; display: flex; align-items: center; justify-content: center; gap: 6px;
         height: 44px; border-radius: 8px; font-size: 15px; font-weight: 700; cursor: pointer; transition: all 0.2s ease;
       }
       .mode-btn.active { background: var(--primary); color: #ffffff; border: 1px solid var(--primary); }
-      .mode-btn:not(.active) { background: #f2f6ff; color: var(--primary); border: 1px solid #dce5fc; }
+      .mode-btn:not(.active) { background: #F1F5FF; color: #5A82E6; border: 1px solid #F1F5FF; }
       .mode-btn .caret { font-size: 10px; }
 
-      /* === 底部弹出分栏选择器 === */
       .picker-overlay {
         position: fixed; inset: 0; background: rgba(0,0,0,0.5); z-index: 9999; 
         display: none; align-items: flex-end; justify-content: center; 
@@ -85,16 +106,28 @@
       .picker-col-right .picker-item.active { color: var(--primary); font-weight: 600; display: flex; justify-content: space-between; }
       .picker-col-right .picker-item.active::after { content: "✓"; color: var(--primary); }
 
-      /* === 看板主体 === */
       .main { padding: 14px 14px 20px; display: flex; flex-direction: column; gap: 12px; background: #FFFFFF; }
       .header-row { display: flex; justify-content: flex-start; gap: 8px; align-items: flex-start; padding-top: 2px; }
       .title-stack { display: flex; flex-direction: column; gap: 6px; }
       .headline-row { display: flex; align-items: center; gap: 10px; flex-wrap: wrap; }
+      .board-source {
+        display: inline-flex;
+        align-items: center;
+        min-height: 28px;
+        padding: 0 10px;
+        border-radius: 999px;
+        background: #F3F4F6;
+        color: #4B5563;
+        font-size: 12px;
+        line-height: 1;
+        white-space: nowrap;
+      }
       .header-row h2 { margin: 0; font-size: 26px; line-height: 1.16; letter-spacing: -0.03em; color: var(--text); font-weight: 600; }
       .header-row p { margin: 0; color: var(--sub); font-size: 12px; }
       
       .topic-tags { display: flex; flex-wrap: wrap; gap: 6px; }
       .topic-tag { display: inline-flex; align-items: center; padding: 4px 8px; border-radius: 999px; border: 1px solid rgba(var(--primary-rgb), 0.1); background: rgba(var(--primary-rgb), 0.05); color: var(--primary); font-size: 11px; font-weight: 500; line-height: 1; white-space: nowrap; }
+      .topic-tag-cool { background: rgba(var(--tertiary-rgb), 0.06); border-color: rgba(var(--tertiary-rgb), 0.12); color: var(--tertiary); }
 
       .hero-panel { background: #fff; border: 1px solid rgba(var(--primary-rgb), 0.08); border-radius: 16px; padding: 16px; }
       .hero-title { color: var(--text); font-size: 15px; font-weight: 500; line-height: 1.45; }
@@ -103,12 +136,12 @@
       .treemap-shell { margin-top: 16px; display: grid; grid-template-columns: minmax(0, 1fr); gap: 12px; }
       .treemap { position: relative; min-height: 320px; border-radius: 16px; overflow: hidden; background: #FFFFFF; border: 1px solid rgba(var(--primary-rgb), 0.08); }
       
-      .treemap-block { position: absolute; padding: 0; overflow: hidden; transition: opacity 0.3s ease; border: 1px solid #FFFFFF; }
+      .treemap-block { position: absolute; padding: 0; overflow: hidden; transition: opacity 0.3s ease; border: 1px solid #FFFFFF; cursor: pointer; }
       .treemap-block-inner { position: relative; z-index: 1; width: 100%; height: 100%; display: flex; flex-direction: column; justify-content: center; align-items: center; text-align: center; gap: 4px; padding: 4px; overflow: hidden; }
       
-      .treemap-name { font-size: 14px; font-weight: 800; line-height: 1.1; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; }
+      .treemap-name { font-size: 14px; font-weight: 800; line-height: 1.1; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; text-overflow: ellipsis; max-width: 100%; word-break: break-all; }
       .treemap-value { font-size: 16px; font-weight: 900; line-height: 1; letter-spacing: -0.03em; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; max-width: 100%; }
-      .treemap-value-sub { font-size: 10px; font-weight: 700; opacity: 0.9; line-height: 1.3; white-space: nowrap; }
+      .treemap-value-sub { font-size: 10px; font-weight: 700; opacity: 0.9; line-height: 1.3; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; max-width: 100%; }
       
       .treemap-block-compact .treemap-name { font-size: 12px; }
       .treemap-block-compact .treemap-value { font-size: 14px; }
@@ -124,13 +157,28 @@
       .sim-card-head { display: flex; align-items: center; justify-content: space-between; gap: 8px; margin-bottom: 8px; }
       .sim-card-title { font-size: 12px; color: var(--sub); }
       .sim-reset { border: 0; background: transparent; color: var(--primary); font-size: 12px; font-weight: 500; cursor: pointer; padding: 0; }
+      
+      .sim-help { position: relative; }
+      .sim-help summary {
+        list-style: none; cursor: pointer; width: 24px; height: 24px; border-radius: 10px; 
+        border: 1px solid rgba(var(--primary-rgb), 0.1); background: rgba(var(--primary-rgb), 0.05); 
+        color: var(--primary); display: inline-flex; align-items: center; justify-content: center; 
+        font-size: 12px; font-weight: 700;
+      }
+      .sim-help summary::-webkit-details-marker { display: none; }
+      .sim-help-panel {
+        position: absolute; right: 0; top: calc(100% + 8px); width: min(280px, 78vw); 
+        padding: 10px 12px; border-radius: 12px; border: 1px solid rgba(var(--primary-rgb), 0.08); 
+        background: #FFFFFF; color: var(--text); font-size: 12px; line-height: 1.6; 
+        box-shadow: 0 10px 24px rgba(0, 0, 0, 0.08); z-index: 5;
+      }
+
       .sim-alert { padding: 10px 12px; border-radius: 12px; border: 1px solid rgba(var(--secondary-rgb), 0.1); background: rgba(var(--secondary-rgb), 0.04); color: var(--secondary); font-size: 12px; line-height: 1.6; }
       .sim-meta { margin-top: 8px; font-size: 12px; color: var(--sub); }
       .sim-pills { margin-top: 10px; display: flex; flex-wrap: wrap; gap: 6px; }
       .sim-pill { display: inline-flex; align-items: center; padding: 4px 8px; border-radius: 999px; background: rgba(var(--tertiary-rgb), 0.05); border: 1px solid rgba(var(--tertiary-rgb), 0.1); color: var(--tertiary); font-size: 11px; font-weight: 700; }
       .sim-empty { display: none; }
 
-      /* === 下方排行榜样式 === */
       .ranking-item { background-color: #fff; border-radius: 8px; padding: 16px 0; border-bottom: 1px solid #f0f0f0; }
       .board .ranking-item:last-child { border-bottom: none; padding-bottom: 0; }
       .board .ranking-item:first-child { padding-top: 0; }
@@ -150,9 +198,9 @@
       .ranking-item.offline .percentage-value { color: var(--secondary); }
       .section-label { margin: 16px 0 8px; color: var(--sub); font-size: 12px; font-weight: 700; }
 
-      /* === 事件面板样式 === */
       .event-panel { display: grid; grid-template-columns: 1fr; gap: 14px; }
       .event-card { background: #FFFFFF; border: 1px solid rgba(var(--primary-rgb), 0.08); border-radius: 16px; padding: 14px; }
+      .event-card-fallback { border-style: dashed; }
       .event-topline { display: flex; align-items: center; justify-content: space-between; gap: 10px; flex-wrap: wrap; margin-bottom: 12px; }
       .event-eyebrow { display: flex; align-items: center; gap: 8px; flex-wrap: wrap; }
       .event-kicker { font-size: 12px; font-weight: 500; color: var(--text); }
@@ -168,10 +216,34 @@
       .event-source a { color: var(--primary); text-decoration: none; font-size: 12px; font-weight: 500; }
 
       .footnote { margin-top: 8px; color: var(--sub); font-size: 12px; line-height: 1.5; }
+      .footnote-aux { margin-top: 4px; }
+
+      /* === 新增的半透明黑色标签样式 === */
+      #customTooltip {
+        position: fixed;
+        background: rgba(0, 0, 0, 0.78);
+        color: #fff;
+        padding: 10px 14px;
+        border-radius: 8px;
+        font-size: 13px;
+        line-height: 1.6;
+        pointer-events: none;
+        z-index: 10000;
+        opacity: 0;
+        transition: opacity 0.2s ease;
+        transform: translate(-50%, -100%);
+        margin-top: -12px;
+        white-space: nowrap;
+        text-align: left;
+        box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+      }
+      #customTooltip.show {
+        opacity: 1;
+      }
 
       @media (min-width: 1041px) {
         .layout { width: min(calc(100% - 40px), var(--page-max-width)); }
-        .sidebar { border-right: 0; border-bottom: 1px solid rgba(35, 93, 230, 0.12); padding: 18px; }
+        .sidebar { border-right: 0; border-bottom: 1px solid rgba(90, 130, 230, 0.12); padding: 28px 18px 18px; }
         .main { padding: 16px 18px 22px; }
         .picker-dialog { border-radius: 16px; margin: auto; height: 500px; transform: translateY(20px); }
         .picker-overlay { align-items: center; } 
@@ -185,7 +257,9 @@
           <div class="brand-lockup">
             <img class="brand-logo" src="./logo-jin10.svg" alt="金十数据 Logo" />
           </div>
-          <h1 class="title">全球大宗商品产量版图</h1>
+          <div class="title-wrapper">
+            <h1 class="title">全球大宗商品产量版图</h1>
+          </div>
         </div>
 
         <div class="mode-toolbar">
@@ -200,6 +274,7 @@
             <div class="headline-row">
               <h2 id="boardTitle">-</h2>
               <div class="topic-tags" id="boardTags"></div>
+              <div class="board-source" id="boardSource" style="display:none;"></div>
             </div>
             <p id="boardSubTitle">-</p>
           </div>
@@ -211,8 +286,14 @@
           <div class="board-tools">
             <div class="card sim-card" id="simulationCard">
               <div class="sim-card-head">
-                <div class="sim-card-title">断供/制裁推演</div>
+                <div class="sim-card-title">断供推演</div>
                 <div class="sim-card-tools">
+                  <details class="sim-help">
+                    <summary>?</summary>
+                    <div class="sim-help-panel">
+                      点击榜单中的“模拟停产”，即可推演单国/地区或多国/地区断供后的供应缺口与剩余份额变化。
+                    </div>
+                  </details>
                   <button class="sim-reset" id="resetSimulationBtn" type="button">清空模拟</button>
                 </div>
               </div>
@@ -225,7 +306,10 @@
         <section class="event-panel" id="eventPanel"></section>
 
         <p class="footnote">
-          数据说明：本内容数据均基于公开资料综合测算。其中，矿产及农产品数据主要参考全球权威行业部门公开估算数据；能化板块数据综合采纳国际能源监管组织等市场公开信息。
+          数据说明：本内容数据均基于公开资料综合测算。其中，矿产及农产品数据主要参考全球权威行业部门公开估算数据；能化板块（含原油、煤炭及各类化工衍生品）数据，综合采纳国际能源监管组织、各国/地区官方统计局及知名行业咨询机构的公开信息。因多方信息源统计口径与更新节奏不同，数据可能存在细微偏差，相关内容仅供市场研究与参考。
+        </p>
+        <p class="footnote footnote-aux">
+          免责声明：本页面信息不构成任何投资建议、交易建议或风险担保，使用者应独立判断并自行承担相关风险。
         </p>
       </main>
     </div>
@@ -243,6 +327,8 @@
         </div>
       </div>
     </div>
+
+    <div id="customTooltip"></div>
 
     <script src="./commodity-ranking-data.js"></script>
     <script>
@@ -290,20 +376,71 @@
       const CORE_COUNTRIES = ["China", "United States", "European Union", "Argentina", "Bangladesh", "Belarus", "Bolivia", "Belgium", "Gabon", "Ghana", "Guinea", "Jordan", "Kazakhstan", "Mongolia", "Mexico", "Morocco", "Philippines", "Algeria", "Brunei", "Chinese Taipei", "Germany", "Greece", "Italy", "Japan", "Kuwait", "Singapore", "United Kingdom", "Thailand", "Turkey", "Malaysia", "Colombia", "Nigeria", "Vietnam", "Saudi Arabia", "United Arab Emirates", "Qatar", "Iran", "Iraq", "Libya", "Norway", "Poland", "India", "Bahrain", "South Korea", "Netherlands", "Trinidad and Tobago", "Oman", "Chile", "Australia", "Indonesia", "Congo (Kinshasa)", "Peru", "Russia", "Canada", "South Africa", "Burma", "Brazil", "Zimbabwe"];
 
       const COUNTRY_ZH_PATCH = { "Côte d’Ivoire": "科特迪瓦", Algeria: "阿尔及利亚", Belgium: "比利时", Brunei: "文莱", "Chinese Taipei": "中国台湾地区", Egypt: "埃及", "European Union": "欧盟", Germany: "德国", Greece: "希腊", Guatemala: "危地马拉", Israel: "以色列", Jamaica: "牙买加", Italy: "意大利", Japan: "日本", Kuwait: "科威特", Libya: "利比亚", "Korea, North": "朝鲜", "Korea, Republic of": "韩国", Kyrgyzstan: "吉尔吉斯斯坦", Malaysia: "马来西亚", Mali: "马里", Mongolia: "蒙古", Norway: "挪威", Pakistan: "巴基斯坦", "Papua New Guinea": "巴布亚新几内亚", Poland: "波兰", Portugal: "葡萄牙", Rwanda: "卢旺达", Senegal: "塞内加尔", Singapore: "新加坡", Spain: "西班牙", "Sri Lanka": "斯里兰卡", Tanzania: "坦桑尼亚", Tunisia: "突尼斯", "United Kingdom": "英国", Uzbekistan: "乌兹别克斯坦", Vietnam: "越南", Zambia: "赞比亚", "South Korea": "韩国", "United Arab Emirates": "阿联酋", "Iran": "伊朗", "Saudi Arabia": "沙特阿拉伯", "Russia": "俄罗斯", "India": "印度", "Indonesia": "印尼" };
-      const FLAG_EMOJI_MAP = { "中国": "🇨🇳", "美国": "🇺🇸", "澳大利亚": "🇦🇺", "俄罗斯": "🇷🇺", "印度": "🇮🇳", "巴西": "🇧🇷", "欧盟": "🇪🇺", "阿根廷": "🇦🇷", "印尼": "🇮🇩", "加拿大": "🇨🇦", "墨西哥": "🇲🇽", "秘鲁": "🇵🇪", "智利": "🇨🇱", "沙特阿拉伯": "🇸🇦", "日本": "🇯🇵", "韩国": "🇰🇷", "德国": "🇩🇪", "英国": "🇬🇧", "法国": "🇫🇷", "伊朗": "🇮🇷", "伊拉克": "🇮🇶", "阿联酋": "🇦🇪", "卡塔尔": "🇶🇦", "科威特": "🇰🇼", "马来西亚": "🇲🇾", "泰国": "🇹🇭", "越南": "🇻🇳", "菲律宾": "🇵🇭", "新加坡": "🇸🇬", "南非": "🇿🇦", "刚果（金）": "🇨🇩", "几内亚": "🇬🇳", "马达加斯加": "🇲🇬", "尼日利亚": "🇳🇬", "玻利维亚": "🇧🇴", "波兰": "🇵🇱", "哈萨克斯坦": "🇰🇿", "白俄罗斯": "🇧🇾", "阿曼": "🇴🇲", "缅甸": "🇲🇲", "塔吉克斯坦": "🇹🇯", "中国台湾地区": "🇹🇼" };
-      const UNIT_ZH_MAP = { "metric tons": "吨", "thousand metric tons": "千吨", "thousand metric dry tons": "千干吨", "ten thousand metric tons": "万吨", "million metric tons": "万吨", "million 480-lb bales": "百万包（480磅/包）", "million barrels per day": "万桶/日" };
+      
+      const FLAG_EMOJI_MAP = { 
+        "中国": "🇨🇳", "美国": "🇺🇸", "澳大利亚": "🇦🇺", "俄罗斯": "🇷🇺", "印度": "🇮🇳", "巴西": "🇧🇷", "欧盟": "🇪🇺", "阿根廷": "🇦🇷", "印尼": "🇮🇩", "印度尼西亚": "🇮🇩", "加拿大": "🇨🇦", "墨西哥": "🇲🇽", "秘鲁": "🇵🇪", "智利": "🇨🇱", "沙特阿拉伯": "🇸🇦", "日本": "🇯🇵", "韩国": "🇰🇷", "德国": "🇩🇪", "英国": "🇬🇧", "法国": "🇫🇷", "伊朗": "🇮🇷", "伊拉克": "🇮🇶", "阿联酋": "🇦🇪", "阿拉伯联合酋长国": "🇦🇪", "卡塔尔": "🇶🇦", "科威特": "🇰🇼", "马来西亚": "🇲🇾", "泰国": "🇹🇭", "越南": "🇻🇳", "菲律宾": "🇵🇭", "新加坡": "🇸🇬", "南非": "🇿🇦", "刚果（金）": "🇨🇩", "几内亚": "🇬🇳", "马达加斯加": "🇲🇬", "尼日利亚": "🇳🇬", "玻利维亚": "🇧🇴", "波兰": "🇵🇱", "哈萨克斯坦": "🇰🇿", "白俄罗斯": "🇧🇾", "阿曼": "🇴🇲", "缅甸": "🇲🇲", "塔吉克斯坦": "🇹🇯", "中国台湾地区": "🇨🇳", "中国台湾": "🇨🇳", "科特迪瓦": "🇨🇮", "阿尔及利亚": "🇩🇿", "比利时": "🇧🇪", "文莱": "🇧🇳", "埃及": "🇪🇬", "希腊": "🇬🇷", "危地马拉": "🇬🇹", "以色列": "🇮🇱", "牙买加": "🇯🇲", "意大利": "🇮🇹", "利比亚": "🇱🇾", "朝鲜": "🇰🇵", "吉尔吉斯斯坦": "🇰🇬", "马里": "🇲🇱", "蒙古": "🇲🇳", "蒙古国": "🇲🇳", "挪威": "🇳🇴", "巴基斯坦": "🇵🇰", "巴布亚新几内亚": "🇵🇬", "葡萄牙": "🇵🇹", "卢旺达": "🇷🇼", "塞内加尔": "🇸🇳", "西班牙": "🇪🇸", "斯里兰卡": "🇱🇰", "坦桑尼亚": "🇹🇿", "突尼斯": "🇹🇳", "乌兹别克斯坦": "🇺🇿", "赞比亚": "🇿🇲", "哥伦比亚": "🇨🇴", "委内瑞拉": "🇻🇪", "孟加拉国": "🇧🇩", "老挝": "🇱🇦", "叙利亚": "🇸🇾", "瑞典": "🇸🇪", "芬兰": "🇫🇮", "冰岛": "🇮🇸", "奥地利": "🇦🇹", "乌克兰": "🇺🇦", "保加利亚": "🇧🇬", "多哥": "🇹🇬", "肯尼亚": "🇰🇪", "博茨瓦纳": "🇧🇼", "安哥拉": "🇦🇴", "赤道几内亚": "🇬🇶", "毛里塔尼亚": "🇲🇷", "新西兰": "🇳🇿", "新喀里多尼亚": "🇳🇨", "布基纳法索": "🇧🇫", "土耳其": "🇹🇷", "摩洛哥": "🇲🇦", "加蓬": "🇬🇦", "莫桑比克": "🇲🇿", "特立尼达和多巴哥": "🇹🇹", "加纳": "🇬🇭", "荷兰": "🇳🇱", "约旦": "🇯🇴", "亚美尼亚": "🇦🇲", "津巴布韦": "🇿🇼", "古巴": "🇨🇺", "巴林": "🇧🇭"
+      };
+      
+      const UNIT_ZH_MAP = { "metric tons": "吨", "thousand metric tons": "千吨", "thousand metric dry tons": "千干吨", "ten thousand metric tons": "万吨", "million metric tons": "万吨", "million 480-lb bales": "万包", "million barrels per day": "万桶/日" };
       const VALUE_TYPE_ZH_MAP = { "Production": "产量" };
       
-      const HOT_TOPIC_TAGS = window.HOT_TOPIC_TAGS || { "原油": ["地缘政治核心"], "锡": ["半导体咽喉"] };
+      const HOT_TOPIC_TAGS = {
+        锡: ["半导体咽喉", "消费电子命脉"],
+        镓: ["芯片材料卡点", "军工半导体"],
+        锗: ["红外光学关键", "光纤通信材料"],
+        锂: ["新能源车核心", "储能链支点"],
+        钴: ["动力电池核心", "高镍三元材料"],
+        镍: ["不锈钢核心", "动力电池材料"],
+        铜: ["电网升级核心", "制造业血液"],
+        铝: ["轻量化骨架", "电力成本锚"],
+        铝土矿: ["电解铝上游命门", "氧化铝核心原料"],
+        电解铝: ["轻量化基石", "电力成本锚"],
+        铁矿石: ["黑色产业龙头", "钢铁成本命脉"],
+        石墨: ["负极材料核心", "电池链关键矿物"],
+        磷矿石: ["磷肥原料根基", "农业安全要素"],
+        钾盐: ["钾肥供应核心", "农化成本锚点"],
+        锰: ["钢铁合金基础", "电池正极辅材"],
+        钼: ["特钢强化关键", "高端制造合金"],
+        稀土: ["永磁材料核心", "军工高端制造"],
+        锑: ["阻燃剂核心", "光伏玻璃辅材"],
+        铅: ["铅酸电池基础", "储能备电材料"],
+        锌: ["镀锌防腐核心", "基建周期风向"],
+        白银: ["光伏导电核心", "避险贵金属"],
+        黄金: ["全球避险锚", "央行储备资产"],
+        原油: ["地缘政治核心", "工业血液"],
+        煤炭: ["电力保供支点", "工业燃料底盘"],
+        LNG: ["天然气贸易锚点", "欧洲能源安全"],
+        LPG: ["民生燃料", "化工裂解原料"],
+        "LNG（液化天然气）": ["天然气贸易锚点", "欧洲能源安全"],
+        "LPG（液化石油气）": ["民生燃料", "化工裂解原料"],
+        甲醇: ["煤化工枢纽", "烯烃链核心"],
+        PTA: ["涤纶产业中枢", "纺服化纤核心"],
+        乙二醇: ["聚酯链关键", "瓶片纤维原料"],
+        苯乙烯: ["家电塑料核心", "ABS产业链关键"],
+        纯苯: ["芳烃基础原料", "化工母体"],
+        PX: ["聚酯链咽喉", "芳烃核心中间体"],
+        "对二甲苯（PX）": ["聚酯链咽喉", "芳烃核心中间体"],
+        聚丙烯: ["包装材料核心", "家电汽车塑料"],
+        沥青: ["基建施工温度计", "道路建设关键"],
+        燃料油: ["船燃关键", "炼厂平衡变量"],
+        纯碱: ["玻璃成本锚", "光伏玻璃核心"],
+        大豆: ["饲料蛋白核心", "油脂定价锚"],
+        白糖: ["食品工业刚需", "天气题材高敏"],
+        棕榈油: ["全球植物油锚", "生柴原料"],
+        油菜籽: ["菜系油脂核心", "加菜链关键"],
+        苹果: ["鲜果消费代表", "天气敏感品"],
+        小麦: ["粮食安全主粮", "全球贸易敏感"],
+        玉米: ["饲料能源双属性", "农业链核心"],
+        棉花: ["纺织工业基石", "服装链风向"],
+        稻米: ["口粮安全底盘", "亚洲主粮"]
+      };
       
-      /* 【修改点2】色板扩充：前6名全部使用不同明度的深蓝/浅蓝，确保蓝色为主基调，辅以暖色点缀 */
       const TREEMAP_COLORS = [
-        "#1A56DB", "#2C7BE5", "#183B67", "#4693D9", "#1F5999", "#34A4EB",
-        "#C2593F", "#F7D273", "#DE4922", "#5A6C7A", "#007491", 
-        "#F59F00", "#7C8A96", "#E57E5A", "#E5A93B", "#A63512"
+        "#5A82E6", "#F7D273", "#C2593F", "#6C90E8", "#5A6C7A", "#DE4922",
+        "#4B76E3", "#007491", "#F59F00", "#7D9EEB", "#7C8A96", 
+        "#E57E5A", "#3D69E0", "#E5A93B", "#A63512", "#8EABED"
       ];
 
-      /* 【修改点1】补全的历史大事件全集 */
       const EVENT_CASES = {
         原油: { date: "2026-03", type: "地缘冲突", title: "霍尔木兹梗阻引发原油供应危机预期", summary: "原油最直接、最剧烈的冲击，仍然来自关键海峡受阻与地缘军事升级。", impact: "新华社多篇报道均指出，霍尔木兹海峡承担全球约五分之一的原油运输。2026 年 3 月海峡一度几乎停航，国际原油价格迅速突破 100 美元/桶，全球原油供应安全预期明显恶化。", source_name: "新华网" },
         LNG: { date: "2026-03", type: "航运梗阻", title: "霍尔木兹受阻放大 LNG 供应风险", summary: "LNG 近年的典型冲击，来自霍尔木兹海峡这一全球天然气航运要道。", impact: "印度现为全球第四大 LNG 买家，其中大量进口依赖中东；霍尔木兹海峡航运受阻后，卡塔尔等中东供应缩减，印度被迫优先保障关键行业和居民用气。", source_name: "新华网" },
@@ -313,7 +450,7 @@
         乙二醇: { date: "2024-05", type: "产能扩张", title: "国内扩产抬升乙二醇宽松预期", summary: "乙二醇近年的典型冲击，是国内产量快速上升带来的进口替代与利润重估。", impact: "多种石化产品产能累计增幅都在 50% 以上，行业普遍面临过剩与利润承压，乙二醇受到扩产与需求放缓的双重挤压。", source_name: "第一财经" },
         沥青: { date: "2024-06", type: "政策约束", title: "炼油行业节能降碳政策压缩沥青扩张空间", summary: "沥青近年的重要冲击来自炼化政策端的约束变化。", impact: "炼油行业节能降碳专项行动明确禁止以重油综合利用、沥青装置等名义变相新增炼油产能，属于典型的制度性供给约束。", source_name: "中国能源报" },
         白银: { date: "2026-01", type: "工业需求", title: "光伏用银成本上升推动白银冲高", summary: "白银近年的核心扰动，是工业属性重新被市场定价。", impact: "2025 年末至 2026 年初，光伏银浆成本明显上升。随着光伏、电气化需求保持韧性，白银从“跟随黄金”转向“贵金属+工业”双逻辑定价。", source_name: "第一财经" },
-        石墨: { date: "2023-10", type: "出口管制", title: "石墨出口许可管理重塑全球电池材料链", summary: "石墨最典型的近年冲击，是政策直接改变全球负极材料供应预期。", impact: "中国对部分石墨产品实施出口许可管理后，全球电池材料供应链重新评估依赖度，石墨被视作关键战略资源。", source_name: "Reuters" },
+        石墨: { date: "2023-10", type: "出口管理", title: "石墨出口许可管理重塑全球电池材料链", summary: "石墨最典型的近年冲击，是政策直接改变全球对负极材料供应稳定性的预期。", impact: "中国宣布对特定石墨物项实施出口管制后，海外电池产业链迅速评估供应影响。公开报道显示，韩国相关进口对中国依赖度较高，石墨由普通原料进一步被视作关键战略资源。", source_name: "环球网" },
         稀土: { date: "2025-04", type: "出口管制", title: "稀土相关物项出口管制升级", summary: "稀土近年的代表性冲击仍然来自政策端，因为其供应高度集中。", impact: "中国对部分稀土相关物项实施出口管制，稀土战略属性进一步强化，全球磁材、军工对供应安全的关注显著升温。", source_name: "新华社" },
         钴: { date: "2025-03", type: "供应过剩", title: "印尼放量加剧全球钴市过剩", summary: "钴近年的主线不是短缺，而是印尼扩产下的价格重估。", impact: "印尼钴产能快速上升，全球钴市维持过剩格局。钴的估值逻辑从资源稀缺，切换到“新增供给何时出清”。", source_name: "Reuters" },
         铝: { date: "2026-03", type: "地缘冲突", title: "霍尔木兹风险扰动全球铝供应链", summary: "铝的最新冲击，来自中东运输受阻与海湾冶炼产能扰动。", impact: "中东冲突升级后，海湾地区部分原铝发运与原料运输受阻，全球铝价快速上行，重新进入地缘冲击定价交易。", source_name: "Reuters" },
@@ -321,21 +458,25 @@
         铁矿石: { date: "2024-05", type: "政策刺激", title: "地产政策刺激短线提振铁矿石情绪", summary: "铁矿石近年的典型冲击，更多来自中国需求预期的快速摆动。", impact: "中国出台地产支持政策后，铁矿石价格一度反弹，随后转入“政策预期与现实需求博弈”阶段。", source_name: "Reuters" },
         铅: { date: "2025-04", type: "供应过剩", title: "过剩预期压制铅价弹性", summary: "铅近两年的特征，不是极端短缺，而是供给宽松下的弱弹性运行。", impact: "全球铅市继续面临过剩预期，汽车电池需求增长有限而精炼产量仍偏高，资金配置明显偏谨慎。", source_name: "Reuters" },
         铜: { date: "2025-03", type: "原料紧缺", title: "铜精矿短缺迫使冶炼厂讨论减产", summary: "铜近年的关键矛盾之一，是矿端紧张与冶炼端扩张错配。", impact: "铜精矿加工费跌至极低水平后，中国铜冶炼厂利润被明显压缩，市场担忧减产，逻辑切换到“原料约束”。", source_name: "Reuters" },
+        锰: { date: "2024-04", type: "运输受阻", title: "加蓬铁路事故扰动锰矿发运节奏", summary: "锰的另一类典型冲击，不在矿山本身，而在主产国运输链条受阻。", impact: "2024年4月，加蓬铁路脱轨事故导致当地锰矿运输受扰。在澳洲锰矿出口已偏紧的背景下，市场担心加蓬发运进一步收缩，全球锰矿供应预期因此再度趋紧。", source_name: "证券时报" },
         电解铝: { date: "2024-07", type: "成本冲击", title: "氧化铝紧张向电解铝成本端强传导", summary: "电解铝近年的重要扰动，更多来自上游氧化铝与铝土矿。", impact: "氧化铝价格走强叠加铝土矿供应担忧，电解铝成本中枢被抬高，市场对高成本产能的敏感度显著上升。", source_name: "Reuters" },
         铝土矿: { date: "2026-03", type: "出口约束", title: "几内亚拟收紧出口扰动铝土矿市场", summary: "铝土矿近年的最大变量，是几内亚政策与发运节奏。", impact: "几内亚评估限制铝土矿出口后，市场担忧进口来源稳定性，氧化铝和电解铝成本链条随之波动。", source_name: "Reuters" },
         锂: { date: "2026-01", type: "需求修复", title: "储能需求爆发推动锂价自低位修复", summary: "锂近两年的主线，先是过剩压价，随后转向储能需求修复。", impact: "储能装机与数据中心相关需求增长，锂需求预期改善，市场开始从“持续过剩”转向“供需再平衡”。", source_name: "Reuters" },
+        锑: { date: "2024-08", type: "出口管制", title: "锑出口管制改变全球供应预期", summary: "锑近年的典型冲击，是政策直接改变出口流向与海外供应预期。", impact: "2024年8月，商务部、海关总署决定对部分锑相关物项实施出口管制。作为全球重要锑供应国之一，中国政策调整迅速提升了市场对海外供应收紧和价格重估的关注度，锑的战略资源属性进一步强化。", source_name: "新华社" },
+        钼: { date: "2025-02", type: "出口管制", title: "钼相关物项出口管制强化战略属性", summary: "钼近年的代表性冲击，不是单纯价格波动，而是政策直接抬升其战略资源属性。", impact: "2025年2月，商务部、海关总署决定对钼相关物项实施出口管制，并同步更新两用物项出口管制清单。事件发生后，市场对钼在高端制造、军工与新材料链条中的供应安全关注明显升温。", source_name: "新华社" },
+        磷矿石: { date: "2025-05", type: "供需偏紧", title: "供给弹性不足重塑磷矿石价格中枢", summary: "磷矿石近年的典型冲击，不是单点突发，而是资源约束下的长期紧平衡。", impact: "2025年以来，国内磷矿石市场供需延续偏紧。行业公开表述显示，新增产能有限而需求持续增加，资源供给弹性不足与下游需求扩张的矛盾，使磷矿石价格长期维持高位，市场定价逻辑转向紧平衡常态化。", source_name: "证券时报" },
         锌: { date: "2024-10", type: "矿端短缺", title: "矿山收缩令锌市转向供应缺口", summary: "锌近年的主要冲击来自矿端，原料持续趋紧。", impact: "全球锌矿产量连续下滑后，冶炼厂加工费明显走低，锌从预期过剩切换到阶段性缺口交易。", source_name: "Reuters" },
         锡: { date: "2024-09", type: "矿山停产", title: "缅甸佤邦停产持续收紧全球锡原料", summary: "锡近年的典型扰动，几乎都绕不开缅甸佤邦矿山。", impact: "缅甸佤邦核心锡矿长期停产后，市场对锡精矿供应担忧升温，原料链稳定性成为交易核心。", source_name: "Reuters" },
         镍: { date: "2025-01", type: "供应过剩", title: "印尼主导的过剩格局压低镍价中枢", summary: "镍近两年的最强主线，是印尼产能扩张重塑全球定价。", impact: "印尼持续扩张产能导致全球镍市长期过剩，价格重心下移，市场开始关注印尼是否会主动控量。", source_name: "Reuters" },
-        黄金: { date: "2025-02", type: "央行购金", title: "全球央行持续购金重塑黄金需求结构", summary: "黄金近年的代表性冲击，是央行购金与地缘避险共振。", impact: "央行保持高强度购金，叠加地缘与美元信用担忧，需求结构被重塑，金价多次刷新历史高位。", source_name: "新华社" },
+        黄金: { date: "2026-01", type: "价格新高", title: "国际金价1月再创历史新高", summary: "黄金近年的代表性冲击，已从单纯避险，转向货币信用与全球资金再配置共振。", impact: "2026年1月，国际金价先后突破5000美元和5500美元关口，再创历史新高。市场对美元走弱、全球货币财政秩序不确定性上升的担忧，推动黄金需求结构进一步强化。", source_name: "新华社" },
         煤炭: { date: "2025-06", type: "供需错配", title: "供给增长与替代能源扩张压低煤价中枢", summary: "煤炭典型扰动是供给走高、需求偏弱与替代能源扩张的共振。", impact: "全国原煤产量增长叠加煤炭进口创历史新高，新能源替代导致煤价中枢明显下移。", source_name: "新华网" },
-        燃料油: { date: "2026-03", type: "地缘冲击", title: "中东局势升级放大燃料油供应与运费风险", summary: "燃料油显著扰动多来自中东地缘、船燃供应和运费保费抬升。", impact: "霍尔木兹封锁预期下，全球海运高硫燃料油供应受扰，高低硫燃料油价格被共同推高。", source_name: "中信期货" },
+        燃料油: { date: "2026-03", type: "地缘冲击", title: "霍尔木兹受限放大燃料油供应与运费风险", summary: "燃料油近年的显著扰动，更多来自中东地缘变化、船燃供应收紧与运费上升的共振。", impact: "新华社报道显示，霍尔木兹海峡一度受阻后，多家船东和交易商暂停经该海峡运输原油、燃料及液化天然气；证券时报同时提到，头部船司上调运价并加收附加费，运输风险迅速抬升。燃料油价格因此明显受到事件驱动。", source_name: "新华社 / 证券时报" },
         甲醇: { date: "2026-03", type: "地缘冲击", title: "霍尔木兹受扰放大甲醇进口收缩预期", summary: "甲醇关键冲击之一是海外装置与进口到港节奏受扰。", impact: "霍尔木兹航运停滞期间，甲醇主力合约连续涨停，体现市场对中东供应与进口收缩的高度敏感。", source_name: "第一财经" },
-        纯碱: { date: "2024-07", type: "产能扩张", title: "新增产能释放重塑纯碱景气周期", summary: "纯碱代表性冲击是高利润诱发扩产，随后供给压力反制价格。", impact: "国内纯碱新增产能巨大，纯碱价格从高位回落，本质是新产能释放后的再平衡。", source_name: "证券时报" },
+        纯碱: { date: "2024-11", type: "检修扰动", title: "高检修与扩能预期反复拉扯纯碱行情", summary: "纯碱代表性冲击之一，是现实供给扰动与远期扩能预期同时作用。", impact: "隆众资讯指出，2024年纯碱上游延续高检修，供给端压力阶段性减轻，但市场同时面临扩能预期压制，价格在现实去库与远期宽松之间反复博弈。", source_name: "隆众资讯" },
         聚丙烯: { date: "2026-03", type: "成本冲击", title: "油气成本抬升带动聚丙烯价格体系重估", summary: "聚丙烯明显冲击包含原油与丙烯链成本快速抬升。", impact: "能源成本重塑聚丙烯价格体系，供应缩量预期与成本上移共同推高市场重心。", source_name: "隆众资讯" },
         纯苯: { date: "2026-03", type: "原料断供预期", title: "中东原料风险放大纯苯价格波动", summary: "纯苯核心风险之一是中东原料与芳烃链成本突发扰动。", impact: "中东断供危机冲击石脑油裂解装置，对纯苯而言，原料链受损会直接放大供应与价格波动。", source_name: "隆众资讯" },
         苯乙烯: { date: "2026-03", type: "检修去库", title: "海内外检修叠加去库预期提振苯乙烯", summary: "苯乙烯典型冲击是供给收缩预期与库存切换。", impact: "国内外装置检修规模大于重启规模，供给存在收缩预期，同时受油价与芳烃链带动明显。", source_name: "证券时报" },
-        大豆: { date: "2018-07", type: "贸易制裁", title: "中美贸易战改写全球大豆流向", summary: "大豆是最典型的“流向重塑型”冲击：买方卖方突然断开。", impact: "中国自美国进口大豆大幅减少，该事件永久改变了全球大豆贸易地图。", source_name: "USDA ERS" },
+        大豆: { date: "2024-05", type: "天气冲击", title: "巴西南部洪灾扰动全球大豆供应预期", summary: "大豆近年的典型冲击，不只是贸易变化，极端天气也会直接影响主产区产量与出口节奏。", impact: "2024年5月，巴西南里奥格兰德州洪灾发生时仍有大量大豆尚未收获，市场随即下调当地大豆产量和巴西出口预期，全球大豆供应与发运节奏因此受到扰动。", source_name: "新华社 / 证券时报" },
         小麦: { date: "2022-02", type: "地缘冲突", title: "俄乌冲突冲击黑海小麦出口", summary: "小麦经典冲击是黑海出口链条受阻。", impact: "俄乌冲突令全球小麦贸易面临极高不确定性，国际小麦价格一度处于历史高位并显著波动。", source_name: "USDA" },
         玉米: { date: "2012-07", type: "严重干旱", title: "美国大旱推升全球玉米价格", summary: "玉米经典冲击往往来自美国天气。", impact: "大旱导致美国玉米减产并推动价格升至历史高位，出口明显收缩。", source_name: "USDA" },
         稻米: { date: "2023-07", type: "出口限制", title: "印度限制大米出口引发全球米市收紧", summary: "稻米市场对主要出口国政策极度敏感。", impact: "印度出口限制压制了全球贸易量并推高国际米价，迅速改变了现货流向。", source_name: "USDA" },
@@ -351,11 +492,36 @@
       function escapeHtml(text) { return String(text ?? "").replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;").replace(/"/g, "&quot;").replace(/'/g, "&#39;"); }
       function translateUnit(unit) { return UNIT_ZH_MAP[unit] || unit; }
       function translateValueType(valueType) { return VALUE_TYPE_ZH_MAP[valueType] || "产量"; }
-      function normalizeDisplayValue(value, unit) { const num = Number(value || 0); return (unit === "million metric tons" || unit === "million barrels per day") ? num * 100 : num; }
+      function normalizeDisplayValue(value, unit) { const num = Number(value || 0); return (unit === "million metric tons" || unit === "million barrels per day" || unit === "million 480-lb bales") ? num * 100 : num; }
       function formatDisplayValue(value, unit) { return new Intl.NumberFormat("zh-CN", { maximumFractionDigits: 2 }).format(normalizeDisplayValue(value, unit)); }
       function getTopicTags(name) { return HOT_TOPIC_TAGS[name] || ["全球供应链聚焦"]; }
-      function renderTopicTagsHtml(tags) { return tags.map(tag => `<span class='topic-tag'>${escapeHtml(tag)}</span>`).join(""); }
+      function renderTopicTagsHtml(tags) { 
+        if (!tags || !tags.length) return "";
+        return tags.map((tag, idx) => `<span class='topic-tag ${idx % 2 === 1 ? "topic-tag-cool" : ""}'>${escapeHtml(tag)}</span>`).join(""); 
+      }
       function setBoardTags(tags) { const el = document.getElementById("boardTags"); if (!el) return; if (!tags || !tags.length) { el.style.display = "none"; return; } el.innerHTML = renderTopicTagsHtml(tags); el.style.display = "flex"; }
+      function setBoardSource(text) {
+        const el = document.getElementById("boardSource");
+        if (!el) return;
+        if (!text) {
+          el.textContent = "";
+          el.style.display = "none";
+          return;
+        }
+        el.textContent = text;
+        el.style.display = "inline-flex";
+      }
+      function getBoardSourceText(item) {
+        if (!item) return "";
+        const major = item.group_major || "";
+        const name = item.commodity_zh || "";
+        if (name === "原油") return "数据来源：OPEC等";
+        if (name === "煤炭") return "数据来源：Energy Institute、IEA等";
+        if (major === "矿产") return "数据来源：USGS等";
+        if (major === "农产品") return "数据来源：USDA等";
+        if (major === "能化") return "数据来源：OPEC、EI等";
+        return "";
+      }
 
       function getDisruptionSet(commodityCode) { if (!simulatedShutdowns.has(commodityCode)) simulatedShutdowns.set(commodityCode, new Set()); return simulatedShutdowns.get(commodityCode); }
       function toggleDisruption(commodityCode, countryCode) { const set = getDisruptionSet(commodityCode); set.has(countryCode) ? set.delete(countryCode) : set.add(countryCode); }
@@ -375,9 +541,18 @@
       }
 
       function selectedCommodity() { return allProducts.find(c => c.commodity_en === appliedCommodity) || allProducts[0] || null; }
+      
+      function getCountryZh(en) {
+        if (COUNTRY_ZH_PATCH[en]) return COUNTRY_ZH_PATCH[en];
+        for (let i = 0; i < allProducts.length; i++) {
+            const entry = allProducts[i].entries.find(e => e.country_en === en);
+            if (entry && entry.country_zh) return toCountryZh(en, entry.country_zh);
+        }
+        return en;
+      }
+      
       function selectedCountryProfile() { const profiles = buildCountryProfiles(CORE_COUNTRIES, allProducts); return profiles.find(c => c.country_en === appliedCountry) || profiles[0] || null; }
 
-      // --- 顶部按钮文案动态更新 ---
       function updateButtonTexts() {
         if (appliedMode === 'commodity') {
           const commObj = allProducts.find(p => p.commodity_en === appliedCommodity);
@@ -387,13 +562,12 @@
           document.getElementById('btnModeCountry').innerHTML = `按国家/地区分类 <span class="caret">▼</span>`;
         } else {
           const contName = CONTINENT_ZH_MAP[appliedContinent] || appliedContinent;
-          const countryZh = toCountryZh(appliedCountry);
+          const countryZh = getCountryZh(appliedCountry); 
           document.getElementById('btnModeCountry').innerHTML = `${contName}-${countryZh} <span class="caret">▼</span>`;
           document.getElementById('btnModeCommodity').innerHTML = `按品种分类 <span class="caret">▼</span>`;
         }
       }
 
-      // --- Picker 逻辑 ---
       const pickerModal = document.getElementById('customPickerModal');
       
       function openPicker(mode) {
@@ -478,7 +652,6 @@
       document.getElementById('btnModeCommodity').addEventListener('click', () => openPicker('commodity'));
       document.getElementById('btnModeCountry').addEventListener('click', () => openPicker('country'));
 
-
       function getCommoditySimulationState(commodity) {
         if (!commodity) return { disruptionSet: new Set(), disruptedEntries: [], activeEntries: [], disruptedValue: 0, remainingTotal: 0, simulationActive: false, gapPct: 0, rankedEntries: [] };
         const set = getDisruptionSet(commodity.commodity_en);
@@ -513,7 +686,6 @@
       function buildTreemapNodes(commodity, simState) {
         const nodes = [];
         
-        // 前 15 名用于展示
         const top15 = commodity.entries.slice(0, 15);
         const activeNodes = top15.map((e, idx) => {
             const isDisrupted = simState.disruptionSet.has(e.country_en);
@@ -529,7 +701,6 @@
         });
         nodes.push(...activeNodes);
 
-        // 第 16 名及以后合并为“其他”
         const otherEntries = commodity.entries.slice(15);
         if (otherEntries.length > 0) {
             const otherValue = otherEntries.reduce((s, e) => s + Number(e.value || 0), 0);
@@ -547,6 +718,37 @@
         return nodes.filter(n => n.value > 0);
       }
 
+      /* === 修改了 alert，接入自定义 Tooltip 交互 === */
+      function showTooltip(e, text) {
+        e.stopPropagation();
+        const tooltip = document.getElementById('customTooltip');
+        if (!tooltip) return;
+        tooltip.innerHTML = text;
+        tooltip.classList.add('show');
+        
+        let x = e.clientX;
+        let y = e.clientY - 15;
+        
+        // 边界控制防溢出屏幕
+        const rect = tooltip.getBoundingClientRect();
+        if (x - rect.width / 2 < 10) x = rect.width / 2 + 10;
+        if (x + rect.width / 2 > window.innerWidth - 10) x = window.innerWidth - rect.width / 2 - 10;
+        if (y - rect.height < 10) y = rect.height + 10;
+        
+        tooltip.style.left = x + 'px';
+        tooltip.style.top = y + 'px';
+      }
+
+      document.addEventListener('click', (event) => {
+        const tooltip = document.getElementById('customTooltip');
+        if (tooltip) tooltip.classList.remove('show');
+        if (!event.target.closest('.sim-help')) {
+          document.querySelectorAll('.sim-help[open]').forEach((el) => {
+            el.removeAttribute('open');
+          });
+        }
+      });
+
       function renderHeroPanel(commodity, simState) {
         const el = document.getElementById("heroPanel");
         if (appliedMode !== "commodity" || !commodity) { el.style.display = "none"; return; }
@@ -555,15 +757,17 @@
         
         const html = layout.map(node => {
           const area = node.width * node.height;
-          // 防溢出检测
-          const sizeClass = (node.width < 12 || node.height < 10 || area < 100) ? " treemap-block-micro" 
-                            : (area < 250) ? " treemap-block-tiny" 
-                            : (area < 500) ? " treemap-block-compact" : "";
+          const sizeClass = (node.width < 16 || node.height < 14 || area < 150) ? " treemap-block-micro" 
+                            : (area < 300) ? " treemap-block-tiny" 
+                            : (area < 600) ? " treemap-block-compact" : "";
           
           const opacityStyle = node.isDisrupted ? "opacity: 0.5;" : "opacity: 1;";
           const fontColor = node.kind === "other" ? "#333" : "#fff";
 
-          return `<div class='treemap-block ${sizeClass}' style='left:${node.x}%;top:${node.y}%;width:${node.width}%;height:${node.height}%;background:${node.color};${opacityStyle}'>
+          // === 替换为 showTooltip 事件 ===
+          const alertText = `${escapeHtml(node.label)}<br>占比：${node.kind === "gap" ? node.shareLabel.replace("%", "") + "%" : node.shareLabel}<br>绝对值：${escapeHtml(formatDisplayValue(node.value, commodity.unit))} ${escapeHtml(translateUnit(commodity.unit))}`;
+
+          return `<div class='treemap-block ${sizeClass}' style='left:${node.x}%;top:${node.y}%;width:${node.width}%;height:${node.height}%;background:${node.color};${opacityStyle}' onclick="showTooltip(event, '${alertText}')">
             <div class='treemap-block-inner' style='color:${fontColor}'><div><div class='treemap-name'>${escapeHtml(node.label)}</div></div>
             <div><div class='treemap-value'>${escapeHtml(formatDisplayValue(node.value, commodity.unit))}</div><div class='treemap-value-sub'>${node.shareLabel}</div></div></div></div>`;
         }).join("");
@@ -577,10 +781,13 @@
         if (appliedMode !== "commodity" || !disruptedEntries.length) { simCard.style.display = "none"; return; }
         simCard.style.display = "block";
         simBody.className = "";
-        simBody.innerHTML = `<div class='sim-alert'>若执行断供，全球将出现 <strong>${gapPct.toFixed(2)}%</strong> 的绝对缺口。</div><div class='sim-meta'>剩余可供量：${formatDisplayValue(remainingTotal, commodity.unit)} ${translateUnit(commodity.unit)}</div><div class='sim-pills'>${disruptedEntries.map(e => `<span class='sim-pill'>${escapeHtml(toCountryZh(e.country_en, e.country_zh))}</span>`).join("")}</div>`;
+        
+        const disruptedLabel = disruptedEntries.length === 1 ? "若该国家/地区断供" : "若这些国家/地区断供";
+        const pillsHtml = disruptedEntries.map(e => `<span class='sim-pill'>${escapeHtml(toCountryZh(e.country_en, e.country_zh))}</span>`).join("");
+        
+        simBody.innerHTML = `<div class='sim-alert'>${disruptedLabel}，全球将出现 <strong>${gapPct.toFixed(2)}%</strong> 的绝对缺口。</div><div class='sim-meta'>剩余可供量：${formatDisplayValue(Math.max(remainingTotal, 0), commodity.unit)} ${translateUnit(commodity.unit)}</div><div class='sim-pills'>${pillsHtml}</div>`;
       }
 
-      // 完美读取本地 EVENT_CASES，渲染历史冲击面板
       function renderEventPanel(commodity) {
         const panel = document.getElementById("eventPanel");
         if (!commodity || appliedMode !== "commodity") {
@@ -590,27 +797,37 @@
         
         const rawCase = EVENT_CASES[commodity.commodity_zh] || (window.EVENT_CASES && window.EVENT_CASES[commodity.commodity_zh]);
         if (!rawCase) {
-            panel.innerHTML = "";
+            panel.innerHTML = `
+                <article class='event-card event-card-fallback'>
+                    <div class='event-topline'>
+                        <div class='event-eyebrow'>
+                            <span class='event-kicker'>历史冲击案例</span>
+                        </div>
+                    </div>
+                    <h3>该品种的代表事件还在补充中</h3>
+                    <p class='event-summary'>当前先提供供应集中度、热点概念和断供推演。后续补入事件后，这里会直接展示“发生了什么”“当时冲击多大”“可否一键代入模拟”。</p>
+                </article>
+            `;
             return;
         }
         
         const cases = Array.isArray(rawCase) ? rawCase : [rawCase];
         
-        let html = `<div class='section-label'>历史断供/冲击复盘</div>`;
+        let html = ``;
         html += cases.map(c => `
-            <div class="event-card">
+            <article class="event-card">
                 <div class="event-topline">
                     <div class="event-eyebrow">
-                        <span class="event-type">${escapeHtml(c.type || '历史事件')}</span>
-                        <span class="event-kicker">${escapeHtml(c.title || '')}</span>
+                        <span class="event-kicker">历史冲击案例</span>
+                        <span class="event-date">${escapeHtml(c.date || '')}</span>
                     </div>
-                    <span class="event-date">${escapeHtml(c.date || '')}</span>
+                    <span class="event-type">${escapeHtml(c.type || '历史事件')}</span>
                 </div>
                 <h3>${escapeHtml(c.title || '')}</h3>
                 <p class="event-summary">${escapeHtml(c.summary || '')}</p>
                 ${c.impact ? `<div class="event-impact"><div class="event-impact-label">核心影响</div><div class="event-impact-text">${escapeHtml(c.impact)}</div></div>` : ''}
                 ${c.source_name ? `<div class="event-source"><div class="event-source-label">来源：${escapeHtml(c.source_name)}</div></div>` : ''}
-            </div>
+            </article>
         `).join("");
         
         panel.innerHTML = html;
@@ -627,6 +844,7 @@
         document.getElementById("boardTitle").textContent = commodity.commodity_zh + "供应排行";
         document.getElementById("boardSubTitle").textContent = `口径：${translateValueType(commodity.value_type)} | 年份：${commodity.year} | 单位：${translateUnit(commodity.unit)}`;
         setBoardTags(getTopicTags(commodity.commodity_zh));
+        setBoardSource(getBoardSourceText(commodity));
         
         renderHeroPanel(commodity, simState);
         renderSimulationPanel(commodity, disruptedEntries, remainingTotal, simState.gapPct);
@@ -694,6 +912,7 @@
         renderSimulationPanel(null, [], 0, 0);
         document.getElementById("eventPanel").innerHTML = ""; 
         document.getElementById("boardSubTitle").textContent = "按该国家/地区在各品种全球占比排序";
+        setBoardSource("");
 
         const entries = profile.entries;
         const maxShare = Math.max(...entries.map((e) => e.share_pct), 1);
