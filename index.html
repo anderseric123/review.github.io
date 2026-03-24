@@ -1,4 +1,3 @@
-
 <!doctype html>
 <html lang="zh-CN">
   <head>
@@ -7,1698 +6,175 @@
     <title>全球大宗商品产量版图</title>
     <style>
       :root {
-        --primary: #1A56DB;
+        --primary: #235de6; 
         --secondary: #E02424;
         --tertiary: #057A55;
-        --neutral: #F3F4F6;
-        --primary-rgb: 26, 86, 219;
+        --primary-rgb: 35, 93, 230;
         --secondary-rgb: 224, 36, 36;
         --tertiary-rgb: 5, 122, 85;
-        --neutral-rgb: 243, 244, 246;
-        --bg: var(--neutral);
-        --panel: var(--neutral);
-        --line: rgba(var(--primary-rgb), 0.12);
+        --bg: #FFFFFF; /* 强制绝对白底 */
         --text: #111111;
         --sub: rgba(17, 17, 17, 0.58);
-        --accent: var(--primary);
-        --accent-soft: rgba(var(--primary-rgb), 0.1);
-        --warn: var(--secondary);
-        --page-max-width: 650px;
+        --page-max-width: 500px;
       }
 
-      * {
-        box-sizing: border-box;
-      }
+      * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
 
       body {
         margin: 0;
         font-family: "Inter", "Roboto", "Noto Sans CJK SC", sans-serif;
         color: var(--text);
-        background: #FFFFFF;
+        background: #FFFFFF; /* 强制白底 */
       }
 
-      .layout {
-        min-height: 100vh;
-        display: block;
-        width: 100%;
-        max-width: 100%;
-        margin: 0 auto;
-      }
+      .layout { min-height: 100vh; display: block; width: 100%; max-width: 100%; margin: 0 auto; background: #FFFFFF; }
 
       .sidebar {
-        border-bottom: 1px solid var(--line);
-        background:
-          linear-gradient(180deg, rgba(246, 241, 233, 0.96) 0%, rgba(255, 253, 249, 0.98) 74%),
-          #fffdf9;
+        border-bottom: 1px solid rgba(35, 93, 230, 0.12);
+        background: #FFFFFF; /* 去除渐变，强制白底 */
         padding: 18px 14px 12px;
-        display: flex;
-        flex-direction: column;
-        gap: 12px;
-      }
-
-      .masthead {
-        display: flex;
-        flex-direction: column;
-        gap: 4px;
-      }
-
-      .brand-lockup {
-        display: inline-flex;
-        align-items: center;
-        margin-bottom: 4px;
-      }
-
-      .brand-logo {
-        display: block;
-        width: 104px;
-        height: auto;
-      }
-
-      .title {
-        margin: 0;
-        font-size: 31px;
-        line-height: 1.08;
-        letter-spacing: -0.045em;
-        font-weight: 800;
-      }
-
-      .desc {
-        margin: 0;
-        font-size: 12px;
-        color: var(--sub);
-        line-height: 1.6;
-        display: none;
-      }
-
-      .toolbar-primary {
-        display: flex;
-        flex-wrap: wrap;
-        gap: 8px;
-        align-items: center;
-      }
-
-      .toolbar-secondary {
-        display: none;
-        grid-template-columns: minmax(0, 1fr);
-        gap: 10px;
-        width: min(100%, 520px);
-        margin-top: 8px;
-        padding: 14px;
-        border: 1px solid #ebeef5;
-        border-radius: 18px;
-        background: #fff;
-        box-shadow: 0 18px 38px rgba(40, 54, 96, 0.08);
-      }
-
-      .toolbar-secondary.is-open {
-        display: grid;
-      }
-
-      .selection-panel-head {
-        position: relative;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        min-height: 28px;
-        padding-bottom: 4px;
-      }
-
-      .selection-panel-title {
-        font-size: 16px;
-        font-weight: 800;
-        color: #1f1c18;
-        text-align: center;
-      }
-
-      .selection-panel-close {
-        position: absolute;
-        right: 0;
-        top: 50%;
-        transform: translateY(-50%);
-        border: 0;
-        background: transparent;
-        color: #b2b2b2;
-        font-size: 20px;
-        line-height: 1;
-        padding: 2px 4px;
-        cursor: pointer;
-      }
-
-      .selection-panel-close:hover {
-        color: #7f8693;
-      }
-
-      .selection-hint {
-        font-size: 12px;
-        color: var(--sub);
-        line-height: 1.6;
-        padding: 0 2px;
-      }
-
-      .selection-hint strong {
-        color: #2c3d61;
-        font-weight: 700;
-      }
-
-      .field-compact .label {
-        display: none;
-      }
-
-      .toolbar-switch {
-        border: 1px solid #dce6ff;
-        border-radius: 8px;
-        overflow: hidden;
-        background: #edf3ff;
-        flex: 0 0 auto;
-        box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.55);
-        transition: background 0.18s ease, border-color 0.18s ease;
-      }
-
-      .toolbar-switch input {
-        display: none;
-      }
-
-      .toolbar-switch span {
-        display: inline-flex;
-        align-items: center;
-        justify-content: center;
-        min-height: 38px;
-        min-width: 110px;
-        padding: 8px 28px 8px 12px;
-        font-size: 13px;
-        font-weight: 700;
-        text-align: center;
-        color: #5f7fe8;
-        position: relative;
-        white-space: nowrap;
-      }
-
-      .toolbar-switch span::after {
-        content: "";
-        position: absolute;
-        right: 10px;
-        top: 50%;
-        width: 0;
-        height: 0;
-        margin-top: -2px;
-        border-left: 4px solid transparent;
-        border-right: 4px solid transparent;
-        border-top: 6px solid currentColor;
-      }
-
-      .toolbar-switch input:checked + span {
-        background: #e4ecff;
-        color: #4d6cff;
-      }
-
-      .toolbar-switch:hover span {
-        background: #e8efff;
-      }
-
-      .toolbar-secondary .field {
-        margin: 0;
-        gap: 6px;
-      }
-
-      .toolbar-secondary select {
-        height: 48px;
-        border-radius: 12px;
-        font-size: 16px;
-        font-weight: 700;
-        background: #fbfbfb;
-        border-color: #ececec;
-        padding-right: 38px;
-        box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.85);
-      }
-
-      .toolbar-secondary .label {
-        display: block;
-        font-size: 12px;
-        color: #96918a;
-        font-weight: 600;
-      }
-
-      .select-wrap {
-        position: relative;
-      }
-
-      .select-wrap::after {
-        content: "";
-        position: absolute;
-        right: 14px;
-        top: 50%;
-        width: 0;
-        height: 0;
-        margin-top: -2px;
-        border-left: 5px solid transparent;
-        border-right: 5px solid transparent;
-        border-top: 6px solid #a7afb8;
-        pointer-events: none;
-      }
-
-      .field-compact select,
-      .field-compact input[type="text"] {
-        height: 42px;
-        border-radius: 10px;
-        padding: 0 12px;
-        font-size: 14px;
-        font-weight: 600;
-        background: #f2eee8;
-      }
-
-      .field-compact .radio-group {
-        gap: 6px;
-      }
-
-      .field-compact .radio-group label {
-        min-width: 0;
-        padding: 0;
-        border-radius: 10px;
-        overflow: hidden;
-        background: #f2eee8;
-        border-color: #dbd2c7;
-      }
-
-      .field-compact .radio-group span {
-        display: block;
-        padding: 11px 10px;
-        font-size: 14px;
-        font-weight: 700;
-      }
-
-      .field-compact .radio-group input:checked + span {
-        margin: 0;
-        padding: 11px 10px;
-        border-radius: 0;
-      }
-
-      .field-span-2 {
-        grid-column: 1 / -1;
-      }
-
-      .toolbar-advanced {
-        border: 1px solid var(--line);
-        border-radius: 14px;
-        background: rgba(255, 253, 249, 0.92);
-        overflow: hidden;
-      }
-
-      .toolbar-picker {
-        border: 0;
-        border-radius: 0;
-        background: transparent;
-        overflow: visible;
-      }
-
-      .toolbar-advanced summary {
-        list-style: none;
-        cursor: pointer;
-        padding: 11px 14px;
-        font-size: 12px;
-        font-weight: 700;
-        color: #3d4b71;
-        background: #f5f1ea;
-      }
-
-      .toolbar-advanced summary::after {
-        content: "展开";
-        float: right;
-        color: #7a7770;
-        font-weight: 600;
-      }
-
-      .toolbar-advanced[open] summary::after {
-        content: "收起";
-      }
-
-      .toolbar-picker summary {
-        padding: 11px 14px;
-        border: 1px solid #dbd2c7;
-        border-radius: 10px;
-        background: #f2eee8;
-        color: #3d4b71;
-        white-space: nowrap;
-      }
-
-      .toolbar-picker summary::after {
-        content: " ▾";
-        float: none;
-        margin-left: 4px;
-        color: #7a7770;
-      }
-
-      .toolbar-picker[open] {
-        grid-column: 1 / -1;
-      }
-
-      .toolbar-picker[open] summary::after {
-        content: " ▴";
-      }
-
-      .toolbar-picker .toolbar-advanced-inner {
-        margin-top: 8px;
-        border: 1px solid var(--line);
-        border-radius: 14px;
-        background: rgba(255, 253, 249, 0.96);
-      }
-
-      .toolbar-advanced summary::-webkit-details-marker {
-        display: none;
-      }
-
-      .toolbar-advanced-inner {
-        padding: 12px;
-        display: flex;
-        flex-direction: column;
-        gap: 12px;
-      }
-
-      .field {
-        display: flex;
-        flex-direction: column;
-        gap: 8px;
-      }
-
-      .label {
-        font-size: 12px;
-        color: var(--sub);
-      }
-
-      select,
-      input[type="text"] {
-        width: 100%;
-        height: 46px;
-        border: 1px solid #d8d0c4;
-        border-radius: 12px;
-        padding: 0 12px;
-        font-size: 16px;
-        background: #fffdfa;
-        appearance: none;
-        color: var(--text);
-      }
-
-      .radio-group {
-        display: flex;
-        flex-wrap: wrap;
-        gap: 8px;
-      }
-
-      .radio-group label {
-        flex: 1;
-        min-width: calc(50% - 4px);
-        border: 1px solid #d8d0c4;
-        border-radius: 999px;
-        padding: 10px 12px;
-        font-size: 13px;
-        text-align: center;
-        cursor: pointer;
-        user-select: none;
-        background: #fffdfa;
-      }
-
-      .radio-group input {
-        display: none;
-      }
-
-      .radio-group input:checked + span {
-        color: #fff;
-        background: var(--accent);
-        border-radius: 999px;
-        padding: 10px 12px;
-        margin: -10px -12px;
-        display: block;
-      }
-
-      .summary-grid {
-        display: grid;
-        grid-template-columns: 1fr 1fr;
-        gap: 10px;
-      }
-
-      .card {
-        background: var(--panel);
-        border: 1px solid var(--line);
-        border-radius: 14px;
-        padding: 12px;
-      }
-
-      .card .k {
-        font-size: 11px;
-        color: var(--sub);
-        margin-bottom: 4px;
-      }
-
-      .card .v {
-        font-size: 16px;
-        font-weight: 700;
-      }
-
-      .main {
-        padding: 14px 14px 20px;
-        display: flex;
-        flex-direction: column;
-        gap: 12px;
-        background: #f7f5ef;
-      }
-
-      .header-row {
-        display: flex;
-        justify-content: flex-start;
-        gap: 8px;
-        align-items: flex-start;
-        padding-top: 2px;
-      }
-
-      .title-stack {
-        display: flex;
-        flex-direction: column;
-        gap: 6px;
-      }
-
-      .headline-row {
-        display: flex;
-        align-items: center;
-        gap: 10px;
-        flex-wrap: wrap;
-      }
-
-      .header-row h2 {
-        margin: 0;
-        font-size: 26px;
-        line-height: 1.16;
-        letter-spacing: -0.03em;
-      }
-
-      .header-row p {
-        margin: 0;
-        color: var(--sub);
-        font-size: 12px;
-      }
-
-      .board {
-        background: var(--panel);
-        border: 1px solid var(--line);
-        border-radius: 14px;
-        padding: 12px;
-        box-shadow: 0 8px 20px rgba(67, 56, 35, 0.04);
-      }
-
-      .board-tools {
-        margin-bottom: 14px;
-        display: grid;
-        grid-template-columns: minmax(0, 1fr);
-        gap: 10px;
-      }
-
-      .board-overview {
-        display: grid;
-        grid-template-columns: minmax(0, 1fr) auto;
-        gap: 12px;
-        align-items: start;
-        padding: 0 2px;
-      }
-
-      .board-overview-text {
-        font-size: 13px;
-        line-height: 1.7;
-        color: #5f5a52;
-      }
-
-      .board-overview-text strong {
-        color: #1f1c18;
-      }
-
-      .metric-inline {
-        display: inline-flex;
-        align-items: center;
-        gap: 4px;
-        padding: 3px;
-        border: 1px solid #ddd3c6;
-        border-radius: 999px;
-        background: #faf7f2;
-      }
-
-      .metric-chip {
-        border: 0;
-        background: transparent;
-        color: #756f66;
-        font-size: 12px;
-        font-weight: 700;
-        font-family: inherit;
-        padding: 7px 12px;
-        border-radius: 999px;
-        cursor: pointer;
-      }
-
-      .metric-chip-active {
-        background: var(--accent);
-        color: #fff;
-      }
-
-      .metric-chip:disabled {
-        opacity: 0.45;
-        cursor: not-allowed;
-      }
-
-      .sim-card {
-        background: #fffdfa;
-      }
-
-      .hero-panel {
-        background: linear-gradient(180deg, #fffdf8 0%, #fbf7f0 100%);
-        border: 1px solid var(--line);
-        border-radius: 16px;
-        padding: 14px;
-        box-shadow: 0 10px 24px rgba(67, 56, 35, 0.05);
-      }
-
-      .hero-kicker {
-        font-size: 11px;
-        color: var(--sub);
-        font-weight: 700;
-        letter-spacing: 0.04em;
-      }
-
-      .hero-title {
-        margin-top: 8px;
-        font-size: 15px;
-        line-height: 1.45;
-        color: #243f61;
-      }
-
-      .hero-title strong {
-        display: inline-block;
-        font-size: 30px;
-        color: #5470ff;
-        line-height: 1;
-        letter-spacing: -0.03em;
-        margin: 4px 2px;
-      }
-
-      .treemap-shell {
-        margin-top: 16px;
-        display: grid;
-        grid-template-columns: minmax(0, 1fr);
-        gap: 12px;
-      }
-
-      .treemap-head {
-        display: flex;
-        align-items: center;
-        justify-content: space-between;
-        gap: 10px;
-        flex-wrap: wrap;
-      }
-
-      .treemap-title {
-        font-size: 14px;
-        font-weight: 700;
-        color: #1b3553;
-      }
-
-      .treemap-sub {
-        font-size: 12px;
-        color: var(--sub);
-      }
-
-      .treemap {
-        position: relative;
-        min-height: 300px;
-        border-radius: 16px;
-        overflow: hidden;
-        background:
-          linear-gradient(180deg, rgba(255, 255, 255, 0.92), rgba(250, 247, 240, 0.98)),
-          #f5f0e8;
-        border: 1px solid #e3dbd1;
-      }
-
-      .treemap-block {
-        position: absolute;
-        padding: 11px;
-        border: 1px solid rgba(255, 255, 255, 0.78);
-        overflow: hidden;
-      }
-
-      .treemap-block::after {
-        content: "";
-        position: absolute;
-        inset: 0;
-        background: linear-gradient(145deg, rgba(255, 255, 255, 0.12), transparent 55%);
-        pointer-events: none;
-      }
-
-      .treemap-block-inner {
-        position: relative;
-        z-index: 1;
-        height: 100%;
-        display: flex;
-        flex-direction: column;
-        justify-content: center;
-        align-items: center;
-        text-align: center;
-        gap: 6px;
-      }
-
-      .treemap-name {
-        font-size: 16px;
-        font-weight: 800;
-        line-height: 1.2;
-        max-width: 100%;
-        word-break: break-all;
-      }
-
-      .treemap-value {
-        font-size: 20px;
-        font-weight: 900;
-        line-height: 1;
-        letter-spacing: -0.03em;
-        white-space: nowrap;
-      }
-
-      .treemap-value-sub {
-        font-size: 10px;
-        font-weight: 700;
-        opacity: 0.9;
-        line-height: 1.3;
-        white-space: nowrap;
-      }
-
-      .treemap-block-compact {
-        padding: 9px;
-      }
-
-      .treemap-block-compact .treemap-name {
-        font-size: 14px;
-      }
-
-      .treemap-block-compact .treemap-value {
-        font-size: 16px;
-      }
-
-      .treemap-block-compact .treemap-value-sub {
-        font-size: 9px;
-      }
-
-      .treemap-block-tiny {
-        padding: 6px;
-      }
-
-      .treemap-block-tiny .treemap-block-inner {
-        gap: 2px;
-      }
-
-      .treemap-block-tiny .treemap-name {
-        font-size: 12px;
-      }
-
-      .treemap-block-tiny .treemap-value {
-        font-size: 12px;
-      }
-
-      .treemap-block-tiny .treemap-value-sub {
-        display: none;
-      }
-
-      .treemap-block-micro {
-        padding: 4px;
-      }
-
-      .treemap-block-micro .treemap-block-inner {
-        gap: 0;
-      }
-
-      .treemap-block-micro .treemap-name {
-        font-size: 11px;
-        line-height: 1.08;
-      }
-
-      .treemap-block-micro .treemap-value,
-      .treemap-block-micro .treemap-value-sub {
-        display: none;
-      }
-
-      .treemap-active {
-        color: #fff;
-      }
-
-      .treemap-gap {
-        color: #1b1b1b;
-        background: linear-gradient(180deg, #d6d6d6 0%, #b7b7b7 100%);
-      }
-
-      .treemap-other {
-        color: #213d5e;
-        background: linear-gradient(180deg, #edf4fb 0%, #dbe8f6 100%);
-      }
-
-      .event-panel {
-        display: grid;
-        grid-template-columns: 1fr;
-        gap: 14px;
-      }
-
-      .event-card {
-        background: #fffdfa;
-        border: 1px solid var(--line);
-        border-radius: 14px;
-        padding: 14px;
-      }
-
-      .event-card-fallback {
-        border-style: dashed;
-        background: #fffdfa;
-        border-color: var(--line);
-      }
-
-      .event-topline {
-        display: flex;
-        align-items: center;
-        justify-content: space-between;
-        gap: 10px;
-        flex-wrap: wrap;
-        margin-bottom: 10px;
-      }
-
-      .event-eyebrow {
-        display: flex;
-        align-items: center;
-        gap: 8px;
-        flex-wrap: wrap;
-      }
-
-      .event-kicker {
-        font-size: 12px;
-        font-weight: 700;
-        color: #9a4e00;
-      }
-
-      .event-date {
-        font-size: 12px;
-        color: var(--sub);
-      }
-
-      .event-type {
-        display: inline-flex;
-        align-items: center;
-        padding: 5px 9px;
-        border-radius: 999px;
-        background: #f4efe6;
-        border: 1px solid #ddd1be;
-        color: #7c654b;
-        font-size: 11px;
-        font-weight: 700;
-        line-height: 1;
-      }
-
-      .event-card h3 {
-        margin: 0 0 8px;
-        font-size: 16px;
-      }
-
-      .event-summary {
-        margin: 0;
-        font-size: 13px;
-        line-height: 1.7;
-        color: #28415f;
-      }
-
-      .event-impact {
-        margin-top: 12px;
-        padding: 12px;
-        border-radius: 12px;
-        background: #f8f2ee;
-        border: 1px solid #ead6cb;
-      }
-
-      .event-impact-label {
-        font-size: 11px;
-        color: #a9362d;
-        font-weight: 700;
-        margin-bottom: 4px;
-      }
-
-      .event-impact-text {
-        font-size: 13px;
-        line-height: 1.7;
-        color: #8d2f28;
-      }
-
-      .event-source {
-        display: flex;
-        align-items: center;
-        justify-content: space-between;
-        gap: 10px;
-        flex-wrap: wrap;
-        margin-top: 12px;
-        padding-top: 12px;
-        border-top: 1px dashed #e2d3bd;
-      }
-
-      .event-source-label {
-        font-size: 12px;
-        color: var(--sub);
-      }
-
-      .event-source a {
-        color: var(--accent);
-        text-decoration: none;
-        font-size: 12px;
-        font-weight: 700;
-      }
-
-      .row {
-        display: grid;
-        grid-template-columns: 34px minmax(0, 1fr);
-        gap: 8px 10px;
-        align-items: start;
-        margin-bottom: 0;
-        padding: 10px 0 12px;
-        border-bottom: 1px solid #ece2d6;
-      }
-
-      .board .row:last-child {
-        border-bottom: 0;
-        padding-bottom: 0;
-      }
-
-      .rank {
-        font-weight: 700;
-        color: #33537a;
-        text-align: right;
-        padding-top: 2px;
-      }
-
-      .country-label {
-        display: flex;
-        flex-direction: row;
-        align-items: center;
-        justify-content: space-between;
-        gap: 8px;
-        font-size: 14px;
-        margin-bottom: 8px;
-      }
-
-      .label-main {
-        min-width: 0;
-        flex: 1;
-      }
-
-      .label-title {
-        display: flex;
-        align-items: center;
-        gap: 6px;
-        flex-wrap: wrap;
-      }
-
-      .label-name {
-        font-weight: 700;
-      }
-
-      .label-sub {
-        margin-top: 3px;
-        font-size: 12px;
-        color: var(--sub);
-        text-align: right;
-      }
-
-      .label-actions {
-        display: flex;
-        align-items: center;
-        gap: 8px;
-        flex-shrink: 0;
-        width: auto;
-        justify-content: flex-end;
-      }
-
-      .metric-row {
-        display: flex;
-        align-items: center;
-        gap: 10px;
-      }
-
-      .metric-row .bar-wrap {
-        flex: 1;
-        min-width: 0;
-      }
-
-      .country-en {
-        font-size: 12px;
-        color: var(--sub);
-      }
-
-      .topic-tags {
-        display: flex;
-        flex-wrap: wrap;
-        gap: 6px;
-      }
-
-      .topic-tag {
-        display: inline-flex;
-        align-items: center;
-        padding: 4px 8px;
-        border-radius: 999px;
-        border: 1px solid #dfd4c5;
-        background: #f5f1ea;
-        color: #7d5d36;
-        font-size: 11px;
-        font-weight: 700;
-        line-height: 1;
-        white-space: nowrap;
-      }
-
-      .topic-tag-cool {
-        border-color: #d6d9e5;
-        background: #eef1f8;
-        color: #526384;
-      }
-
-      .topic-tag-inline {
-        padding: 3px 7px;
-        font-size: 10px;
-      }
-
-      .bar-wrap {
-        width: 100%;
-        height: 14px;
-        border-radius: 999px;
-        background: #e5eef8;
-        overflow: hidden;
-        border: 1px solid #d4e3f3;
-      }
-
-      .bar {
-        height: 100%;
-        background: linear-gradient(90deg, #86b9ff, #2e75cf 62%, #1b57a9);
-      }
-
-      .value {
-        text-align: right;
-        font-size: 13px;
-        font-weight: 600;
-        color: #183b67;
-        padding-left: 0;
-        white-space: nowrap;
-        min-width: 68px;
-      }
-
-      .value-sub {
-        margin-top: 2px;
-        font-size: 11px;
-        font-weight: 500;
-        color: var(--sub);
-      }
-
-      .highlight .bar {
-        background: linear-gradient(90deg, #ffd08a, #f59f00);
-      }
-
-      .highlight .rank,
-      .highlight .value {
-        color: #a65f00;
-      }
-
-      .row.offline .bar {
-        background: linear-gradient(90deg, #f7c2bc, #d95c50 68%, #a9362d);
-      }
-
-      .row.offline .value {
-        color: #a9362d;
-      }
-
-      .sim-toggle {
-        border: 1px solid #c7d8ec;
-        border-radius: 999px;
-        min-height: 34px;
-        padding: 7px 12px;
-        background: #fff;
-        color: #215387;
-        font-size: 12px;
-        font-family: inherit;
-        cursor: pointer;
-        transition:
-          background 0.2s ease,
-          border-color 0.2s ease,
-          color 0.2s ease;
-      }
-
-      .sim-toggle:hover {
-        border-color: var(--accent);
-        background: #eef5ff;
-        color: var(--accent);
-      }
-
-      .sim-toggle-active {
-        border-color: #f0b777;
-        background: #fff2e3;
-        color: #9f4b00;
-      }
-
-      .sim-card-head {
-        display: flex;
-        align-items: center;
-        justify-content: space-between;
-        gap: 8px;
-        margin-bottom: 8px;
-      }
-
-      .sim-card-title {
-        font-size: 12px;
-        color: var(--sub);
-      }
-
-      .sim-card-tools {
-        display: inline-flex;
-        align-items: center;
-        gap: 10px;
-      }
-
-      .sim-reset {
-        border: 0;
-        background: transparent;
-        color: var(--accent);
-        font-size: 12px;
-        font-family: inherit;
-        cursor: pointer;
-        padding: 0;
-      }
-
-      .sim-help {
-        position: relative;
-      }
-
-      .sim-help summary {
-        list-style: none;
-        cursor: pointer;
-        width: 20px;
-        height: 20px;
-        border-radius: 999px;
-        border: 1px solid #d8d0c4;
-        display: inline-flex;
-        align-items: center;
-        justify-content: center;
-        color: #6a665f;
-        font-size: 12px;
-        font-weight: 700;
-        background: #fffdfa;
-      }
-
-      .sim-help summary::-webkit-details-marker {
-        display: none;
-      }
-
-      .sim-help-panel {
-        position: absolute;
-        right: 0;
-        top: calc(100% + 8px);
-        width: min(280px, 78vw);
-        padding: 10px 12px;
-        border-radius: 12px;
-        border: 1px solid #e1d6c7;
-        background: #fffdfa;
-        color: #6a665f;
-        font-size: 12px;
-        line-height: 1.6;
-        box-shadow: 0 10px 24px rgba(67, 56, 35, 0.08);
-        z-index: 5;
-      }
-
-      .sim-empty {
-        font-size: 12px;
-        color: var(--sub);
-        line-height: 1.6;
-      }
-
-      .sim-alert {
-        padding: 10px 12px;
-        border-radius: 12px;
-        border: 1px solid #f1c1bb;
-        background: #fff1ef;
-        color: #a9362d;
-        font-size: 12px;
-        line-height: 1.6;
-      }
-
-      .sim-meta {
-        margin-top: 8px;
-        font-size: 12px;
-        color: var(--sub);
-      }
-
-      .sim-pills {
-        margin-top: 10px;
-        display: flex;
-        flex-wrap: wrap;
-        gap: 6px;
-      }
-
-      .sim-pill {
-        display: inline-flex;
-        align-items: center;
-        padding: 4px 8px;
-        border-radius: 999px;
-        background: #fff3f1;
-        border: 1px solid #f2c8c3;
-        color: #9b3c34;
-        font-size: 11px;
-        font-weight: 700;
-      }
-
-      .section-label {
-        margin: 14px 0 8px;
-        color: var(--sub);
-        font-size: 12px;
-        font-weight: 700;
-      }
-
-      .footnote {
-        margin-top: 8px;
-        color: var(--sub);
-        font-size: 12px;
-        line-height: 1.5;
-      }
-
-      .footnote-aux {
-        margin-top: 4px;
-      }
-
-      .layout,
-      .sidebar,
-      .main {
-        background: #FFFFFF;
-      }
-
-      .sidebar {
-        border-bottom: 1px solid var(--line);
-        padding: 16px;
-        gap: 16px;
-        background: #FFFFFF;
-      }
-
-      .title,
-      .header-row h2,
-      .selection-panel-title,
-      .event-card h3,
-      .label-name,
-      .board-overview-text strong {
-        color: var(--text);
-        font-weight: 600;
-      }
-
-      .title {
-        letter-spacing: -0.03em;
-      }
-
-      .toolbar-secondary,
-      .board,
-      .hero-panel,
-      .event-card,
-      .card,
-      .sim-card {
-        background: #FFFFFF;
-        border: 1px solid rgba(var(--primary-rgb), 0.08);
-        border-radius: 16px;
-        box-shadow: none;
-      }
-
-      .toolbar-switch {
-        border-color: rgba(var(--primary-rgb), 0.1);
-        background: rgba(var(--primary-rgb), 0.05);
-        box-shadow: none;
-      }
-
-      .toolbar-switch span {
-        color: var(--primary);
-        font-size: 13px;
-        font-weight: 500;
-      }
-
-      .toolbar-switch input:checked + span {
-        background: var(--primary);
-        color: var(--neutral);
-      }
-
-      .toolbar-switch:hover span {
-        background: rgba(var(--primary-rgb), 0.08);
-      }
-
-      .toolbar-secondary {
-        padding: 16px;
-        gap: 16px;
-      }
-
-      .toolbar-secondary .label,
-      .label,
-      .event-date,
-      .event-source-label,
-      .footnote,
-      .footnote-aux,
-      .header-row p,
-      .desc,
-      .sim-card-title,
-      .sim-meta,
-      .value-sub {
-        color: var(--sub);
-        font-size: 12px;
-        font-weight: 400;
-      }
-
-      select,
-      input[type="text"],
-      .toolbar-secondary select,
-      .field-compact select,
-      .field-compact input[type="text"] {
-        background: #FFFFFF;
-        border: 1px solid rgba(var(--primary-rgb), 0.08);
-        border-radius: 14px;
-        color: var(--text);
-        box-shadow: none;
-      }
-
-      .select-wrap::after {
-        border-top-color: var(--sub);
-      }
-
-      .board {
-        padding: 16px;
-      }
-
-      .board-overview {
-        gap: 16px;
-        align-items: center;
-      }
-
-      .board-overview-text {
-        color: var(--text);
-        font-size: 14px;
-        line-height: 1.7;
-      }
-
-      .metric-inline {
-        background: #FFFFFF;
-        border: 1px solid rgba(var(--primary-rgb), 0.08);
-        border-radius: 14px;
-        padding: 4px;
-      }
-
-      .metric-chip {
-        border-radius: 10px;
-        color: var(--text);
-        font-weight: 500;
-        padding: 8px 12px;
-      }
-
-      .metric-chip-active {
-        background: var(--primary);
-        color: var(--neutral);
-      }
-
-      .metric-chip:disabled {
-        opacity: 0.45;
-        color: var(--sub);
-      }
-
-      .hero-panel {
-        padding: 16px;
-      }
-
-      .hero-title {
-        color: var(--text);
-        font-size: 18px;
-        font-weight: 500;
-      }
-
-      .hero-title strong {
-        color: var(--primary);
-        font-weight: 600;
-      }
-
-      .treemap {
-        border-radius: 16px;
-        background: #FFFFFF;
-        border: 1px solid rgba(var(--primary-rgb), 0.08);
-      }
-
-      .treemap-block {
-        border-color: rgba(var(--neutral-rgb), 0.95);
-      }
-
-      .treemap-gap {
-        background: linear-gradient(135deg, rgba(var(--secondary-rgb), 0.9), var(--secondary));
-        color: var(--neutral);
-      }
-
-      .treemap-other {
-        background: linear-gradient(135deg, rgba(var(--primary-rgb), 0.04), rgba(var(--primary-rgb), 0.12));
-        color: var(--text);
-      }
-
-      .topic-tag {
-        background: rgba(var(--primary-rgb), 0.05);
-        border: 1px solid rgba(var(--primary-rgb), 0.1);
-        color: var(--primary);
-        border-radius: 999px;
-        font-weight: 500;
-      }
-
-      .topic-tag-cool {
-        background: rgba(var(--tertiary-rgb), 0.06);
-        border-color: rgba(var(--tertiary-rgb), 0.12);
-        color: var(--tertiary);
-      }
-
-      .event-topline {
-        margin-bottom: 12px;
-      }
-
-      .event-kicker {
-        color: var(--text);
-        font-size: 12px;
-        font-weight: 500;
-      }
-
-      .event-type {
-        background: rgba(var(--tertiary-rgb), 0.06);
-        border: 1px solid rgba(var(--tertiary-rgb), 0.12);
-        color: var(--tertiary);
-        border-radius: 999px;
-        font-weight: 500;
-      }
-
-      .event-summary {
-        color: var(--text);
-      }
-
-      .event-impact {
-        background: rgba(var(--secondary-rgb), 0.04);
-        border: 1px solid rgba(var(--secondary-rgb), 0.1);
-        border-radius: 16px;
-      }
-
-      .event-impact-label,
-      .event-impact-text {
-        color: var(--secondary);
-      }
-
-      .event-source {
-        border-top: 1px solid rgba(var(--primary-rgb), 0.12);
-      }
-
-      .event-source a,
-      .sim-reset {
-        color: var(--primary);
-        font-weight: 500;
-      }
-
-      .row {
-        border-bottom: 1px solid rgba(var(--primary-rgb), 0.12);
-        padding: 12px 0 16px;
-      }
-
-      .rank,
-      .value {
-        color: var(--text);
-      }
-
-      .rank {
-        color: rgba(17, 17, 17, 0.72);
-      }
-
-      .bar-wrap {
-        background: rgba(var(--primary-rgb), 0.05);
-        border: 0;
-        height: 12px;
-      }
-
-      .bar {
-        background: linear-gradient(90deg, var(--primary), rgba(var(--primary-rgb), 0.72));
-      }
-
-      .row.offline .bar {
-        background: linear-gradient(90deg, var(--secondary), rgba(var(--secondary-rgb), 0.72));
-      }
-
-      .row.offline .value {
-        color: var(--secondary);
-      }
-
-      .sim-toggle {
-        min-height: 28px;
-        padding: 4px 10px;
-        background: transparent;
-        border: 1px solid rgba(var(--primary-rgb), 0.26);
-        color: var(--primary);
-        border-radius: 999px;
-        font-size: 11px;
-        line-height: 1;
-        font-weight: 500;
-      }
-
-      .sim-toggle:hover {
-        background: rgba(var(--primary-rgb), 0.05);
-        border-color: var(--primary);
-        color: var(--primary);
-      }
-
-      .sim-toggle-active {
-        border-color: rgba(var(--secondary-rgb), 0.18);
-        background: rgba(var(--secondary-rgb), 0.04);
-        color: var(--secondary);
-      }
-
-      .sim-help summary {
-        width: 24px;
-        height: 24px;
-        border-radius: 10px;
-        border: 1px solid rgba(var(--primary-rgb), 0.1);
-        background: rgba(var(--primary-rgb), 0.05);
-        color: var(--primary);
-      }
-
-      .sim-help-panel {
-        background: #FFFFFF;
-        border: 1px solid rgba(var(--primary-rgb), 0.08);
-        color: var(--text);
-        box-shadow: none;
-      }
-
-      .sim-alert {
-        background: rgba(var(--secondary-rgb), 0.04);
-        border: 1px solid rgba(var(--secondary-rgb), 0.1);
-        color: var(--secondary);
-        border-radius: 16px;
-      }
-
-      .sim-pill {
-        background: rgba(var(--tertiary-rgb), 0.05);
-        border: 1px solid rgba(var(--tertiary-rgb), 0.1);
-        color: var(--tertiary);
-      }
-
-      @media (max-width: 520px) {
-        .summary-grid {
-          grid-template-columns: 1fr 1fr;
-          gap: 8px;
-        }
-
-        .title {
-          font-size: 25px;
-        }
-
-        .header-row h2 {
-          font-size: 23px;
-        }
-
-        .hero-title strong {
-          font-size: 24px;
-        }
-
-        .hero-panel {
-          padding: 18px 14px 16px;
-        }
-
-        .treemap-shell {
-          margin-top: 18px;
-          gap: 14px;
-        }
-
-        .treemap-head {
-          gap: 6px;
-        }
-
-        .treemap {
-          min-height: clamp(320px, 56vh, 430px);
-        }
-
-        .treemap-title,
-        .treemap-sub {
-          width: 100%;
-        }
-
-        .toolbar-primary {
-          gap: 6px;
-        }
-
-        .toolbar-switch {
-          flex: 1 1 calc(50% - 3px);
-        }
-
-        .toolbar-switch span {
-          width: 100%;
-          min-width: 0;
-        }
-
-        .board-overview {
-          grid-template-columns: 1fr;
-        }
-
-        .metric-inline {
-          justify-self: end;
-        }
-      }
+        display: flex; flex-direction: column; gap: 12px;
+      }
+
+      .masthead { display: flex; flex-direction: column; gap: 4px; }
+      .brand-lockup { display: inline-flex; align-items: center; margin-bottom: 4px; }
+      .brand-logo { display: block; width: 104px; height: auto; }
+      .title { margin: 0; font-size: 31px; line-height: 1.08; letter-spacing: -0.045em; font-weight: 800; }
+
+      /* === 顶部双按钮 === */
+      .mode-toolbar { display: flex; gap: 10px; margin-top: 4px; }
+      .mode-btn {
+        flex: 1; display: flex; align-items: center; justify-content: center; gap: 6px;
+        height: 44px; border-radius: 8px; font-size: 15px; font-weight: 700; cursor: pointer; transition: all 0.2s ease;
+      }
+      .mode-btn.active { background: var(--primary); color: #ffffff; border: 1px solid var(--primary); }
+      .mode-btn:not(.active) { background: #f2f6ff; color: var(--primary); border: 1px solid #dce5fc; }
+      .mode-btn .caret { font-size: 10px; }
+
+      /* === 底部弹出分栏选择器 === */
+      .picker-overlay {
+        position: fixed; inset: 0; background: rgba(0,0,0,0.5); z-index: 9999; 
+        display: none; align-items: flex-end; justify-content: center; 
+        opacity: 0; transition: opacity 0.2s ease;
+      }
+      .picker-overlay.is-open { display: flex; opacity: 1; }
+      
+      .picker-dialog {
+        width: 100%; max-width: var(--page-max-width); background: #fff;
+        border-radius: 16px 16px 0 0; overflow: hidden; display: flex; flex-direction: column;
+        transform: translateY(100%); transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+      }
+      .picker-overlay.is-open .picker-dialog { transform: translateY(0); }
+
+      .picker-header {
+        display: flex; justify-content: space-between; align-items: center;
+        padding: 16px; border-bottom: 1px solid #f0f0f0;
+      }
+      .picker-title { font-size: 16px; font-weight: 700; color: #333; }
+      .picker-btn { font-size: 15px; border: none; background: transparent; cursor: pointer; padding: 4px 8px; }
+      .picker-btn.cancel { color: #888; }
+      .picker-btn.confirm { color: var(--primary); font-weight: 700; }
+
+      .picker-body { display: flex; height: 320px; }
+      
+      .picker-col-left { width: 40%; background: #f7f8fa; overflow-y: auto; }
+      .picker-col-right { width: 60%; background: #ffffff; overflow-y: auto; }
+      
+      .picker-item { padding: 16px 20px; text-align: left; font-size: 15px; color: #333; cursor: pointer; }
+      .picker-col-left .picker-item.active { background: #e6f0ff; color: var(--primary); font-weight: 600; border-left: 3px solid var(--primary); padding-left: 17px; }
+      .picker-col-right .picker-item.active { color: var(--primary); font-weight: 600; display: flex; justify-content: space-between; }
+      .picker-col-right .picker-item.active::after { content: "✓"; color: var(--primary); }
+
+      /* === 看板主体 === */
+      .main { padding: 14px 14px 20px; display: flex; flex-direction: column; gap: 12px; background: #FFFFFF; }
+      .header-row { display: flex; justify-content: flex-start; gap: 8px; align-items: flex-start; padding-top: 2px; }
+      .title-stack { display: flex; flex-direction: column; gap: 6px; }
+      .headline-row { display: flex; align-items: center; gap: 10px; flex-wrap: wrap; }
+      .header-row h2 { margin: 0; font-size: 26px; line-height: 1.16; letter-spacing: -0.03em; color: var(--text); font-weight: 600; }
+      .header-row p { margin: 0; color: var(--sub); font-size: 12px; }
+      
+      .topic-tags { display: flex; flex-wrap: wrap; gap: 6px; }
+      .topic-tag { display: inline-flex; align-items: center; padding: 4px 8px; border-radius: 999px; border: 1px solid rgba(var(--primary-rgb), 0.1); background: rgba(var(--primary-rgb), 0.05); color: var(--primary); font-size: 11px; font-weight: 500; line-height: 1; white-space: nowrap; }
+
+      .hero-panel { background: #fff; border: 1px solid rgba(var(--primary-rgb), 0.08); border-radius: 16px; padding: 16px; }
+      .hero-title { color: var(--text); font-size: 15px; font-weight: 500; line-height: 1.45; }
+      .hero-title strong { color: var(--primary); font-weight: 600; font-size: 30px; line-height: 1; letter-spacing: -0.03em; margin: 4px 2px; display: inline-block; }
+      
+      .treemap-shell { margin-top: 16px; display: grid; grid-template-columns: minmax(0, 1fr); gap: 12px; }
+      .treemap { position: relative; min-height: 320px; border-radius: 16px; overflow: hidden; background: #FFFFFF; border: 1px solid rgba(var(--primary-rgb), 0.08); }
+      
+      .treemap-block { position: absolute; padding: 0; overflow: hidden; transition: opacity 0.3s ease; border: 1px solid #FFFFFF; }
+      .treemap-block-inner { position: relative; z-index: 1; width: 100%; height: 100%; display: flex; flex-direction: column; justify-content: center; align-items: center; text-align: center; gap: 4px; padding: 4px; overflow: hidden; }
+      
+      .treemap-name { font-size: 14px; font-weight: 800; line-height: 1.1; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; }
+      .treemap-value { font-size: 16px; font-weight: 900; line-height: 1; letter-spacing: -0.03em; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; max-width: 100%; }
+      .treemap-value-sub { font-size: 10px; font-weight: 700; opacity: 0.9; line-height: 1.3; white-space: nowrap; }
+      
+      .treemap-block-compact .treemap-name { font-size: 12px; }
+      .treemap-block-compact .treemap-value { font-size: 14px; }
+      .treemap-block-compact .treemap-value-sub { font-size: 9px; }
+      .treemap-block-tiny .treemap-name, .treemap-block-tiny .treemap-value { font-size: 11px; }
+      .treemap-block-tiny .treemap-value-sub { display: none; }
+      .treemap-block-micro .treemap-block-inner { display: none; }
+      
+      .board { background: #FFFFFF; border: 1px solid rgba(var(--primary-rgb), 0.08); border-radius: 16px; padding: 16px; }
+      .board-overview { display: grid; grid-template-columns: minmax(0, 1fr) auto; gap: 16px; align-items: center; padding: 0 2px; margin-bottom: 14px; }
+      
+      .sim-card { background: #FFFFFF; border: 1px solid rgba(var(--primary-rgb), 0.08); border-radius: 16px; padding: 12px; margin-bottom: 14px; }
+      .sim-card-head { display: flex; align-items: center; justify-content: space-between; gap: 8px; margin-bottom: 8px; }
+      .sim-card-title { font-size: 12px; color: var(--sub); }
+      .sim-reset { border: 0; background: transparent; color: var(--primary); font-size: 12px; font-weight: 500; cursor: pointer; padding: 0; }
+      .sim-alert { padding: 10px 12px; border-radius: 12px; border: 1px solid rgba(var(--secondary-rgb), 0.1); background: rgba(var(--secondary-rgb), 0.04); color: var(--secondary); font-size: 12px; line-height: 1.6; }
+      .sim-meta { margin-top: 8px; font-size: 12px; color: var(--sub); }
+      .sim-pills { margin-top: 10px; display: flex; flex-wrap: wrap; gap: 6px; }
+      .sim-pill { display: inline-flex; align-items: center; padding: 4px 8px; border-radius: 999px; background: rgba(var(--tertiary-rgb), 0.05); border: 1px solid rgba(var(--tertiary-rgb), 0.1); color: var(--tertiary); font-size: 11px; font-weight: 700; }
+      .sim-empty { display: none; }
+
+      /* === 下方排行榜样式 === */
+      .ranking-item { background-color: #fff; border-radius: 8px; padding: 16px 0; border-bottom: 1px solid #f0f0f0; }
+      .board .ranking-item:last-child { border-bottom: none; padding-bottom: 0; }
+      .board .ranking-item:first-child { padding-top: 0; }
+      .ranking-top { display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px; }
+      .rank-country { display: flex; align-items: center; font-size: 14px; font-weight: 600; color: var(--text); }
+      .rank-num { color: #999; margin-right: 8px; font-weight: 700; }
+      .country-flag { margin-right: 6px; font-size: 16px; line-height: 1; }
+      .sim-toggle { min-height: 28px; padding: 4px 12px; background: #f4f5f7; border: 1px solid transparent; color: #666; border-radius: 6px; font-size: 12px; line-height: 1; font-weight: 500; cursor: pointer; transition: all 0.2s ease; }
+      .sim-toggle:hover { background: #ebeef2; color: #333; }
+      .sim-toggle-active { background: rgba(var(--secondary-rgb), 0.08); color: var(--secondary); }
+      .bar-chart-container { display: flex; align-items: center; }
+      .bar-chart { flex-grow: 1; height: 32px; background-color: rgba(var(--primary-rgb), 0.06); border-radius: 6px; overflow: hidden; position: relative; margin-right: 12px; }
+      .bar-fill { height: 100%; background-color: var(--primary); display: flex; align-items: center; justify-content: flex-start; padding-left: 10px; transition: width 0.3s ease; border-radius: 6px; min-width: fit-content; }
+      .ranking-item.offline .bar-fill { background-color: var(--secondary); opacity: 0.5; }
+      .absolute-value { color: #fff; font-size: 13px; font-weight: 500; white-space: nowrap; padding-right: 10px; }
+      .percentage-value { color: var(--primary); font-weight: 700; font-size: 15px; white-space: nowrap; min-width: 50px; text-align: right; }
+      .ranking-item.offline .percentage-value { color: var(--secondary); }
+      .section-label { margin: 16px 0 8px; color: var(--sub); font-size: 12px; font-weight: 700; }
+
+      /* === 事件面板样式 === */
+      .event-panel { display: grid; grid-template-columns: 1fr; gap: 14px; }
+      .event-card { background: #FFFFFF; border: 1px solid rgba(var(--primary-rgb), 0.08); border-radius: 16px; padding: 14px; }
+      .event-topline { display: flex; align-items: center; justify-content: space-between; gap: 10px; flex-wrap: wrap; margin-bottom: 12px; }
+      .event-eyebrow { display: flex; align-items: center; gap: 8px; flex-wrap: wrap; }
+      .event-kicker { font-size: 12px; font-weight: 500; color: var(--text); }
+      .event-date { font-size: 12px; color: var(--sub); }
+      .event-type { display: inline-flex; align-items: center; padding: 5px 9px; border-radius: 999px; background: rgba(var(--tertiary-rgb), 0.06); border: 1px solid rgba(var(--tertiary-rgb), 0.12); color: var(--tertiary); font-size: 11px; font-weight: 500; line-height: 1; }
+      .event-card h3 { margin: 0 0 8px; font-size: 16px; color: var(--text); font-weight: 600; }
+      .event-summary { margin: 0; font-size: 13px; line-height: 1.7; color: var(--text); }
+      .event-impact { margin-top: 12px; padding: 12px; border-radius: 16px; background: rgba(var(--secondary-rgb), 0.04); border: 1px solid rgba(var(--secondary-rgb), 0.1); }
+      .event-impact-label { font-size: 11px; color: var(--secondary); font-weight: 700; margin-bottom: 4px; }
+      .event-impact-text { font-size: 13px; line-height: 1.7; color: var(--secondary); }
+      .event-source { display: flex; align-items: center; justify-content: space-between; gap: 10px; flex-wrap: wrap; margin-top: 12px; padding-top: 12px; border-top: 1px dashed rgba(var(--primary-rgb), 0.12); }
+      .event-source-label { font-size: 12px; color: var(--sub); }
+      .event-source a { color: var(--primary); text-decoration: none; font-size: 12px; font-weight: 500; }
+
+      .footnote { margin-top: 8px; color: var(--sub); font-size: 12px; line-height: 1.5; }
 
       @media (min-width: 1041px) {
-        .layout {
-          display: block;
-          width: min(calc(100% - 40px), var(--page-max-width));
-          max-width: var(--page-max-width);
-          margin: 0 auto;
-        }
-
-        .sidebar {
-          position: static;
-          min-height: auto;
-          width: 100%;
-          max-width: var(--page-max-width);
-          margin: 0 auto;
-          border-right: 0;
-          border-bottom: 1px solid var(--line);
-          padding: 18px 18px 14px;
-          gap: 14px;
-        }
-
-        .masthead {
-          max-width: 720px;
-        }
-
-        .toolbar-primary {
-          gap: 10px;
-          align-items: start;
-        }
-
-        .toolbar-secondary {
-          grid-template-columns: minmax(280px, 420px);
-        }
-
-        .toolbar-advanced {
-          max-width: 720px;
-        }
-
-        .title {
-          font-size: 24px;
-          line-height: 1.1;
-        }
-
-        .brand-logo {
-          width: 96px;
-        }
-
-        select,
-        input[type="text"] {
-          height: 40px;
-          font-size: 14px;
-          border-radius: 10px;
-          padding: 0 10px;
-        }
-
-        .radio-group label {
-          min-width: 0;
-          padding: 8px 10px;
-          font-size: 12px;
-        }
-
-        .radio-group input:checked + span {
-          padding: 8px 10px;
-          margin: -8px -10px;
-        }
-
-        .card {
-          border-radius: 12px;
-          padding: 10px;
-        }
-
-        .main {
-          width: 100%;
-          max-width: var(--page-max-width);
-          margin: 0 auto;
-          padding: 16px 18px 22px;
-          gap: 10px;
-        }
-
-        .event-panel {
-          grid-template-columns: minmax(0, 1fr);
-        }
-
-        .header-row {
-          justify-content: space-between;
-          align-items: flex-end;
-        }
-
-        .header-row h2 {
-          font-size: 24px;
-        }
-
-        .hero-panel {
-          border-radius: 18px;
-          padding: 18px;
-        }
-
-        .hero-title {
-          font-size: 16px;
-        }
-
-        .hero-title strong {
-          font-size: 44px;
-          margin: 0 3px;
-        }
-
-        .treemap {
-          min-height: 390px;
-          border-radius: 18px;
-        }
-
-        .headline-row {
-          align-items: center;
-        }
-
-        .board {
-          padding: 14px;
-        }
-
-        .row {
-          grid-template-columns: 46px 1fr 130px;
-          gap: 12px;
-          align-items: center;
-          margin-bottom: 0;
-        }
-
-        .country-label {
-          flex-direction: row;
-          justify-content: space-between;
-        }
-
-        .label-actions {
-          width: auto;
-          justify-content: flex-end;
-        }
-
-        .bar-wrap {
-          height: 16px;
-        }
-
-        .value {
-          grid-column: auto;
-          text-align: right;
-        }
+        .layout { width: min(calc(100% - 40px), var(--page-max-width)); }
+        .sidebar { border-right: 0; border-bottom: 1px solid rgba(35, 93, 230, 0.12); padding: 18px; }
+        .main { padding: 16px 18px 22px; }
+        .picker-dialog { border-radius: 16px; margin: auto; height: 500px; transform: translateY(20px); }
+        .picker-overlay { align-items: center; } 
       }
     </style>
   </head>
@@ -1710,53 +186,12 @@
             <img class="brand-logo" src="./logo-jin10.svg" alt="金十数据 Logo" />
           </div>
           <h1 class="title">全球大宗商品产量版图</h1>
-          <p class="desc"></p>
         </div>
 
-        <div class="toolbar-primary">
-          <label class="toolbar-switch">
-            <input type="radio" name="viewMode" value="commodity" checked />
-            <span>按品种分类</span>
-          </label>
-          <label class="toolbar-switch">
-            <input type="radio" name="viewMode" value="country" />
-            <span>按国家/地区分类</span>
-          </label>
+        <div class="mode-toolbar">
+          <button class="mode-btn active" id="btnModeCommodity">按品种分类 <span class="caret">▼</span></button>
+          <button class="mode-btn" id="btnModeCountry">按国家/地区分类 <span class="caret">▼</span></button>
         </div>
-
-        <div class="toolbar-secondary" id="selectionPanel">
-          <div class="selection-panel-head">
-            <div class="selection-panel-title" id="selectionPanelTitle">选择品种</div>
-            <button class="selection-panel-close" id="selectionPanelClose" type="button">×</button>
-          </div>
-
-          <div class="field field-compact">
-            <span class="label">选择分类</span>
-            <div class="select-wrap">
-              <select id="majorCategorySelect">
-                <option value="all" selected>全部分类</option>
-                <option value="矿产">矿产</option>
-                <option value="能化">能化</option>
-                <option value="农产品">农产品</option>
-              </select>
-            </div>
-          </div>
-
-          <div class="field field-compact" id="commodityField">
-            <span class="label">选择品种</span>
-            <div class="select-wrap">
-              <select id="commoditySelect"></select>
-            </div>
-          </div>
-
-          <div class="field field-compact" id="countryField" style="display: none">
-            <span class="label">选择国家/地区</span>
-            <div class="select-wrap">
-              <select id="coreCountrySelect"></select>
-            </div>
-          </div>
-        </div>
-
       </aside>
 
       <main class="main">
@@ -1776,1683 +211,535 @@
           <div class="board-tools">
             <div class="card sim-card" id="simulationCard">
               <div class="sim-card-head">
-                <div class="sim-card-title">断供推演</div>
+                <div class="sim-card-title">断供/制裁推演</div>
                 <div class="sim-card-tools">
-                  <details class="sim-help">
-                    <summary>?</summary>
-                    <div class="sim-help-panel">
-                      点击榜单中的“模拟停产”，即可推演单国/地区或多国/地区断供后的供应缺口与剩余份额变化。
-                    </div>
-                  </details>
                   <button class="sim-reset" id="resetSimulationBtn" type="button">清空模拟</button>
                 </div>
               </div>
               <div id="simulationBody" class="sim-empty"></div>
             </div>
           </div>
-
           <div id="board"></div>
         </section>
 
         <section class="event-panel" id="eventPanel"></section>
 
         <p class="footnote">
-          数据说明：本内容数据均基于公开资料综合测算。其中，矿产及农产品数据主要参考全球权威行业部门公开估算数据；能化板块（含原油、煤炭及各类化工衍生品）数据，综合采纳国际能源监管组织、各国官方统计局及知名行业咨询机构的公开信息。因多方信息源统计口径与更新节奏不同，数据可能存在细微偏差，相关内容仅供市场研究与参考。
-        </p>
-        <p class="footnote footnote-aux">
-          免责声明：本页面信息不构成任何投资建议、交易建议或风险担保，使用者应独立判断并自行承担相关风险。<br>
-          金十数据制作
+          数据说明：本内容数据均基于公开资料综合测算。其中，矿产及农产品数据主要参考全球权威行业部门公开估算数据；能化板块数据综合采纳国际能源监管组织等市场公开信息。
         </p>
       </main>
+    </div>
+
+    <div class="picker-overlay" id="customPickerModal">
+      <div class="picker-dialog">
+        <div class="picker-header">
+          <button class="picker-btn cancel" id="pickerCancel">取消</button>
+          <div class="picker-title" id="pickerTitle">选择品种</div>
+          <button class="picker-btn confirm" id="pickerConfirm">确定</button>
+        </div>
+        <div class="picker-body">
+          <div class="picker-col-left" id="pickerLeftCol"></div>
+          <div class="picker-col-right" id="pickerRightCol"></div>
+        </div>
+      </div>
     </div>
 
     <script src="./commodity-ranking-data.js"></script>
     <script>
       const DATA = window.COMMODITY_RANKING_DATA;
       if (!DATA || !Array.isArray(DATA.products)) {
-        document.body.innerHTML =
-          "<div style=\"padding:24px;font-family:'Source Han Sans','Noto Sans CJK SC',sans-serif\">未读取到数据文件 `commodity-ranking-data.js`。</div>";
+        document.body.innerHTML = "<div style=\"padding:24px;\">未读取到数据文件。</div>";
       }
 
-      const majorCategorySelect = document.getElementById("majorCategorySelect");
-      const commoditySelect = document.getElementById("commoditySelect");
-      const coreCountrySelect = document.getElementById("coreCountrySelect");
-      const selectionPanelEl = document.getElementById("selectionPanel");
-      const selectionPanelTitleEl = document.getElementById("selectionPanelTitle");
-      const selectionPanelCloseBtn = document.getElementById("selectionPanelClose");
-      const commodityFieldEl = document.getElementById("commodityField");
-      const countryFieldEl = document.getElementById("countryField");
-      const boardEl = document.getElementById("board");
-      const boardTitleEl = document.getElementById("boardTitle");
-      const boardSubTitleEl = document.getElementById("boardSubTitle");
-      const boardTagsEl = document.getElementById("boardTags");
-      const heroPanelEl = document.getElementById("heroPanel");
-      const eventPanelEl = document.getElementById("eventPanel");
-      const simulationCardEl = document.getElementById("simulationCard");
-      const simulationBodyEl = document.getElementById("simulationBody");
-      const resetSimulationBtn = document.getElementById("resetSimulationBtn");
       const allProducts = DATA.products;
-      const viewModeRadios = Array.from(document.querySelectorAll("input[name='viewMode']"));
-      const toolbarSwitchEls = Array.from(document.querySelectorAll(".toolbar-switch"));
       const simulatedShutdowns = new Map();
-      let currentMetric = "share";
-      let metricValueEnabled = true;
+
+      let appliedMode = 'commodity'; 
+      let appliedMajor = '矿产';
+      let appliedCommodity = 'Silver';
+      let appliedContinent = 'Asia';
+      let appliedCountry = 'China'; 
+
+      let tempMode = 'commodity';
+      let tempMajor = '矿产';
+      let tempCommodity = 'Silver';
+      let tempContinent = 'Asia';
+      let tempCountry = 'China';
+
+      const CONTINENT_MAP = {
+        "Asia": ["China", "India", "Indonesia", "Iran", "Saudi Arabia", "Turkey", "Kazakhstan", "Japan", "South Korea", "Singapore", "Thailand", "Malaysia", "Vietnam", "Qatar", "Iraq", "Kuwait", "Oman", "Burma", "Philippines", "Chinese Taipei", "Mongolia", "Bangladesh", "Pakistan", "Uzbekistan", "Kyrgyzstan", "Tajikistan", "Laos", "Israel", "Jordan", "Syria", "Brunei", "Bahrain", "Sri Lanka", "Korea, North", "Korea, Republic of", "United Arab Emirates"],
+        "Europe": ["European Union", "Russia", "Germany", "Poland", "Sweden", "Belarus", "France", "Italy", "United Kingdom", "Spain", "Netherlands", "Belgium", "Bulgaria", "Portugal", "Finland", "Iceland", "Austria", "Ukraine"],
+        "North America": ["United States", "Canada", "Mexico", "Jamaica", "Guatemala", "Trinidad and Tobago"],
+        "South America": ["Brazil", "Argentina", "Chile", "Peru", "Bolivia", "Colombia", "Venezuela"],
+        "Africa": ["South Africa", "Guinea", "Ghana", "Gabon", "Morocco", "Nigeria", "Madagascar", "Tanzania", "Mozambique", "Senegal", "Algeria", "Togo", "Rwanda", "Congo (Kinshasa)", "Zambia", "Kenya", "Botswana", "Côte d’Ivoire", "Angola", "Equatorial Guinea", "Mali", "Zimbabwe", "Mauritania"],
+        "Oceania": ["Australia", "Papua New Guinea", "New Zealand", "New Caledonia"]
+      };
+      
+      const CONTINENT_ZH_MAP = {
+        "Asia": "亚洲", "Europe": "欧洲", "North America": "北美洲", 
+        "South America": "南美洲", "Africa": "非洲", "Oceania": "大洋洲", "all": "全部大洲"
+      };
+
+      function getContinentEn(countryEn) {
+        for (const [cont, countries] of Object.entries(CONTINENT_MAP)) {
+          if (countries.includes(countryEn)) return cont;
+        }
+        return "Other";
+      }
+
+      const CORE_COUNTRIES = ["China", "United States", "European Union", "Argentina", "Bangladesh", "Belarus", "Bolivia", "Belgium", "Gabon", "Ghana", "Guinea", "Jordan", "Kazakhstan", "Mongolia", "Mexico", "Morocco", "Philippines", "Algeria", "Brunei", "Chinese Taipei", "Germany", "Greece", "Italy", "Japan", "Kuwait", "Singapore", "United Kingdom", "Thailand", "Turkey", "Malaysia", "Colombia", "Nigeria", "Vietnam", "Saudi Arabia", "United Arab Emirates", "Qatar", "Iran", "Iraq", "Libya", "Norway", "Poland", "India", "Bahrain", "South Korea", "Netherlands", "Trinidad and Tobago", "Oman", "Chile", "Australia", "Indonesia", "Congo (Kinshasa)", "Peru", "Russia", "Canada", "South Africa", "Burma", "Brazil", "Zimbabwe"];
+
+      const COUNTRY_ZH_PATCH = { "Côte d’Ivoire": "科特迪瓦", Algeria: "阿尔及利亚", Belgium: "比利时", Brunei: "文莱", "Chinese Taipei": "中国台湾地区", Egypt: "埃及", "European Union": "欧盟", Germany: "德国", Greece: "希腊", Guatemala: "危地马拉", Israel: "以色列", Jamaica: "牙买加", Italy: "意大利", Japan: "日本", Kuwait: "科威特", Libya: "利比亚", "Korea, North": "朝鲜", "Korea, Republic of": "韩国", Kyrgyzstan: "吉尔吉斯斯坦", Malaysia: "马来西亚", Mali: "马里", Mongolia: "蒙古", Norway: "挪威", Pakistan: "巴基斯坦", "Papua New Guinea": "巴布亚新几内亚", Poland: "波兰", Portugal: "葡萄牙", Rwanda: "卢旺达", Senegal: "塞内加尔", Singapore: "新加坡", Spain: "西班牙", "Sri Lanka": "斯里兰卡", Tanzania: "坦桑尼亚", Tunisia: "突尼斯", "United Kingdom": "英国", Uzbekistan: "乌兹别克斯坦", Vietnam: "越南", Zambia: "赞比亚", "South Korea": "韩国", "United Arab Emirates": "阿联酋", "Iran": "伊朗", "Saudi Arabia": "沙特阿拉伯", "Russia": "俄罗斯", "India": "印度", "Indonesia": "印尼" };
+      const FLAG_EMOJI_MAP = { "中国": "🇨🇳", "美国": "🇺🇸", "澳大利亚": "🇦🇺", "俄罗斯": "🇷🇺", "印度": "🇮🇳", "巴西": "🇧🇷", "欧盟": "🇪🇺", "阿根廷": "🇦🇷", "印尼": "🇮🇩", "加拿大": "🇨🇦", "墨西哥": "🇲🇽", "秘鲁": "🇵🇪", "智利": "🇨🇱", "沙特阿拉伯": "🇸🇦", "日本": "🇯🇵", "韩国": "🇰🇷", "德国": "🇩🇪", "英国": "🇬🇧", "法国": "🇫🇷", "伊朗": "🇮🇷", "伊拉克": "🇮🇶", "阿联酋": "🇦🇪", "卡塔尔": "🇶🇦", "科威特": "🇰🇼", "马来西亚": "🇲🇾", "泰国": "🇹🇭", "越南": "🇻🇳", "菲律宾": "🇵🇭", "新加坡": "🇸🇬", "南非": "🇿🇦", "刚果（金）": "🇨🇩", "几内亚": "🇬🇳", "马达加斯加": "🇲🇬", "尼日利亚": "🇳🇬", "玻利维亚": "🇧🇴", "波兰": "🇵🇱", "哈萨克斯坦": "🇰🇿", "白俄罗斯": "🇧🇾", "阿曼": "🇴🇲", "缅甸": "🇲🇲", "塔吉克斯坦": "🇹🇯", "中国台湾地区": "🇹🇼" };
+      const UNIT_ZH_MAP = { "metric tons": "吨", "thousand metric tons": "千吨", "thousand metric dry tons": "千干吨", "ten thousand metric tons": "万吨", "million metric tons": "万吨", "million 480-lb bales": "百万包（480磅/包）", "million barrels per day": "万桶/日" };
+      const VALUE_TYPE_ZH_MAP = { "Production": "产量" };
+      
+      const HOT_TOPIC_TAGS = window.HOT_TOPIC_TAGS || { "原油": ["地缘政治核心"], "锡": ["半导体咽喉"] };
+      
+      /* 【修改点2】色板扩充：前6名全部使用不同明度的深蓝/浅蓝，确保蓝色为主基调，辅以暖色点缀 */
       const TREEMAP_COLORS = [
-        "linear-gradient(145deg, #1A56DB 0%, rgba(26, 86, 219, 0.86) 100%)",
-        "linear-gradient(145deg, #057A55 0%, rgba(5, 122, 85, 0.9) 100%)",
-        "linear-gradient(145deg, rgba(26, 86, 219, 0.94) 0%, rgba(5, 122, 85, 0.88) 100%)",
-        "linear-gradient(145deg, #1A56DB 0%, rgba(26, 86, 219, 0.72) 100%)",
-        "linear-gradient(145deg, #057A55 0%, rgba(5, 122, 85, 0.72) 100%)",
-        "linear-gradient(145deg, rgba(26, 86, 219, 0.84) 0%, rgba(26, 86, 219, 0.62) 100%)",
-        "linear-gradient(145deg, rgba(5, 122, 85, 0.84) 0%, rgba(5, 122, 85, 0.62) 100%)"
+        "#1A56DB", "#2C7BE5", "#183B67", "#4693D9", "#1F5999", "#34A4EB",
+        "#C2593F", "#F7D273", "#DE4922", "#5A6C7A", "#007491", 
+        "#F59F00", "#7C8A96", "#E57E5A", "#E5A93B", "#A63512"
       ];
 
-      const CORE_COUNTRIES = [
-        "China",
-        "United States",
-        "European Union",
-        "Argentina",
-        "Bangladesh",
-        "Belarus",
-        "Bolivia",
-        "Belgium",
-        "Gabon",
-        "Ghana",
-        "Guinea",
-        "Jordan",
-        "Kazakhstan",
-        "Mongolia",
-        "Mexico",
-        "Morocco",
-        "Philippines",
-        "Algeria",
-        "Brunei",
-        "Chinese Taipei",
-        "Germany",
-        "Greece",
-        "Italy",
-        "Japan",
-        "Kuwait",
-        "Singapore",
-        "United Kingdom",
-        "Thailand",
-        "Turkey",
-        "Malaysia",
-        "Colombia",
-        "Nigeria",
-        "Vietnam",
-        "Saudi Arabia",
-        "United Arab Emirates",
-        "Qatar",
-        "Iran",
-        "Iraq",
-        "Libya",
-        "Norway",
-        "Poland",
-        "India",
-        "Bahrain",
-        "South Korea",
-        "Netherlands",
-        "Trinidad and Tobago",
-        "Oman",
-        "Chile",
-        "Australia",
-        "Indonesia",
-        "Congo (Kinshasa)",
-        "Peru",
-        "Russia",
-        "Canada",
-        "South Africa",
-        "Burma",
-        "Brazil",
-        "Zimbabwe"
-      ];
-
-      const COUNTRY_ZH_PATCH = {
-        "Burkina Faso": "布基纳法索",
-        "Côte d’Ivoire": "科特迪瓦",
-        Algeria: "阿尔及利亚",
-        Belgium: "比利时",
-        Brunei: "文莱",
-        "Chinese Taipei": "中国台湾",
-        Egypt: "埃及",
-        "European Union": "欧盟",
-        Germany: "德国",
-        Greece: "希腊",
-        Guatemala: "危地马拉",
-        Israel: "以色列",
-        Jamaica: "牙买加",
-        Italy: "意大利",
-        Japan: "日本",
-        Kuwait: "科威特",
-        Libya: "利比亚",
-        "Korea, North": "朝鲜",
-        "Korea, Republic of": "韩国",
-        Kyrgyzstan: "吉尔吉斯斯坦",
-        Malaysia: "马来西亚",
-        Mali: "马里",
-        Mongolia: "蒙古",
-        Norway: "挪威",
-        Pakistan: "巴基斯坦",
-        "Papua New Guinea": "巴布亚新几内亚",
-        Poland: "波兰",
-        Portugal: "葡萄牙",
-        Rwanda: "卢旺达",
-        Senegal: "塞内加尔",
-        Singapore: "新加坡",
-        Spain: "西班牙",
-        "Sri Lanka": "斯里兰卡",
-        Tanzania: "坦桑尼亚",
-        Tunisia: "突尼斯",
-        "United Kingdom": "英国",
-        Uzbekistan: "乌兹别克斯坦",
-        Vietnam: "越南",
-        Zambia: "赞比亚"
-      };
-
-      const HOT_TOPIC_TAGS = {
-        锡: ["半导体咽喉", "消费电子命脉"],
-        镓: ["芯片材料卡点", "军工半导体"],
-        锗: ["红外光学关键", "光纤通信材料"],
-        锂: ["新能源车核心", "储能链支点"],
-        钴: ["动力电池核心", "高镍三元材料"],
-        镍: ["不锈钢核心", "动力电池材料"],
-        铜: ["电网升级核心", "制造业血液"],
-        铝: ["轻量化骨架", "电力成本锚"],
-        铝土矿: ["电解铝上游命门", "氧化铝核心原料"],
-        电解铝: ["轻量化基石", "电力成本锚"],
-        铁矿石: ["黑色产业龙头", "钢铁成本命脉"],
-        石墨: ["负极材料核心", "电池链关键矿物"],
-        磷矿石: ["磷肥原料根基", "农业安全要素"],
-        钾盐: ["钾肥供应核心", "农化成本锚点"],
-        锰: ["钢铁合金基础", "电池正极辅材"],
-        钼: ["特钢强化关键", "高端制造合金"],
-        稀土: ["永磁材料核心", "军工高端制造"],
-        锑: ["阻燃剂核心", "光伏玻璃辅材"],
-        铅: ["铅酸电池基础", "储能备电材料"],
-        锌: ["镀锌防腐核心", "基建周期风向"],
-        白银: ["光伏导电核心", "避险贵金属"],
-        黄金: ["全球避险锚", "央行储备资产"],
-        原油: ["地缘政治核心", "工业血液"],
-        煤炭: ["电力保供支点", "工业燃料底盘"],
-        LNG: ["天然气贸易锚点", "欧洲能源安全"],
-        LPG: ["民生燃料", "化工裂解原料"],
-        "LNG（液化天然气）": ["天然气贸易锚点", "欧洲能源安全"],
-        "LPG（液化石油气）": ["民生燃料", "化工裂解原料"],
-        甲醇: ["煤化工枢纽", "烯烃链核心"],
-        PTA: ["涤纶产业中枢", "纺服化纤核心"],
-        乙二醇: ["聚酯链关键", "瓶片纤维原料"],
-        苯乙烯: ["家电塑料核心", "ABS产业链关键"],
-        纯苯: ["芳烃基础原料", "化工母体"],
-        PX: ["聚酯链咽喉", "芳烃核心中间体"],
-        "对二甲苯（PX）": ["聚酯链咽喉", "芳烃核心中间体"],
-        聚丙烯: ["包装材料核心", "家电汽车塑料"],
-        沥青: ["基建施工温度计", "道路建设关键"],
-        燃料油: ["船燃关键", "炼厂平衡变量"],
-        纯碱: ["玻璃成本锚", "光伏玻璃核心"],
-        大豆: ["饲料蛋白核心", "油脂定价锚"],
-        白糖: ["食品工业刚需", "天气题材高敏"],
-        棕榈油: ["全球植物油锚", "生柴原料"],
-        油菜籽: ["菜系油脂核心", "加菜链关键"],
-        苹果: ["鲜果消费代表", "天气敏感品"],
-        小麦: ["粮食安全主粮", "全球贸易敏感"],
-        玉米: ["饲料能源双属性", "农业链核心"],
-        棉花: ["纺织工业基石", "服装链风向"],
-        稻米: ["口粮安全底盘", "亚洲主粮"]
-      };
-
+      /* 【修改点1】补全的历史大事件全集 */
       const EVENT_CASES = {
-        原油: {
-          date: "2026-03",
-          type: "地缘冲突",
-          title: "霍尔木兹梗阻引发原油供应危机预期",
-          summary:
-            "原油最直接、最剧烈的冲击，仍然来自关键海峡受阻与地缘军事升级。",
-          impact:
-            "新华社多篇报道均指出，霍尔木兹海峡承担全球约五分之一的原油运输。2026 年 3 月海峡一度几乎停航，国际原油价格迅速突破 100 美元/桶，全球原油供应安全预期明显恶化。",
-          source_name: "新华网",
-          source_url: "https://www.xinhuanet.com/20260316/11732b1724434ad59b7fc57a9e79d3d7/c.html"
-        },
-        LNG: {
-          date: "2026-03",
-          type: "航运梗阻",
-          title: "霍尔木兹受阻放大 LNG 供应风险",
-          summary:
-            "LNG 近年的典型冲击，来自霍尔木兹海峡这一全球天然气航运要道。",
-          impact:
-            "新华社报道指出，印度现为全球第四大 LNG 买家，其中大量进口依赖中东；霍尔木兹海峡航运受阻后，卡塔尔等中东供应缩减，印度被迫优先保障关键行业和居民用气，LNG 供应链紧张迅速外溢。",
-          source_name: "新华网",
-          source_url: "https://www.xinhuanet.com/20260311/bbaa9bed0844435b8ec6750693e6a4a1/c.html"
-        },
-        LPG: {
-          date: "2026-03",
-          type: "航运梗阻",
-          title: "中东动荡冲击 LPG 跨境供应",
-          summary:
-            "LPG 对中东海运依赖度较高，霍尔木兹受扰会直接影响区域采购与到港节奏。",
-          impact:
-            "新华社报道显示，印度是全球第二大 LPG 买家，进口大部分源自中东国家。霍尔木兹海峡基本关闭后，印度一度要求液化石油气优先保障家庭需求，说明区域 LPG 供应与分配节奏已受到实质冲击。",
-          source_name: "新华网",
-          source_url: "https://www.xinhuanet.com/20260311/bbaa9bed0844435b8ec6750693e6a4a1/c.html"
-        },
-        PTA: {
-          date: "2026-03",
-          type: "地缘冲击",
-          title: "霍尔木兹受扰带动 PTA 成本端快速抬升",
-          summary:
-            "PTA 的近年大扰动，更多体现为油价和芳烃链成本突发上移。",
-          impact:
-            "第一财经指出，霍尔木兹航运受阻引发化工板块普涨，PTA 也受到原油与芳烃成本快速上行的直接拉动。该类行情通常先由供给中断预期驱动，再回到装置开工与下游需求验证阶段。",
-          source_name: "第一财经",
-          source_url: "https://www.yicai.com/news/103070286.html"
-        },
-        PX: {
-          date: "2026-03",
-          type: "原料扰动",
-          title: "上游供应稳定性担忧推升 PX 强势表现",
-          summary:
-            "PX 近年的代表性冲击，不只是油价波动，更是上游原料稳定性扰动带来的供需再定价。",
-          impact:
-            "中信建投期货在能化早报中提到，受上游原料供应稳定性担忧影响，亚洲部分 PX 装置进行了预防性降负；同时 PX 检修季开启，库存预期由累库转为去库，PX 在聚酯链中表现偏强。",
-          source_name: "中信建投期货",
-          source_url: "https://finance.sina.com.cn/money/future/fmnews/2026-03-23/doc-inhrxvtz4180942.shtml"
-        },
-        乙二醇: {
-          date: "2024-05",
-          type: "产能扩张",
-          title: "国内扩产抬升乙二醇宽松预期",
-          summary:
-            "乙二醇近年的典型冲击，是国内产量快速上升带来的进口替代与利润重估。",
-          impact:
-            "第一财经在石化行业转型报道中指出，近五年来多种石化产品产能、产量累计增幅都在 50% 以上，行业普遍面临过剩与利润承压。乙二醇所处的聚酯原料链同样受到扩产与需求放缓的双重挤压。",
-          source_name: "第一财经",
-          source_url: "https://www.yicai.com/news/102962956.html"
-        },
-        沥青: {
-          date: "2024-06",
-          type: "政策约束",
-          title: "炼油行业节能降碳政策压缩沥青扩张空间",
-          summary:
-            "沥青近年的重要冲击，不完全来自需求，而是来自炼化政策端的约束变化。",
-          impact:
-            "政策解读显示，炼油行业节能降碳专项行动明确禁止以重油综合利用、原料预处理、沥青装置等名义变相新增炼油产能。对于沥青链条而言，这属于典型的制度性供给约束。",
-          source_name: "中国能源报",
-          source_url: "https://paper.people.com.cn/zgnybwap/html/2024-06/24/content_26066455.htm"
-        },
-        白银: {
-          date: "2026-01",
-          type: "工业需求",
-          title: "光伏用银成本上升推动白银冲高",
-          summary:
-            "白银近年的核心扰动，不只是贵金属属性，而是工业属性重新被市场定价。",
-          impact:
-            "2025 年末至 2026 年初，银价持续冲高，光伏银浆成本明显上升。随着光伏、电气化需求保持韧性，白银从“跟随黄金”转向“贵金属+工业金属”双逻辑定价。",
-          source_name: "第一财经",
-          source_url: "https://www.yicai.com/video/103008694.html"
-        },
-        石墨: {
-          date: "2023-10",
-          type: "出口管制",
-          title: "石墨出口许可管理重塑全球电池材料链",
-          summary:
-            "石墨最典型的近年冲击，是政策直接改变全球负极材料供应预期。",
-          impact:
-            "中国对部分石墨产品实施出口许可管理后，全球电池材料供应链重新评估对中国石墨的依赖度，石墨由普通原料进一步被视作关键战略资源。",
-          source_name: "Reuters",
-          source_url:
-            "https://www.reuters.com/world/china/china-require-export-permits-some-graphite-products-dec-1-2023-10-20/"
-        },
-        稀土: {
-          date: "2025-04",
-          type: "出口管制",
-          title: "稀土相关物项出口管制升级",
-          summary:
-            "稀土近年的代表性冲击，仍然来自政策端，因为其供应高度集中。",
-          impact:
-            "2025 年 4 月起，中国对部分稀土相关物项实施出口管制，稀土的战略属性进一步强化，全球磁材、军工和高端制造链对供应安全的关注显著升温。",
-          source_name: "新华社",
-          source_url:
-            "https://cpc.people.com.cn/n1/2025/0407/c64387-40454411.html"
-        },
-        钴: {
-          date: "2025-03",
-          type: "供应过剩",
-          title: "印尼放量加剧全球钴市过剩",
-          summary:
-            "钴近年的主线不是短缺，而是印尼扩产下的价格重估。",
-          impact:
-            "随着印尼钴产能快速上升，全球钴市维持过剩格局，价格长期承压。钴的估值逻辑从资源稀缺，切换到“新增供给何时出清”。",
-          source_name: "Reuters",
-          source_url:
-            "https://www.reuters.com/markets/commodities/cobalt-produced-by-chinas-lygend-indonesia-skirts-trump-tariffs-2025-03-17/"
-        },
-        铝: {
-          date: "2026-03",
-          type: "地缘冲突",
-          title: "霍尔木兹风险扰动全球铝供应链",
-          summary:
-            "铝的最新冲击，来自中东运输受阻与海湾冶炼产能扰动。",
-          impact:
-            "中东冲突升级后，海湾地区部分原铝发运与原料运输受阻，全球铝价快速上行。铝重新进入“地缘冲击+供应链重组”的交易框架。",
-          source_name: "Reuters",
-          source_url:
-            "https://www.reuters.com/markets/commodities/iran-war-rattles-global-aluminium-supply-chain-2026-03-19/"
-        },
-        钾盐: {
-          date: "2024-10",
-          type: "供给恢复",
-          title: "俄白回流令全球钾盐市场重回宽松",
-          summary:
-            "钾盐近年的关键冲击，从制裁紧张逐步切换为供给恢复后的价格压力。",
-          impact:
-            "随着俄罗斯和白俄罗斯出口路径修复，全球钾盐供应逐步接近战前水平，前期紧张格局缓解，价格与利润中枢面临下移压力。",
-          source_name: "Reuters",
-          source_url:
-            "https://www.reuters.com/markets/commodities/potash-supply-nears-pre-war-levels-pushing-producers-cut-output-2024-10-23/"
-        },
-        铁矿石: {
-          date: "2024-05",
-          type: "政策刺激",
-          title: "地产政策刺激短线提振铁矿石情绪",
-          summary:
-            "铁矿石近年的典型冲击，更多来自中国需求预期的快速摆动。",
-          impact:
-            "中国出台地产支持政策后，铁矿石价格一度反弹，但由于港口库存高、钢材需求修复偏慢，市场很快转入“政策预期与现实需求博弈”阶段。",
-          source_name: "Reuters",
-          source_url:
-            "https://www.reuters.com/markets/commodities/iron-ore-prices-lack-conviction-despite-china-stimulus-moves-russell-2024-05-28/"
-        },
-        铅: {
-          date: "2025-04",
-          type: "供应过剩",
-          title: "过剩预期压制铅价弹性",
-          summary:
-            "铅近两年的特征，不是极端短缺，而是供给宽松下的弱弹性运行。",
-          impact:
-            "2025 年全球铅市继续面临过剩预期，汽车电池需求增长有限而精炼产量仍偏高，铅价表现相对平淡，资金配置明显偏谨慎。",
-          source_name: "Reuters",
-          source_url:
-            "https://www.reuters.com/markets/commodities/investment-funds-turn-bearish-over-supplied-lead-zinc-andy-home-2025-04-28/"
-        },
-        铜: {
-          date: "2025-03",
-          type: "原料紧缺",
-          title: "铜精矿短缺迫使冶炼厂讨论减产",
-          summary:
-            "铜近年的关键矛盾之一，是矿端紧张与冶炼端扩张错配。",
-          impact:
-            "铜精矿加工费跌至极低水平后，中国铜冶炼厂利润被明显压缩，市场开始担忧减产与检修扩大，铜价逻辑从“需求交易”切换到“原料约束”。",
-          source_name: "Reuters",
-          source_url:
-            "https://www.reuters.com/markets/commodities/switching-off-plants-chinese-copper-smelters-grapple-with-margin-collapse-2025-03-21/"
-        },
-        电解铝: {
-          date: "2024-07",
-          type: "成本冲击",
-          title: "氧化铝紧张向电解铝成本端强传导",
-          summary:
-            "电解铝近年的重要扰动，更多来自上游氧化铝与铝土矿，而非需求本身。",
-          impact:
-            "2024 年氧化铝价格明显走强，叠加铝土矿供应担忧，电解铝成本中枢被抬高，行业利润重新分化，市场对高成本产能的敏感度显著上升。",
-          source_name: "Reuters",
-          source_url:
-            "https://www.reuters.com/markets/commodities/rising-chinese-aluminium-output-pressures-alumina-supply-2024-07-01/"
-        },
-        铝土矿: {
-          date: "2026-03",
-          type: "出口约束",
-          title: "几内亚拟收紧出口扰动铝土矿市场",
-          summary:
-            "铝土矿近年的最大变量，是几内亚政策与发运节奏。",
-          impact:
-            "几内亚评估限制铝土矿出口后，市场担忧中国进口来源稳定性，铝土矿价格与运费预期同时受到影响，氧化铝和电解铝成本链条随之波动。",
-          source_name: "Reuters",
-          source_url:
-            "https://www.reuters.com/world/africa/guinea-curb-bauxite-exports-by-april-stabilize-prices-minister-says-2026-03-18/"
-        },
-        锂: {
-          date: "2026-01",
-          type: "需求修复",
-          title: "储能需求爆发推动锂价自低位修复",
-          summary:
-            "锂近两年的主线，先是过剩压价，随后转向储能需求修复。",
-          impact:
-            "随着储能装机与数据中心相关需求快速增长，锂需求预期明显改善，市场开始从“持续过剩”转向“供需再平衡”，锂价自低位反弹。",
-          source_name: "Reuters",
-          source_url:
-            "https://www.reuters.com/sustainability/climate-energy/energy-storage-boom-strengthens-demand-outlook-beaten-down-lithium-2026-01-04/"
-        },
-        锌: {
-          date: "2024-10",
-          type: "矿端短缺",
-          title: "矿山收缩令锌市转向供应缺口",
-          summary:
-            "锌近年的主要冲击来自矿端，不是消费突然爆发，而是原料持续趋紧。",
-          impact:
-            "全球锌矿产量连续下滑后，冶炼厂加工费明显走低，锌从预期过剩切换到阶段性缺口交易，价格弹性与波动率都被放大。",
-          source_name: "Reuters",
-          source_url:
-            "https://www.reuters.com/markets/commodities/zinc-facing-supply-deficit-mine-output-falls-again-2024-10-09/"
-        },
-        锡: {
-          date: "2024-09",
-          type: "矿山停产",
-          title: "缅甸佤邦停产持续收紧全球锡原料",
-          summary:
-            "锡近年的典型扰动，几乎都绕不开缅甸佤邦矿山。",
-          impact:
-            "缅甸佤邦核心锡矿长期停产后，市场对全球锡精矿供应的担忧持续升温，锡价对复产消息异常敏感，原料链稳定性成为交易核心。",
-          source_name: "Reuters",
-          source_url:
-            "https://www.reuters.com/markets/commodities/tin-supply-chain-tightens-after-key-mine-s-long-absence-2024-09-13/"
-        },
-        镍: {
-          date: "2025-01",
-          type: "供应过剩",
-          title: "印尼主导的过剩格局压低镍价中枢",
-          summary:
-            "镍近两年的最强主线，是印尼产能扩张重塑全球定价。",
-          impact:
-            "印尼持续扩张矿山和冶炼产能，全球镍市长期过剩，库存不断累积，价格重心明显下移，市场开始更多关注印尼政策是否会主动控量。",
-          source_name: "Reuters",
-          source_url:
-            "https://www.reuters.com/markets/commodities/only-indonesia-can-help-nickel-recover-price-bust-andy-home-2025-01-22/"
-        },
-        黄金: {
-          date: "2025-02",
-          type: "央行购金",
-          title: "全球央行持续购金重塑黄金需求结构",
-          summary:
-            "黄金近年的代表性冲击，是央行购金与地缘避险共振。",
-          impact:
-            "全球央行连续多年保持高强度购金，叠加地缘与美元信用担忧，黄金需求结构被重塑，金价中枢显著抬升并多次刷新历史高位。",
-          source_name: "新华社",
-          source_url:
-            "https://www.news.cn/fortune/20250205/8253d83542ea4cd192745ce4fcb37116/c.html"
-        },
-        煤炭: {
-          date: "2025-06",
-          type: "供需错配",
-          title: "供给增长与替代能源扩张压低煤价中枢",
-          summary:
-            "煤炭近年的典型扰动，不是单一事件，而是供给走高、需求偏弱与替代能源扩张的共振。",
-          impact:
-            "新华社调研指出，2025 年 1 至 4 月全国原煤产量同比增长 6.6%，2024 年煤炭进口量创历史新高。供给偏宽叠加新能源替代，导致煤价中枢明显下移，行业利润受到挤压。",
-          source_name: "新华网",
-          source_url: "https://www.news.cn/politics/20250623/c367efa757c7434c9aeda718883121ff/c.html"
-        },
-        燃料油: {
-          date: "2026-03",
-          type: "地缘冲击",
-          title: "中东局势升级放大燃料油供应与运费风险",
-          summary:
-            "燃料油近年的显著扰动，更多来自中东地缘、船燃供应和运费保费同步抬升。",
-          impact:
-            "上海金融官微转引中信期货观点称，霍尔木兹封锁预期下，全球海运高硫燃料油供应受扰，叠加运费和保费大涨，高低硫燃料油价格被共同推高，行情明显受事件驱动。",
-          source_name: "中信期货（转引）",
-          source_url: "https://jrj.sh.gov.cn/QT186/20260319/c35887414fc648fcb608ce35aa23173d.html"
-        },
-        甲醇: {
-          date: "2026-03",
-          type: "地缘冲击",
-          title: "霍尔木兹受扰放大甲醇进口收缩预期",
-          summary:
-            "甲醇近年的关键冲击之一，是海外装置与进口到港节奏受到地缘和航运干扰。",
-          impact:
-            "第一财经在化工板块报道中提到，霍尔木兹航运停滞期间，甲醇主力合约连续涨停，体现出市场对中东供应与进口收缩的高度敏感。与此同时，东吴期货也提示甲醇价格对伊朗货源流向与进口补充能力高度依赖。",
-          source_name: "第一财经 / 东吴期货",
-          source_url: "https://www.yicai.com/news/103070286.html"
-        },
-        纯碱: {
-          date: "2024-07",
-          type: "产能扩张",
-          title: "新增产能释放重塑纯碱景气周期",
-          summary:
-            "纯碱近年的代表性冲击，是高利润诱发扩产，随后供给压力反向压制价格。",
-          impact:
-            "证券时报报道指出，2023 至 2025 年国内纯碱合计新增产能约 1400 万吨，供应压力明显；隆众资讯同期跟踪也显示，2024 年纯碱价格从高位回落后逐步进入止跌企稳阶段，本质上仍是新产能释放后的再平衡。",
-          source_name: "证券时报 / 隆众资讯",
-          source_url: "https://stcn.com/article/detail/1264308.html"
-        },
-        聚丙烯: {
-          date: "2026-03",
-          type: "成本冲击",
-          title: "油气成本抬升带动聚丙烯价格体系重估",
-          summary:
-            "聚丙烯近年的明显冲击，除了扩产，还有原油与丙烯链成本快速抬升。",
-          impact:
-            "第一财经报道显示，霍尔木兹受阻后聚丙烯等化工品一度涨停；隆众资讯进一步指出，能源成本重塑聚丙烯价格体系，供应缩量预期与成本上移共同推高市场重心。",
-          source_name: "第一财经 / 隆众资讯",
-          source_url: "https://www.yicai.com/news/103070286.html"
-        },
-        纯苯: {
-          date: "2026-03",
-          type: "原料断供预期",
-          title: "中东原料风险放大纯苯价格波动",
-          summary:
-            "纯苯近年的核心风险之一，是中东原料与芳烃链成本的突发扰动。",
-          impact:
-            "隆众资讯在重点链条分析中指出，中东断供危机已对中国石脑油裂解装置形成实质性冲击，乙烯负荷明显下滑；对纯苯这类芳烃原料而言，原料链受损会直接放大供应与价格波动。",
-          source_name: "隆众资讯",
-          source_url: "https://focus.oilchem.net/special_manage_info/304"
-        },
-        苯乙烯: {
-          date: "2026-03",
-          type: "检修去库",
-          title: "海内外检修叠加去库预期提振苯乙烯",
-          summary:
-            "苯乙烯近年的典型冲击，不只是油价，而是供给收缩预期与库存切换。",
-          impact:
-            "证券时报报道指出，2026 年 3 月国内外装置陆续进入检修季，整体检修规模大于重启规模，苯乙烯供给存在收缩预期；同时第一财经也提到，霍尔木兹扰动阶段苯乙烯是受油价与芳烃链带动最明显的品种之一。",
-          source_name: "证券时报 / 第一财经",
-          source_url: "https://www.stcn.com/article/detail/3655587.html"
-        },
-        大豆: {
-          date: "2018-07",
-          type: "贸易制裁",
-          title: "中美贸易战改写全球大豆流向",
-          summary:
-            "大豆是最典型的“流向重塑型”冲击：不是全球没豆，而是最核心的买家与卖家突然断开。",
-          impact:
-            "USDA ERS 显示，2018/19 市场年度前半程，中国自美国进口大豆减少近 2200 万吨，同比下降 89%；来自巴西和加拿大的增量也只能填补其中一部分。这次事件永久改变了全球大豆贸易地图。",
-          source_name: "USDA ERS",
-          source_url:
-            "https://www.ers.usda.gov/amber-waves/2022/march/retaliatory-tariffs-reduced-u-s-states-exports-of-agricultural-commodities/"
-        },
-        小麦: {
-          date: "2022-02",
-          type: "地缘冲突",
-          title: "俄乌冲突冲击黑海小麦出口",
-          summary:
-            "小麦最典型的历史冲击之一，是黑海出口链条受阻，因为俄乌在全球小麦贸易中占据关键位置。",
-          impact:
-            "USDA 在 2022 年小麦展望中指出，俄乌冲突令全球小麦贸易面临越来越高的不确定性，黑海出口受扰后，全球小麦价格一度处于历史高位并显著波动。",
-          source_name: "USDA ERS",
-          source_url: "https://www.ers.usda.gov/sites/default/files/_laserfiche/outlooks/103490/WHS-22c.pdf"
-        },
-        玉米: {
-          date: "2012-07",
-          type: "严重干旱",
-          title: "美国大旱推升全球玉米价格",
-          summary:
-            "玉米的经典历史冲击，往往来自美国天气，因为美国在全球玉米供给与出口中权重极高。",
-          impact:
-            "USDA 研究指出，2012 年美国大旱使玉米单产和总产显著下修，并推动 2012/13 年度美国农民玉米均价升至纪录高位；同年美国玉米出口也因减产而明显收缩。",
-          source_name: "USDA ERS",
-          source_url: "https://www.ers.usda.gov/sites/default/files/_laserfiche/publications/101722/ERR-294.pdf"
-        },
-        稻米: {
-          date: "2023-07",
-          type: "出口限制",
-          title: "印度限制大米出口引发全球米市收紧",
-          summary:
-            "稻米市场对出口政策极为敏感，因为全球可出口余量集中在少数国家。",
-          impact:
-            "USDA 指出，自 2023 年 7 月起，印度出口限制压制了全球稻米贸易量，并推高国际米价。作为全球最重要的大米出口国之一，印度政策变化迅速改变了全球现货流向与采购节奏。",
-          source_name: "USDA ERS",
-          source_url: "https://www.ers.usda.gov/sites/default/files/_laserfiche/outlooks/110219/RCS-24I.pdf"
-        },
-        棕榈油: {
-          date: "2022-04",
-          type: "出口禁令",
-          title: "印尼出口禁令扰动全球植物油供应",
-          summary:
-            "棕榈油最具代表性的历史冲击之一，是主产国政策直接改变全球可流通供给。",
-          impact:
-            "2022 年印尼实施棕榈油出口禁令后，全球植物油供应进一步趋紧。FAO 随后指出，随着禁令取消，国际棕榈油价格才明显回落，说明这一政策曾对全球棕榈油流通与定价形成显著扰动。",
-          source_name: "FAO",
-          source_url:
-            "https://openknowledge.fao.org/server/api/core/bitstreams/46cc0462-bad5-4f27-8384-7d60f9584e7f/content"
-        },
-        白糖: {
-          date: "2023-09",
-          type: "天气冲击",
-          title: "厄尔尼诺预期推升全球糖价至多年高位",
-          summary:
-            "白糖的典型冲击不是单一政策，而是主产国产量预期同时收缩，全球定价随之迅速抬升。",
-          impact:
-            "FAO 指出，2023 年 9 月国际糖价升至 2011 年 9 月以来最高水平，背后核心原因是市场担忧厄尔尼诺天气将削弱印度、泰国等主产国的产量前景，全球供应预期阶段性收紧。",
-          source_name: "FAO",
-          source_url:
-            "https://www.fao.org/newsroom/detail/fao-food-price-index-unchanged-in-september/en"
-        },
-        油菜籽: {
-          date: "2021-08",
-          type: "极端干旱",
-          title: "加拿大大旱重创油菜籽供给",
-          summary:
-            "油菜籽的历史冲击，往往绕不开加拿大天气，因为加拿大是全球最关键的出口来源之一。",
-          impact:
-            "加拿大农业部当时预计，受 2021 年西加拿大大范围干旱影响，加拿大油菜籽产量将同比大幅下降约 27%。随后全球菜籽供应趋紧，市场持续关注新季恢复情况。",
-          source_name: "Agriculture and Agri-Food Canada",
-          source_url:
-            "https://agriculture.canada.ca/sites/default/files/documents/2021-08/fco-ppc_2021_08-eng.pdf"
-        },
-        苹果: {
-          date: "2018-04",
-          type: "霜冻灾害",
-          title: "春季霜冻导致中国苹果减产",
-          summary:
-            "苹果的冲击逻辑和谷物不同，往往体现为天气对产量与优果率的集中打击。",
-          impact:
-            "USDA 驻华报告显示，2018 年 4 月的严重霜冻导致中国苹果和梨产量下降超过 20%，国内供应阶段性偏紧，苹果价格明显抬升，出口也因供给收缩而受到影响。",
-          source_name: "USDA FAS",
-          source_url:
-            "https://apps.fas.usda.gov/newgainapi/api/report/downloadreportbyfilename?filename=Fresh+Deciduous+Fruit+Annual_Beijing_China+-+Peoples+Republic+of_10-30-2018.pdf"
-        },
-        棉花: {
-          date: "2022-08",
-          type: "洪灾冲击",
-          title: "巴基斯坦洪灾扰动全球棉花供给",
-          summary:
-            "棉花的历史冲击常来自主产区灾害，因为棉花既是农产品，也是纺织工业链的重要原料。",
-          impact:
-            "USDA 多份棉花展望报告将巴基斯坦 2022/23 年度棉花定义为“洪灾损毁作物”，其产量降至近几十年低位附近，全球市场随后持续跟踪其恢复进度与进口缺口变化。",
-          source_name: "USDA ERS",
-          source_url: "https://www.ers.usda.gov/sites/default/files/_laserfiche/outlooks/106680/CWS-23f.pdf"
-        },
+        原油: { date: "2026-03", type: "地缘冲突", title: "霍尔木兹梗阻引发原油供应危机预期", summary: "原油最直接、最剧烈的冲击，仍然来自关键海峡受阻与地缘军事升级。", impact: "新华社多篇报道均指出，霍尔木兹海峡承担全球约五分之一的原油运输。2026 年 3 月海峡一度几乎停航，国际原油价格迅速突破 100 美元/桶，全球原油供应安全预期明显恶化。", source_name: "新华网" },
+        LNG: { date: "2026-03", type: "航运梗阻", title: "霍尔木兹受阻放大 LNG 供应风险", summary: "LNG 近年的典型冲击，来自霍尔木兹海峡这一全球天然气航运要道。", impact: "印度现为全球第四大 LNG 买家，其中大量进口依赖中东；霍尔木兹海峡航运受阻后，卡塔尔等中东供应缩减，印度被迫优先保障关键行业和居民用气。", source_name: "新华网" },
+        LPG: { date: "2026-03", type: "航运梗阻", title: "中东动荡冲击 LPG 跨境供应", summary: "LPG 对中东海运依赖度较高，霍尔木兹受扰会直接影响区域采购与到港节奏。", impact: "霍尔木兹海峡基本关闭后，印度一度要求液化石油气优先保障家庭需求，区域 LPG 供应与分配节奏受到实质冲击。", source_name: "新华网" },
+        PTA: { date: "2026-03", type: "地缘冲击", title: "霍尔木兹受扰带动 PTA 成本端快速抬升", summary: "PTA 的近年大扰动，更多体现为油价和芳烃链成本突发上移。", impact: "第一财经指出，霍尔木兹航运受阻引发化工板块普涨，PTA 也受到原油与芳烃成本快速上行的直接拉动。", source_name: "第一财经" },
+        PX: { date: "2026-03", type: "原料扰动", title: "上游供应稳定性担忧推升 PX 强势表现", summary: "PX 的代表性冲击，是上游原料稳定性扰动带来的供需再定价。", impact: "受上游原料供应稳定性担忧影响，亚洲部分 PX 装置进行了预防性降负；同时 PX 检修季开启，PX 在聚酯链中表现偏强。", source_name: "中信建投期货" },
+        乙二醇: { date: "2024-05", type: "产能扩张", title: "国内扩产抬升乙二醇宽松预期", summary: "乙二醇近年的典型冲击，是国内产量快速上升带来的进口替代与利润重估。", impact: "多种石化产品产能累计增幅都在 50% 以上，行业普遍面临过剩与利润承压，乙二醇受到扩产与需求放缓的双重挤压。", source_name: "第一财经" },
+        沥青: { date: "2024-06", type: "政策约束", title: "炼油行业节能降碳政策压缩沥青扩张空间", summary: "沥青近年的重要冲击来自炼化政策端的约束变化。", impact: "炼油行业节能降碳专项行动明确禁止以重油综合利用、沥青装置等名义变相新增炼油产能，属于典型的制度性供给约束。", source_name: "中国能源报" },
+        白银: { date: "2026-01", type: "工业需求", title: "光伏用银成本上升推动白银冲高", summary: "白银近年的核心扰动，是工业属性重新被市场定价。", impact: "2025 年末至 2026 年初，光伏银浆成本明显上升。随着光伏、电气化需求保持韧性，白银从“跟随黄金”转向“贵金属+工业”双逻辑定价。", source_name: "第一财经" },
+        石墨: { date: "2023-10", type: "出口管制", title: "石墨出口许可管理重塑全球电池材料链", summary: "石墨最典型的近年冲击，是政策直接改变全球负极材料供应预期。", impact: "中国对部分石墨产品实施出口许可管理后，全球电池材料供应链重新评估依赖度，石墨被视作关键战略资源。", source_name: "Reuters" },
+        稀土: { date: "2025-04", type: "出口管制", title: "稀土相关物项出口管制升级", summary: "稀土近年的代表性冲击仍然来自政策端，因为其供应高度集中。", impact: "中国对部分稀土相关物项实施出口管制，稀土战略属性进一步强化，全球磁材、军工对供应安全的关注显著升温。", source_name: "新华社" },
+        钴: { date: "2025-03", type: "供应过剩", title: "印尼放量加剧全球钴市过剩", summary: "钴近年的主线不是短缺，而是印尼扩产下的价格重估。", impact: "印尼钴产能快速上升，全球钴市维持过剩格局。钴的估值逻辑从资源稀缺，切换到“新增供给何时出清”。", source_name: "Reuters" },
+        铝: { date: "2026-03", type: "地缘冲突", title: "霍尔木兹风险扰动全球铝供应链", summary: "铝的最新冲击，来自中东运输受阻与海湾冶炼产能扰动。", impact: "中东冲突升级后，海湾地区部分原铝发运与原料运输受阻，全球铝价快速上行，重新进入地缘冲击定价交易。", source_name: "Reuters" },
+        钾盐: { date: "2024-10", type: "供给恢复", title: "俄白回流令全球钾盐市场重回宽松", summary: "钾盐近年的关键冲击，从制裁紧张逐步切换为供给恢复后的价格压力。", impact: "随着俄罗斯和白俄罗斯出口路径修复，全球钾盐供应逐步接近战前水平，价格与利润中枢面临下移压力。", source_name: "Reuters" },
+        铁矿石: { date: "2024-05", type: "政策刺激", title: "地产政策刺激短线提振铁矿石情绪", summary: "铁矿石近年的典型冲击，更多来自中国需求预期的快速摆动。", impact: "中国出台地产支持政策后，铁矿石价格一度反弹，随后转入“政策预期与现实需求博弈”阶段。", source_name: "Reuters" },
+        铅: { date: "2025-04", type: "供应过剩", title: "过剩预期压制铅价弹性", summary: "铅近两年的特征，不是极端短缺，而是供给宽松下的弱弹性运行。", impact: "全球铅市继续面临过剩预期，汽车电池需求增长有限而精炼产量仍偏高，资金配置明显偏谨慎。", source_name: "Reuters" },
+        铜: { date: "2025-03", type: "原料紧缺", title: "铜精矿短缺迫使冶炼厂讨论减产", summary: "铜近年的关键矛盾之一，是矿端紧张与冶炼端扩张错配。", impact: "铜精矿加工费跌至极低水平后，中国铜冶炼厂利润被明显压缩，市场担忧减产，逻辑切换到“原料约束”。", source_name: "Reuters" },
+        电解铝: { date: "2024-07", type: "成本冲击", title: "氧化铝紧张向电解铝成本端强传导", summary: "电解铝近年的重要扰动，更多来自上游氧化铝与铝土矿。", impact: "氧化铝价格走强叠加铝土矿供应担忧，电解铝成本中枢被抬高，市场对高成本产能的敏感度显著上升。", source_name: "Reuters" },
+        铝土矿: { date: "2026-03", type: "出口约束", title: "几内亚拟收紧出口扰动铝土矿市场", summary: "铝土矿近年的最大变量，是几内亚政策与发运节奏。", impact: "几内亚评估限制铝土矿出口后，市场担忧进口来源稳定性，氧化铝和电解铝成本链条随之波动。", source_name: "Reuters" },
+        锂: { date: "2026-01", type: "需求修复", title: "储能需求爆发推动锂价自低位修复", summary: "锂近两年的主线，先是过剩压价，随后转向储能需求修复。", impact: "储能装机与数据中心相关需求增长，锂需求预期改善，市场开始从“持续过剩”转向“供需再平衡”。", source_name: "Reuters" },
+        锌: { date: "2024-10", type: "矿端短缺", title: "矿山收缩令锌市转向供应缺口", summary: "锌近年的主要冲击来自矿端，原料持续趋紧。", impact: "全球锌矿产量连续下滑后，冶炼厂加工费明显走低，锌从预期过剩切换到阶段性缺口交易。", source_name: "Reuters" },
+        锡: { date: "2024-09", type: "矿山停产", title: "缅甸佤邦停产持续收紧全球锡原料", summary: "锡近年的典型扰动，几乎都绕不开缅甸佤邦矿山。", impact: "缅甸佤邦核心锡矿长期停产后，市场对锡精矿供应担忧升温，原料链稳定性成为交易核心。", source_name: "Reuters" },
+        镍: { date: "2025-01", type: "供应过剩", title: "印尼主导的过剩格局压低镍价中枢", summary: "镍近两年的最强主线，是印尼产能扩张重塑全球定价。", impact: "印尼持续扩张产能导致全球镍市长期过剩，价格重心下移，市场开始关注印尼是否会主动控量。", source_name: "Reuters" },
+        黄金: { date: "2025-02", type: "央行购金", title: "全球央行持续购金重塑黄金需求结构", summary: "黄金近年的代表性冲击，是央行购金与地缘避险共振。", impact: "央行保持高强度购金，叠加地缘与美元信用担忧，需求结构被重塑，金价多次刷新历史高位。", source_name: "新华社" },
+        煤炭: { date: "2025-06", type: "供需错配", title: "供给增长与替代能源扩张压低煤价中枢", summary: "煤炭典型扰动是供给走高、需求偏弱与替代能源扩张的共振。", impact: "全国原煤产量增长叠加煤炭进口创历史新高，新能源替代导致煤价中枢明显下移。", source_name: "新华网" },
+        燃料油: { date: "2026-03", type: "地缘冲击", title: "中东局势升级放大燃料油供应与运费风险", summary: "燃料油显著扰动多来自中东地缘、船燃供应和运费保费抬升。", impact: "霍尔木兹封锁预期下，全球海运高硫燃料油供应受扰，高低硫燃料油价格被共同推高。", source_name: "中信期货" },
+        甲醇: { date: "2026-03", type: "地缘冲击", title: "霍尔木兹受扰放大甲醇进口收缩预期", summary: "甲醇关键冲击之一是海外装置与进口到港节奏受扰。", impact: "霍尔木兹航运停滞期间，甲醇主力合约连续涨停，体现市场对中东供应与进口收缩的高度敏感。", source_name: "第一财经" },
+        纯碱: { date: "2024-07", type: "产能扩张", title: "新增产能释放重塑纯碱景气周期", summary: "纯碱代表性冲击是高利润诱发扩产，随后供给压力反制价格。", impact: "国内纯碱新增产能巨大，纯碱价格从高位回落，本质是新产能释放后的再平衡。", source_name: "证券时报" },
+        聚丙烯: { date: "2026-03", type: "成本冲击", title: "油气成本抬升带动聚丙烯价格体系重估", summary: "聚丙烯明显冲击包含原油与丙烯链成本快速抬升。", impact: "能源成本重塑聚丙烯价格体系，供应缩量预期与成本上移共同推高市场重心。", source_name: "隆众资讯" },
+        纯苯: { date: "2026-03", type: "原料断供预期", title: "中东原料风险放大纯苯价格波动", summary: "纯苯核心风险之一是中东原料与芳烃链成本突发扰动。", impact: "中东断供危机冲击石脑油裂解装置，对纯苯而言，原料链受损会直接放大供应与价格波动。", source_name: "隆众资讯" },
+        苯乙烯: { date: "2026-03", type: "检修去库", title: "海内外检修叠加去库预期提振苯乙烯", summary: "苯乙烯典型冲击是供给收缩预期与库存切换。", impact: "国内外装置检修规模大于重启规模，供给存在收缩预期，同时受油价与芳烃链带动明显。", source_name: "证券时报" },
+        大豆: { date: "2018-07", type: "贸易制裁", title: "中美贸易战改写全球大豆流向", summary: "大豆是最典型的“流向重塑型”冲击：买方卖方突然断开。", impact: "中国自美国进口大豆大幅减少，该事件永久改变了全球大豆贸易地图。", source_name: "USDA ERS" },
+        小麦: { date: "2022-02", type: "地缘冲突", title: "俄乌冲突冲击黑海小麦出口", summary: "小麦经典冲击是黑海出口链条受阻。", impact: "俄乌冲突令全球小麦贸易面临极高不确定性，国际小麦价格一度处于历史高位并显著波动。", source_name: "USDA" },
+        玉米: { date: "2012-07", type: "严重干旱", title: "美国大旱推升全球玉米价格", summary: "玉米经典冲击往往来自美国天气。", impact: "大旱导致美国玉米减产并推动价格升至历史高位，出口明显收缩。", source_name: "USDA" },
+        稻米: { date: "2023-07", type: "出口限制", title: "印度限制大米出口引发全球米市收紧", summary: "稻米市场对主要出口国政策极度敏感。", impact: "印度出口限制压制了全球贸易量并推高国际米价，迅速改变了现货流向。", source_name: "USDA" },
+        棕榈油: { date: "2022-04", type: "出口禁令", title: "印尼出口禁令扰动全球植物油供应", summary: "棕榈油典型冲击是主产国政策改变全球供给。", impact: "印尼实施出口禁令后全球供应趋紧，禁令取消后价格才明显回落。", source_name: "FAO" },
+        白糖: { date: "2023-09", type: "天气冲击", title: "厄尔尼诺预期推升全球糖价至多年高位", summary: "白糖冲击多为主产国产量预期同时收缩。", impact: "市场担忧厄尔尼诺削弱印度、泰国等主产国产量，国际糖价升至十多年最高水平。", source_name: "FAO" },
+        油菜籽: { date: "2021-08", type: "极端干旱", title: "加拿大大旱重创油菜籽供给", summary: "油菜籽历史冲击绕不开加拿大天气因素。", impact: "大范围干旱导致加拿大油菜籽产量大幅下降，全球菜籽供应随即趋紧。", source_name: "Agriculture Canada" },
+        苹果: { date: "2018-04", type: "霜冻灾害", title: "春季霜冻导致中国苹果减产", summary: "苹果的冲击常体现为天气对产量的集中打击。", impact: "严重霜冻导致中国苹果和梨大幅减产，国内供应偏紧且价格明显抬升。", source_name: "USDA FAS" },
+        棉花: { date: "2022-08", type: "洪灾冲击", title: "巴基斯坦洪灾扰动全球棉花供给", summary: "棉花历史冲击常来自主产区灾害。", impact: "洪灾致使巴基斯坦棉花产量降至低位，全球市场持续跟踪其进口缺口变化。", source_name: "USDA" }
       };
 
-      const UNIT_ZH_MAP = {
-        "metric tons": "吨",
-        "thousand metric tons": "千吨",
-        "thousand metric dry tons": "千干吨",
-        "ten thousand metric tons": "万吨",
-        "million metric tons": "万吨",
-        "million 480-lb bales": "百万包（480磅/包）",
-        "million barrels per day": "万桶/日",
-        kilograms: "千克",
-        "thousand carats": "千克拉",
-        "million carats": "百万克拉",
-        "terawatt-hours": "太瓦时（TWh）",
-        "US dollars": "美元"
-      };
+      function getFlagEmoji(countryZh) { return FLAG_EMOJI_MAP[countryZh] || "🏳️"; }
+      function toCountryZh(countryEn, countryZh) { if (countryZh && countryZh !== countryEn) return countryZh; return COUNTRY_ZH_PATCH[countryEn] || countryZh || countryEn; }
+      function escapeHtml(text) { return String(text ?? "").replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;").replace(/"/g, "&quot;").replace(/'/g, "&#39;"); }
+      function translateUnit(unit) { return UNIT_ZH_MAP[unit] || unit; }
+      function translateValueType(valueType) { return VALUE_TYPE_ZH_MAP[valueType] || "产量"; }
+      function normalizeDisplayValue(value, unit) { const num = Number(value || 0); return (unit === "million metric tons" || unit === "million barrels per day") ? num * 100 : num; }
+      function formatDisplayValue(value, unit) { return new Intl.NumberFormat("zh-CN", { maximumFractionDigits: 2 }).format(normalizeDisplayValue(value, unit)); }
+      function getTopicTags(name) { return HOT_TOPIC_TAGS[name] || ["全球供应链聚焦"]; }
+      function renderTopicTagsHtml(tags) { return tags.map(tag => `<span class='topic-tag'>${escapeHtml(tag)}</span>`).join(""); }
+      function setBoardTags(tags) { const el = document.getElementById("boardTags"); if (!el) return; if (!tags || !tags.length) { el.style.display = "none"; return; } el.innerHTML = renderTopicTagsHtml(tags); el.style.display = "flex"; }
 
-      const VALUE_TYPE_ZH_MAP = {
-        Production: "产量",
-        "Production (primary energy)": "产量（一次能源口径）",
-        "Production (daily average, OPEC MOMR Feb 2026, top 15 countries)":
-          "产量（日均，OPEC 2026年2月月报，前15国/地区样本）",
-        "Mine production": "矿山产量",
-        "Mine production, antimony content": "矿山产量（锑含量）",
-        "Mine production, bauxite, dry tons": "矿山产量（铝土矿，干吨）",
-        "Mine production, cobalt content, estimated": "矿山产量（钴含量，估算）",
-        "Mine production, lead content": "矿山产量（铅含量）",
-        "Mine production, lithium content": "矿山产量（锂含量）",
-        "Mine production, manganese content": "矿山产量（锰含量）",
-        "Mine production, marketable phosphate rock": "矿山产量（可销售磷矿石）",
-        "Mine production, molybdenum content": "矿山产量（钼含量）",
-        "Mine production, nickel content": "矿山产量（镍含量）",
-        "Mine production, potassium oxide (K2O) equivalent": "矿山产量（氧化钾 K2O 当量）",
-        "Mine production, rare-earth-oxide equivalent": "矿山产量（稀土氧化物当量）",
-        "Mine production, recoverable copper content": "矿山产量（可回收铜含量）",
-        "Mine production, silver content": "矿山产量（银含量）",
-        "Smelter production, aluminum": "冶炼产量（电解铝）",
-        "Mine production, tin content": "矿山产量（锡含量）",
-        "Mine production, usable ore": "矿山产量（可用矿石）",
-        "Mine production, zinc content": "矿山产量（锌含量）",
-        "mine production, gold content": "矿山产量（金含量）"
-      };
-
-      function toCountryZh(countryEn, countryZh) {
-        if (countryZh && countryZh !== countryEn) return countryZh;
-        return COUNTRY_ZH_PATCH[countryEn] || countryZh || countryEn;
-      }
-
-      function escapeHtml(text) {
-        return String(text ?? "")
-          .replace(/&/g, "&amp;")
-          .replace(/</g, "&lt;")
-          .replace(/>/g, "&gt;")
-          .replace(/"/g, "&quot;")
-          .replace(/'/g, "&#39;");
-      }
-
-      function translateUnit(unit) {
-        return UNIT_ZH_MAP[unit] || unit;
-      }
-
-      function normalizeDisplayValue(value, unit) {
-        const numericValue = Number(value || 0);
-        if (unit === "million metric tons" || unit === "million barrels per day") {
-          return numericValue * 100;
-        }
-        return numericValue;
-      }
-
-      function formatDisplayValue(value, unit) {
-        return formatNumber(normalizeDisplayValue(value, unit));
-      }
-
-      function translateValueType(valueType) {
-        if (VALUE_TYPE_ZH_MAP[valueType]) return VALUE_TYPE_ZH_MAP[valueType];
-        if (String(valueType || "").startsWith("Exports trade value")) {
-          return "出口额（" + String(valueType).replace("Exports trade value (", "").replace(")", "") + "）";
-        }
-        if (String(valueType || "").startsWith("Export quantity")) {
-          return "出口量（物理量，" + String(valueType).replace("Export quantity (physical volume, ", "").replace(")", "") + "）";
-        }
-        return String(valueType || "")
-          .replace(/^mine production/i, "矿山产量")
-          .replace("estimated", "估算")
-          .replace("content", "含量");
-      }
-
-      function getTopicTags(name) {
-        return HOT_TOPIC_TAGS[name] || ["全球供应链焦点", "宏观扰动敏感"];
-      }
-
-      function renderTopicTagsHtml(tags, extraClass) {
-        if (!tags || !tags.length) return "";
-        const extra = extraClass ? " " + extraClass : "";
-        return tags
-          .map(
-            (tag, idx) =>
-              "<span class='topic-tag" +
-              (idx % 2 === 1 ? " topic-tag-cool" : "") +
-              extra +
-              "'>" +
-              escapeHtml(tag) +
-              "</span>"
-          )
-          .join("");
-      }
-
-      function setBoardTags(tags) {
-        if (!boardTagsEl) return;
-        if (!tags || !tags.length) {
-          boardTagsEl.innerHTML = "";
-          boardTagsEl.style.display = "none";
-          return;
-        }
-        boardTagsEl.innerHTML = renderTopicTagsHtml(tags);
-        boardTagsEl.style.display = "flex";
-      }
-
-      function getDisruptionSet(commodityCode) {
-        if (!simulatedShutdowns.has(commodityCode)) {
-          simulatedShutdowns.set(commodityCode, new Set());
-        }
-        return simulatedShutdowns.get(commodityCode);
-      }
-
-      function toggleDisruption(commodityCode, countryCode) {
-        const disruptionSet = getDisruptionSet(commodityCode);
-        if (disruptionSet.has(countryCode)) {
-          disruptionSet.delete(countryCode);
-        } else {
-          disruptionSet.add(countryCode);
-        }
-      }
-
-      function clearDisruptions(commodityCode) {
-        getDisruptionSet(commodityCode).clear();
-      }
-
-      function getEventCase(name) {
-        return EVENT_CASES[name] || null;
-      }
-
-      function renderEventPanel(commodity) {
-        if (!eventPanelEl) return;
-
-        if (activeViewMode() !== "commodity" || !commodity) {
-          eventPanelEl.style.display = "none";
-          eventPanelEl.innerHTML = "";
-          return;
-        }
-
-        eventPanelEl.style.display = "grid";
-        const eventCase = getEventCase(commodity.commodity_zh);
-
-        if (!eventCase) {
-          eventPanelEl.innerHTML =
-            "<article class='event-card event-card-fallback'>" +
-            "<div class='event-kicker'>历史冲击案例</div>" +
-            "<h3>该品种的代表事件还在补充中</h3>" +
-            "<p class='event-summary'>当前先提供供应集中度、热点概念和断供推演。后续补入事件后，这里会直接展示“发生了什么”“当时冲击多大”“可否一键代入模拟”。</p>" +
-            "</article>";
-          return;
-        }
-
-        eventPanelEl.innerHTML =
-          "<article class='event-card'>" +
-          "<div class='event-topline'>" +
-          "<div class='event-eyebrow'>" +
-          "<span class='event-kicker'>历史冲击案例</span>" +
-          "<span class='event-date'>" +
-          escapeHtml(eventCase.date) +
-          "</span>" +
-          "</div>" +
-          "<span class='event-type'>" +
-          escapeHtml(eventCase.type) +
-          "</span>" +
-          "</div>" +
-          "<h3>" +
-          escapeHtml(eventCase.title) +
-          "</h3>" +
-          "<p class='event-summary'>" +
-          escapeHtml(eventCase.summary) +
-          "</p>" +
-          "<div class='event-impact'>" +
-          "<div class='event-impact-label'>对该品种的冲击</div>" +
-          "<div class='event-impact-text'>" +
-          escapeHtml(eventCase.impact) +
-          "</div></div>" +
-          "<div class='event-source'>" +
-          "<div class='event-source-label'>来源：" +
-          escapeHtml(eventCase.source_name) +
-          "</div></div>" +
-          "</article>";
-      }
-
-      function splitTreemapNodes(nodes) {
-        const total = nodes.reduce((sum, node) => sum + node.value, 0);
-        let running = 0;
-        let bestIndex = 1;
-        let smallestDiff = Infinity;
-        for (let index = 0; index < nodes.length - 1; index += 1) {
-          running += nodes[index].value;
-          const diff = Math.abs(total / 2 - running);
-          if (diff < smallestDiff) {
-            smallestDiff = diff;
-            bestIndex = index + 1;
-          }
-        }
-        return [nodes.slice(0, bestIndex), nodes.slice(bestIndex)];
-      }
-
-      function layoutTreemap(nodes, x, y, width, height) {
-        if (!nodes.length || width <= 0 || height <= 0) return [];
-        if (nodes.length === 1) {
-          return [{ ...nodes[0], x, y, width, height }];
-        }
-
-        const orderedNodes = [...nodes].sort((a, b) => b.value - a.value);
-        const total = orderedNodes.reduce((sum, node) => sum + node.value, 0);
-        const [groupA, groupB] = splitTreemapNodes(orderedNodes);
-        const sumA = groupA.reduce((sum, node) => sum + node.value, 0);
-        const ratioA = total > 0 ? sumA / total : 0.5;
-
-        if (width >= height) {
-          const widthA = width * ratioA;
-          return [
-            ...layoutTreemap(groupA, x, y, widthA, height),
-            ...layoutTreemap(groupB, x + widthA, y, width - widthA, height)
-          ];
-        }
-
-        const heightA = height * ratioA;
-        return [
-          ...layoutTreemap(groupA, x, y, width, heightA),
-          ...layoutTreemap(groupB, x, y + heightA, width, height - heightA)
-        ];
-      }
-
-      function buildTreemapNodes(commodity, simState) {
-        const simulationActive = simState.simulationActive;
-        const activeTop = simState.rankedEntries.slice(0, 5).map((entry, idx) => ({
-          key: entry.country_en,
-          label: toCountryZh(entry.country_en, entry.country_zh),
-          value: Number(entry.value || 0),
-          shareLabel:
-            (simulationActive ? entry.adjusted_share : entry.share_pct).toFixed(2) + "%",
-          kind: "active",
-          color: TREEMAP_COLORS[idx % TREEMAP_COLORS.length]
-        }));
-
-        const otherValue = simState.rankedEntries
-          .slice(5)
-          .reduce((sum, entry) => sum + Number(entry.value || 0), 0);
-
-        const nodes = [];
-        if (simulationActive && simState.disruptedValue > 0) {
-          const gapLabel =
-            simState.disruptedEntries.length === 1
-              ? "若" +
-                toCountryZh(
-                  simState.disruptedEntries[0].country_en,
-                  simState.disruptedEntries[0].country_zh
-                ) +
-                "停产"
-              : "若多国停产";
-          nodes.push({
-            key: "gap",
-            label: gapLabel,
-            value: simState.disruptedValue,
-            shareLabel: simState.gapPct.toFixed(2) + "%",
-            kind: "gap"
-          });
-        }
-
-        nodes.push(...activeTop);
-
-        if (otherValue > 0) {
-          const otherShare =
-            commodity.world_total > 0 ? (otherValue / Number(commodity.world_total)) * 100 : 0;
-          nodes.push({
-            key: "other",
-            label: "其他供应",
-            value: otherValue,
-            shareLabel: otherShare.toFixed(2) + "%",
-            kind: "other"
-          });
-        }
-
-        return nodes.filter((node) => node.value > 0);
-      }
-
-      function renderHeroPanel(commodity, simState) {
-        if (!heroPanelEl) return;
-
-        if (activeViewMode() !== "commodity" || !commodity) {
-          heroPanelEl.style.display = "none";
-          heroPanelEl.innerHTML = "";
-          return;
-        }
-
-        heroPanelEl.style.display = "block";
-        const nodes = buildTreemapNodes(commodity, simState);
-        const layout = layoutTreemap(nodes, 0, 0, 100, 100);
-        const treemapHtml = layout
-          .map((node) => {
-            const nodeArea = node.width * node.height;
-            const extraClass =
-              node.kind === "gap"
-                ? " treemap-gap"
-                : node.kind === "other"
-                  ? " treemap-other"
-                  : " treemap-active";
-            const sizeClass =
-              node.width < 12 || node.height < 14 || nodeArea < 160
-                ? " treemap-block-micro"
-                : node.width < 18 || node.height < 22 || nodeArea < 280
-                  ? " treemap-block-tiny"
-                  : node.width < 28 || node.height < 30 || nodeArea < 520
-                  ? " treemap-block-compact"
-                  : "";
-            const backgroundStyle =
-              node.kind === "active" ? "background:" + node.color + ";" : "";
-            return (
-              "<div class='treemap-block" +
-              extraClass +
-              sizeClass +
-              "' style='left:" +
-              node.x.toFixed(2) +
-              "%;top:" +
-              node.y.toFixed(2) +
-              "%;width:" +
-              node.width.toFixed(2) +
-              "%;height:" +
-              node.height.toFixed(2) +
-              "%;" +
-              backgroundStyle +
-              "'>" +
-              "<div class='treemap-block-inner'>" +
-              "<div><div class='treemap-name'>" +
-              escapeHtml(node.label) +
-              "</div></div>" +
-              "<div><div class='treemap-value'>" +
-              escapeHtml(
-                node.kind === "gap"
-                  ? node.shareLabel.replace("%", "") + "%"
-                  : formatDisplayValue(Math.round(node.value * 100) / 100, commodity.unit)
-              ) +
-              "</div><div class='treemap-value-sub'>" +
-              escapeHtml(
-                node.kind === "gap"
-                  ? "全球缺口"
-                  : node.kind === "other"
-                    ? node.shareLabel + " 未展开部分"
-                    : node.shareLabel
-              ) +
-              "</div></div>" +
-              "</div></div>"
-            );
-          })
-          .join("");
-
-        heroPanelEl.innerHTML =
-          "<div class='hero-title'>" +
-          formatYearLabel(commodity.year) +
-          "全球" +
-          escapeHtml(commodity.commodity_zh) +
-          (simState.simulationActive ? "可供总量 " : "供应总量 ") +
-          "<strong>" +
-          escapeHtml(
-            formatDisplayValue(
-              simState.simulationActive ? simState.remainingTotal : commodity.world_total,
-              commodity.unit
-            )
-          ) +
-          "</strong>" +
-          escapeHtml(translateUnit(commodity.unit)) +
-          "</div>" +
-          "<div class='treemap-shell'>" +
-          "<div class='treemap'>" +
-          treemapHtml +
-          "</div></div>";
-      }
-
-      function renderSimulationPanel(commodity, disruptedEntries, remainingTotal, gapPct) {
-        if (!simulationCardEl || !simulationBodyEl || !resetSimulationBtn) return;
-
-        if (activeViewMode() !== "commodity" || !commodity) {
-          simulationCardEl.style.display = "none";
-          return;
-        }
-
-        if (!disruptedEntries.length) {
-          simulationCardEl.style.display = "none";
-          resetSimulationBtn.style.display = "none";
-          simulationBodyEl.className = "sim-empty";
-          simulationBodyEl.innerHTML = "";
-          return;
-        }
-
-        simulationCardEl.style.display = "block";
-        resetSimulationBtn.style.display = "inline-block";
-
-        const disruptedLabel =
-          disruptedEntries.length === 1 ? "若该国家/地区断供" : "若这些国家/地区断供";
-        const pillsHtml = disruptedEntries
-          .map(
-            (entry) =>
-              "<span class='sim-pill'>" +
-              escapeHtml(toCountryZh(entry.country_en, entry.country_zh)) +
-              "</span>"
-          )
-          .join("");
-
-        simulationBodyEl.className = "";
-        simulationBodyEl.innerHTML =
-          "<div class='sim-alert'>" +
-          disruptedLabel +
-          "，全球将出现 <strong>" +
-          gapPct.toFixed(2) +
-          "%</strong> 的绝对缺口。</div>" +
-          "<div class='sim-meta'>剩余可供量：" +
-          formatDisplayValue(Math.max(remainingTotal, 0), commodity.unit) +
-          " " +
-          escapeHtml(translateUnit(commodity.unit)) +
-          "</div>" +
-          "<div class='sim-pills'>" +
-          pillsHtml +
-          "</div>";
-      }
+      function getDisruptionSet(commodityCode) { if (!simulatedShutdowns.has(commodityCode)) simulatedShutdowns.set(commodityCode, new Set()); return simulatedShutdowns.get(commodityCode); }
+      function toggleDisruption(commodityCode, countryCode) { const set = getDisruptionSet(commodityCode); set.has(countryCode) ? set.delete(countryCode) : set.add(countryCode); }
+      function clearDisruptions(commodityCode) { getDisruptionSet(commodityCode).clear(); }
 
       function buildCountryProfiles(coreCountries, productList) {
         const coreSet = new Set(coreCountries);
         const profileMap = new Map();
-
-        productList.forEach((product) => {
-          product.entries.forEach((entry) => {
+        productList.forEach(product => {
+          product.entries.forEach(entry => {
             if (!coreSet.has(entry.country_en)) return;
-            if (!profileMap.has(entry.country_en)) {
-              profileMap.set(entry.country_en, {
-                country_en: entry.country_en,
-                country_zh: toCountryZh(entry.country_en, entry.country_zh),
-                entries: []
-              });
-            }
-            profileMap.get(entry.country_en).entries.push({
-              commodity_en: product.commodity_en,
-              commodity_zh: product.commodity_zh,
-              share_pct: entry.share_pct,
-              value: entry.value,
-              unit: product.unit,
-              value_type: product.value_type,
-              year: product.year,
-              global_rank: entry.rank
-            });
+            if (!profileMap.has(entry.country_en)) profileMap.set(entry.country_en, { country_en: entry.country_en, country_zh: toCountryZh(entry.country_en, entry.country_zh), entries: [] });
+            profileMap.get(entry.country_en).entries.push({ commodity_en: product.commodity_en, commodity_zh: product.commodity_zh, share_pct: entry.share_pct, value: entry.value, unit: product.unit, value_type: product.value_type, year: product.year, global_rank: entry.rank });
           });
         });
-
-        return Array.from(profileMap.values())
-          .map((profile) => ({
-            ...profile,
-            entries: [...profile.entries].sort((a, b) => b.share_pct - a.share_pct)
-          }))
-          .filter((profile) => profile.entries.length > 0)
-          .sort((a, b) => b.entries[0].share_pct - a.entries[0].share_pct);
+        return Array.from(profileMap.values()).map(p => ({ ...p, entries: [...p.entries].sort((a, b) => b.share_pct - a.share_pct) })).filter(p => p.entries.length > 0).sort((a, b) => b.entries[0].share_pct - a.entries[0].share_pct);
       }
 
-      function formatNumber(num) {
-        return new Intl.NumberFormat("zh-CN", { maximumFractionDigits: 2 }).format(num);
+      function selectedCommodity() { return allProducts.find(c => c.commodity_en === appliedCommodity) || allProducts[0] || null; }
+      function selectedCountryProfile() { const profiles = buildCountryProfiles(CORE_COUNTRIES, allProducts); return profiles.find(c => c.country_en === appliedCountry) || profiles[0] || null; }
+
+      // --- 顶部按钮文案动态更新 ---
+      function updateButtonTexts() {
+        if (appliedMode === 'commodity') {
+          const commObj = allProducts.find(p => p.commodity_en === appliedCommodity);
+          const commName = commObj ? commObj.commodity_zh : appliedCommodity;
+          const majorName = appliedMajor === 'all' ? '全部分类' : appliedMajor;
+          document.getElementById('btnModeCommodity').innerHTML = `${majorName}-${commName} <span class="caret">▼</span>`;
+          document.getElementById('btnModeCountry').innerHTML = `按国家/地区分类 <span class="caret">▼</span>`;
+        } else {
+          const contName = CONTINENT_ZH_MAP[appliedContinent] || appliedContinent;
+          const countryZh = toCountryZh(appliedCountry);
+          document.getElementById('btnModeCountry').innerHTML = `${contName}-${countryZh} <span class="caret">▼</span>`;
+          document.getElementById('btnModeCommodity').innerHTML = `按品种分类 <span class="caret">▼</span>`;
+        }
       }
 
-      function formatYearLabel(year) {
-        const text = String(year ?? "");
-        return /^\\d{4}$/.test(text) ? text + "年" : text;
+      // --- Picker 逻辑 ---
+      const pickerModal = document.getElementById('customPickerModal');
+      
+      function openPicker(mode) {
+        tempMode = mode;
+        document.getElementById('pickerTitle').innerText = mode === 'commodity' ? '选择品种' : '选择国家/地区';
+        
+        if (mode === 'commodity') {
+          tempMajor = (appliedMode === 'commodity') ? appliedMajor : '矿产';
+          tempCommodity = appliedCommodity;
+        } else {
+          tempContinent = (appliedMode === 'country') ? appliedContinent : 'Asia';
+          tempCountry = appliedCountry;
+        }
+        pickerModal.classList.add('is-open');
+        renderPickerLeft(); 
       }
 
-      function activeMetric() {
-        return currentMetric;
+      function renderPickerLeft() {
+        const leftCol = document.getElementById('pickerLeftCol');
+        let html = '';
+        if (tempMode === 'commodity') {
+          const majors = ['all', '矿产', '能化', '农产品'];
+          const names = ['全部分类', '矿产', '能化', '农产品'];
+          majors.forEach((m, i) => html += `<div class="picker-item ${tempMajor === m ? 'active' : ''}" data-val="${m}">${names[i]}</div>`);
+        } else {
+          const conts = ['all', 'Asia', 'Europe', 'North America', 'South America', 'Africa', 'Oceania'];
+          const names = ['全部大洲', '亚洲', '欧洲', '北美洲', '南美洲', '非洲', '大洋洲'];
+          conts.forEach((c, i) => html += `<div class="picker-item ${tempContinent === c ? 'active' : ''}" data-val="${c}">${names[i]}</div>`);
+        }
+        leftCol.innerHTML = html;
+        renderPickerRight();
       }
 
-      function activeViewMode() {
-        const checked = viewModeRadios.find((n) => n.checked);
-        return checked ? checked.value : "commodity";
+      function renderPickerRight() {
+        const rightCol = document.getElementById('pickerRightCol');
+        let html = '';
+        if (tempMode === 'commodity') {
+          let products = tempMajor === 'all' ? allProducts : allProducts.filter(p => p.group_major === tempMajor);
+          if (!products.some(p => p.commodity_en === tempCommodity) && products.length > 0) { tempCommodity = products[0].commodity_en; }
+          products.forEach(p => html += `<div class="picker-item ${tempCommodity === p.commodity_en ? 'active' : ''}" data-val="${p.commodity_en}">${p.commodity_zh}</div>`);
+        } else {
+          let profiles = buildCountryProfiles(CORE_COUNTRIES, allProducts);
+          if (tempContinent !== 'all') profiles = profiles.filter(p => getContinentEn(p.country_en) === tempContinent);
+          if (!profiles.some(p => p.country_en === tempCountry) && profiles.length > 0) { tempCountry = profiles[0].country_en; }
+          profiles.forEach(p => html += `<div class="picker-item ${tempCountry === p.country_en ? 'active' : ''}" data-val="${p.country_en}">${p.country_zh}</div>`);
+        }
+        rightCol.innerHTML = html;
       }
 
-      function getFilteredProducts() {
-        const scope = majorCategorySelect.value || "all";
-        if (scope === "all") return allProducts;
-        return allProducts.filter((p) => p.group_major === scope);
-      }
+      document.getElementById('pickerLeftCol').addEventListener('click', e => {
+        const item = e.target.closest('.picker-item');
+        if(item) {
+          if(tempMode === 'commodity') tempMajor = item.getAttribute('data-val');
+          else tempContinent = item.getAttribute('data-val');
+          renderPickerLeft();
+        }
+      });
+      document.getElementById('pickerRightCol').addEventListener('click', e => {
+        const item = e.target.closest('.picker-item');
+        if(item) {
+          if(tempMode === 'commodity') tempCommodity = item.getAttribute('data-val');
+          else tempCountry = item.getAttribute('data-val');
+          Array.from(document.getElementById('pickerRightCol').children).forEach(el => el.classList.remove('active'));
+          item.classList.add('active');
+        }
+      });
+      document.getElementById('pickerCancel').addEventListener('click', () => pickerModal.classList.remove('is-open'));
+      
+      document.getElementById('pickerConfirm').addEventListener('click', () => {
+        appliedMode = tempMode;
+        if (appliedMode === 'commodity') { appliedMajor = tempMajor; appliedCommodity = tempCommodity; } 
+        else { appliedContinent = tempContinent; appliedCountry = tempCountry; }
+        
+        document.getElementById('btnModeCommodity').classList.toggle('active', appliedMode === 'commodity');
+        document.getElementById('btnModeCountry').classList.toggle('active', appliedMode === 'country');
+        
+        updateButtonTexts();
+        pickerModal.classList.remove('is-open');
+        renderBoard();
+      });
 
-      function selectedCommodity() {
-        const products = getFilteredProducts();
-        const code = commoditySelect.value;
-        return products.find((c) => c.commodity_en === code) || products[0] || null;
-      }
+      document.getElementById('btnModeCommodity').addEventListener('click', () => openPicker('commodity'));
+      document.getElementById('btnModeCountry').addEventListener('click', () => openPicker('country'));
 
-      function getCountryProfiles() {
-        return buildCountryProfiles(CORE_COUNTRIES, getFilteredProducts());
-      }
-
-      function selectedCountryProfile() {
-        const countryProfiles = getCountryProfiles();
-        const code = coreCountrySelect.value;
-        return countryProfiles.find((c) => c.country_en === code) || countryProfiles[0] || null;
-      }
 
       function getCommoditySimulationState(commodity) {
-        if (!commodity) {
-          return {
-            disruptionSet: new Set(),
-            disruptedEntries: [],
-            activeEntries: [],
-            disruptedValue: 0,
-            remainingTotal: 0,
-            simulationActive: false,
-            gapPct: 0,
-            rankedEntries: []
-          };
-        }
-
-        const disruptionSet = getDisruptionSet(commodity.commodity_en);
-        const disruptedEntries = commodity.entries.filter((entry) => disruptionSet.has(entry.country_en));
-        const activeEntries = commodity.entries.filter((entry) => !disruptionSet.has(entry.country_en));
-        const disruptedValue = disruptedEntries.reduce((sum, entry) => sum + Number(entry.value || 0), 0);
-        const remainingTotal = Math.max(Number(commodity.world_total || 0) - disruptedValue, 0);
-        const simulationActive = disruptedEntries.length > 0;
-        const rankedEntries = activeEntries.map((entry, idx) => ({
-          ...entry,
-          adjusted_rank: idx + 1,
-          adjusted_share: remainingTotal > 0 ? (Number(entry.value || 0) / remainingTotal) * 100 : 0
-        }));
-
+        if (!commodity) return { disruptionSet: new Set(), disruptedEntries: [], activeEntries: [], disruptedValue: 0, remainingTotal: 0, simulationActive: false, gapPct: 0, rankedEntries: [] };
+        const set = getDisruptionSet(commodity.commodity_en);
+        const disrupted = commodity.entries.filter(e => set.has(e.country_en));
+        const active = commodity.entries.filter(e => !set.has(e.country_en));
+        const dValue = disrupted.reduce((sum, e) => sum + Number(e.value || 0), 0);
+        const rTotal = Math.max(Number(commodity.world_total || 0) - dValue, 0);
         return {
-          disruptionSet,
-          disruptedEntries,
-          activeEntries,
-          disruptedValue,
-          remainingTotal,
-          simulationActive,
-          gapPct:
-            commodity.world_total > 0 ? (disruptedValue / Number(commodity.world_total)) * 100 : 0,
-          rankedEntries
+          disruptionSet: set, disruptedEntries: disrupted, activeEntries: active, disruptedValue: dValue, remainingTotal: rTotal, simulationActive: disrupted.length > 0, gapPct: commodity.world_total > 0 ? (dValue / commodity.world_total) * 100 : 0,
+          rankedEntries: active.map((e, idx) => ({ ...e, adjusted_rank: idx + 1, adjusted_share: rTotal > 0 ? (Number(e.value || 0) / rTotal) * 100 : 0 }))
         };
       }
 
-      function setMetricValueEnabled(enabled) {
-        metricValueEnabled = enabled;
-        if (!enabled && currentMetric === "value") {
-          currentMetric = "share";
-        }
+      function splitTreemapNodes(nodes) {
+        const total = nodes.reduce((sum, n) => sum + n.value, 0);
+        let running = 0, bestIndex = 1, smallestDiff = Infinity;
+        for (let i = 0; i < nodes.length - 1; i++) { running += nodes[i].value; const diff = Math.abs(total / 2 - running); if (diff < smallestDiff) { smallestDiff = diff; bestIndex = i + 1; } }
+        return [nodes.slice(0, bestIndex), nodes.slice(bestIndex)];
+      }
+      
+      function layoutTreemap(nodes, x, y, width, height) {
+        if (!nodes.length || width <= 0 || height <= 0) return [];
+        if (nodes.length === 1) return [{ ...nodes[0], x, y, width, height }];
+        const ordered = [...nodes].sort((a, b) => b.value - a.value);
+        const total = ordered.reduce((s, n) => s + n.value, 0);
+        const [gA, gB] = splitTreemapNodes(ordered);
+        const ratioA = total > 0 ? gA.reduce((s, n) => s + n.value, 0) / total : 0.5;
+        if (width >= height) { const wA = width * ratioA; return [...layoutTreemap(gA, x, y, wA, height), ...layoutTreemap(gB, x + wA, y, width - wA, height)]; }
+        const hA = height * ratioA; return [...layoutTreemap(gA, x, y, width, hA), ...layoutTreemap(gB, x, y + hA, width, height - hA)];
       }
 
-      function openSelectionPanel() {
-        if (!selectionPanelEl) return;
-        selectionPanelEl.classList.add("is-open");
+      function buildTreemapNodes(commodity, simState) {
+        const nodes = [];
+        
+        // 前 15 名用于展示
+        const top15 = commodity.entries.slice(0, 15);
+        const activeNodes = top15.map((e, idx) => {
+            const isDisrupted = simState.disruptionSet.has(e.country_en);
+            return { 
+                key: e.country_en, 
+                label: toCountryZh(e.country_en, e.country_zh), 
+                value: Number(e.value || 0), 
+                shareLabel: e.share_pct.toFixed(2) + "%", 
+                kind: "active", 
+                color: TREEMAP_COLORS[idx % TREEMAP_COLORS.length],
+                isDisrupted: isDisrupted 
+            };
+        });
+        nodes.push(...activeNodes);
+
+        // 第 16 名及以后合并为“其他”
+        const otherEntries = commodity.entries.slice(15);
+        if (otherEntries.length > 0) {
+            const otherValue = otherEntries.reduce((s, e) => s + Number(e.value || 0), 0);
+            nodes.push({
+                key: "other",
+                label: "其他地区",
+                value: otherValue,
+                shareLabel: ((otherValue / commodity.world_total) * 100).toFixed(2) + "%",
+                kind: "other",
+                color: "#E2E8F0", 
+                isDisrupted: false
+            });
+        }
+
+        return nodes.filter(n => n.value > 0);
       }
 
-      function closeSelectionPanel() {
-        if (!selectionPanelEl) return;
-        selectionPanelEl.classList.remove("is-open");
+      function renderHeroPanel(commodity, simState) {
+        const el = document.getElementById("heroPanel");
+        if (appliedMode !== "commodity" || !commodity) { el.style.display = "none"; return; }
+        el.style.display = "block";
+        const layout = layoutTreemap(buildTreemapNodes(commodity, simState), 0, 0, 100, 100);
+        
+        const html = layout.map(node => {
+          const area = node.width * node.height;
+          // 防溢出检测
+          const sizeClass = (node.width < 12 || node.height < 10 || area < 100) ? " treemap-block-micro" 
+                            : (area < 250) ? " treemap-block-tiny" 
+                            : (area < 500) ? " treemap-block-compact" : "";
+          
+          const opacityStyle = node.isDisrupted ? "opacity: 0.5;" : "opacity: 1;";
+          const fontColor = node.kind === "other" ? "#333" : "#fff";
+
+          return `<div class='treemap-block ${sizeClass}' style='left:${node.x}%;top:${node.y}%;width:${node.width}%;height:${node.height}%;background:${node.color};${opacityStyle}'>
+            <div class='treemap-block-inner' style='color:${fontColor}'><div><div class='treemap-name'>${escapeHtml(node.label)}</div></div>
+            <div><div class='treemap-value'>${escapeHtml(formatDisplayValue(node.value, commodity.unit))}</div><div class='treemap-value-sub'>${node.shareLabel}</div></div></div></div>`;
+        }).join("");
+        
+        el.innerHTML = `<div class='hero-title'>${commodity.year}年全球${escapeHtml(commodity.commodity_zh)}${simState.simulationActive ? "可供总量 " : "供应总量 "}<strong>${formatDisplayValue(simState.simulationActive ? simState.remainingTotal : commodity.world_total, commodity.unit)}</strong>${translateUnit(commodity.unit)}</div><div class='treemap-shell'><div class='treemap'>${html}</div></div>`;
       }
 
-      function setViewModeUI() {
-        const mode = activeViewMode();
-        const isCommodity = mode === "commodity";
-        commodityFieldEl.style.display = isCommodity ? "flex" : "none";
-        countryFieldEl.style.display = isCommodity ? "none" : "flex";
-        if (selectionPanelTitleEl) {
-          selectionPanelTitleEl.textContent = isCommodity ? "选择品种" : "选择国家/地区";
+      function renderSimulationPanel(commodity, disruptedEntries, remainingTotal, gapPct) {
+        const simCard = document.getElementById("simulationCard");
+        const simBody = document.getElementById("simulationBody");
+        if (appliedMode !== "commodity" || !disruptedEntries.length) { simCard.style.display = "none"; return; }
+        simCard.style.display = "block";
+        simBody.className = "";
+        simBody.innerHTML = `<div class='sim-alert'>若执行断供，全球将出现 <strong>${gapPct.toFixed(2)}%</strong> 的绝对缺口。</div><div class='sim-meta'>剩余可供量：${formatDisplayValue(remainingTotal, commodity.unit)} ${translateUnit(commodity.unit)}</div><div class='sim-pills'>${disruptedEntries.map(e => `<span class='sim-pill'>${escapeHtml(toCountryZh(e.country_en, e.country_zh))}</span>`).join("")}</div>`;
+      }
+
+      // 完美读取本地 EVENT_CASES，渲染历史冲击面板
+      function renderEventPanel(commodity) {
+        const panel = document.getElementById("eventPanel");
+        if (!commodity || appliedMode !== "commodity") {
+            panel.innerHTML = "";
+            return;
         }
-        if (isCommodity) {
-          setMetricValueEnabled(true);
-        } else {
-          setMetricValueEnabled(false);
+        
+        const rawCase = EVENT_CASES[commodity.commodity_zh] || (window.EVENT_CASES && window.EVENT_CASES[commodity.commodity_zh]);
+        if (!rawCase) {
+            panel.innerHTML = "";
+            return;
         }
+        
+        const cases = Array.isArray(rawCase) ? rawCase : [rawCase];
+        
+        let html = `<div class='section-label'>历史断供/冲击复盘</div>`;
+        html += cases.map(c => `
+            <div class="event-card">
+                <div class="event-topline">
+                    <div class="event-eyebrow">
+                        <span class="event-type">${escapeHtml(c.type || '历史事件')}</span>
+                        <span class="event-kicker">${escapeHtml(c.title || '')}</span>
+                    </div>
+                    <span class="event-date">${escapeHtml(c.date || '')}</span>
+                </div>
+                <h3>${escapeHtml(c.title || '')}</h3>
+                <p class="event-summary">${escapeHtml(c.summary || '')}</p>
+                ${c.impact ? `<div class="event-impact"><div class="event-impact-label">核心影响</div><div class="event-impact-text">${escapeHtml(c.impact)}</div></div>` : ''}
+                ${c.source_name ? `<div class="event-source"><div class="event-source-label">来源：${escapeHtml(c.source_name)}</div></div>` : ''}
+            </div>
+        `).join("");
+        
+        panel.innerHTML = html;
       }
 
       function renderCommodityBoard() {
         const commodity = selectedCommodity();
-        if (!commodity) {
-          setBoardTags([]);
-          renderHeroPanel(null, null);
-          renderEventPanel(null);
-          renderSimulationPanel(null, [], 0, 0);
-          boardTitleEl.textContent = "暂无可显示品种";
-          boardSubTitleEl.textContent = "当前筛选范围没有数据";
-          boardEl.innerHTML = "<div>暂无数据</div>";
-          return;
-        }
+        const boardEl = document.getElementById("board");
+        if (!commodity) { boardEl.innerHTML = "<div>暂无数据</div>"; document.getElementById("eventPanel").innerHTML = ""; return; }
 
-        const metric = activeMetric();
         const simState = getCommoditySimulationState(commodity);
-        const disruptedEntries = simState.disruptedEntries;
-        const activeEntries = simState.activeEntries;
-        const remainingTotal = simState.remainingTotal;
-        const simulationActive = simState.simulationActive;
-        const rankedEntries = simState.rankedEntries;
-        const visibleEntries = rankedEntries;
-        const maxMetricValue = Math.max(
-          ...visibleEntries.map((entry) =>
-            metric === "share"
-              ? simulationActive
-                ? entry.adjusted_share
-                : entry.share_pct
-              : entry.value
-          ),
-          1
-        );
-        boardTitleEl.textContent = commodity.commodity_zh + "供应排行";
+        const { disruptedEntries, activeEntries, remainingTotal, simulationActive, rankedEntries } = simState;
+        
+        document.getElementById("boardTitle").textContent = commodity.commodity_zh + "供应排行";
+        document.getElementById("boardSubTitle").textContent = `口径：${translateValueType(commodity.value_type)} | 年份：${commodity.year} | 单位：${translateUnit(commodity.unit)}`;
         setBoardTags(getTopicTags(commodity.commodity_zh));
+        
         renderHeroPanel(commodity, simState);
-        renderEventPanel(commodity);
-        boardSubTitleEl.textContent =
-          "口径：" +
-          translateValueType(commodity.value_type) +
-          " | 年份：" +
-          commodity.year +
-          " | 单位：" +
-          translateUnit(commodity.unit) +
-          (simulationActive
-            ? " | 已模拟停产 " +
-              disruptedEntries.length +
-              " 个国家/地区 | 绝对缺口 " +
-              simState.gapPct.toFixed(2) +
-              "%"
-            : "");
-        const cr3 = visibleEntries
-          .slice(0, 3)
-          .reduce(
-            (sum, item) => sum + (simulationActive ? item.adjusted_share : item.share_pct),
-            0
-          );
-
         renderSimulationPanel(commodity, disruptedEntries, remainingTotal, simState.gapPct);
+        renderEventPanel(commodity);
+        
+        const maxShare = Math.max(...rankedEntries.map(e => simulationActive ? e.adjusted_share : e.share_pct), 1);
 
-        const overviewText =
-          (simulationActive ? "剩余可供量" : "全球总量") +
-          " <strong>" +
-          escapeHtml(
-            formatDisplayValue(simulationActive ? remainingTotal : commodity.world_total, commodity.unit) +
-              " " +
-              translateUnit(commodity.unit)
-          ) +
-          "</strong>，" +
-          (simulationActive ? "剩余供应第一名占比" : "第一名占比") +
-          " <strong>" +
-          escapeHtml(
-            visibleEntries.length
-              ? ((simulationActive ? visibleEntries[0].adjusted_share : visibleEntries[0].share_pct).toFixed(2) +
-                  "%")
-              : "-"
-          ) +
-          "</strong>，" +
-          (simulationActive ? "剩余供应前三集中度" : "前三集中度") +
-          " <strong>" +
-          escapeHtml(cr3.toFixed(2) + "%") +
-          "</strong>，" +
-          (simulationActive ? "可供国家/地区数" : "统计国家/地区数") +
-          " <strong>" +
-          escapeHtml(
-            simulationActive ? activeEntries.length + " / " + commodity.entries.length : String(commodity.entries.length)
-          ) +
-          "</strong>。";
+        const rowsHtml = rankedEntries.map((entry, idx) => {
+          const effectiveShare = simulationActive ? entry.adjusted_share : entry.share_pct;
+          const absoluteValue = formatDisplayValue(entry.value, commodity.unit) + " " + translateUnit(commodity.unit);
+          const widthPct = Math.max(5, (effectiveShare / maxShare) * 100); 
+          const countryZh = toCountryZh(entry.country_en, entry.country_zh);
 
-        const boardTopHtml =
-          "<div class='board-overview'>" +
-          "<div class='board-overview-text'>" +
-          overviewText +
-          "</div>" +
-          "<div class='metric-inline'>" +
-          "<button class='metric-chip " +
-          (metric === "share" ? "metric-chip-active" : "") +
-          "' type='button' data-set-metric='share'>全球占比 %</button>" +
-          "<button class='metric-chip " +
-          (metric === "value" ? "metric-chip-active" : "") +
-          "' type='button' data-set-metric='value'>绝对值</button>" +
-          "</div>" +
-          "</div>";
+          return `
+            <div class="ranking-item">
+              <div class="ranking-top">
+                <div class="rank-country">
+                  <span class="rank-num">#${idx + 1}</span>
+                  <span class="country-flag">${getFlagEmoji(countryZh)}</span>
+                  <span class="country-name">${escapeHtml(countryZh)}</span>
+                </div>
+                <button class="sim-toggle" data-sim-commodity="${escapeHtml(commodity.commodity_en)}" data-sim-country="${escapeHtml(entry.country_en)}">模拟停产</button>
+              </div>
+              <div class="bar-chart-container">
+                <div class="bar-chart">
+                  <div class="bar-fill" style="width: ${widthPct.toFixed(1)}%;">
+                    <span class="absolute-value">${absoluteValue}</span>
+                  </div>
+                </div>
+                <span class="percentage-value">${effectiveShare.toFixed(2)}%</span>
+              </div>
+            </div>
+          `;
+        }).join("");
 
-        const rowsHtml = visibleEntries
-          .map((entry, idx) => {
-            const effectiveShare = simulationActive ? entry.adjusted_share : entry.share_pct;
-            const metricValue = metric === "share" ? effectiveShare : entry.value;
-            const widthPct = Math.max(3, (metricValue / maxMetricValue) * 100);
+        const disruptedRowsHtml = disruptedEntries.length ? 
+          "<div class='section-label'>已模拟停产区域</div>" + disruptedEntries.map(entry => {
             const countryZh = toCountryZh(entry.country_en, entry.country_zh);
-            const valueLabel =
-              metric === "share"
-                ? effectiveShare.toFixed(2) +
-                  "%" +
-                  (simulationActive
-                    ? "<div class='value-sub'>原占比 " + entry.share_pct.toFixed(2) + "%</div>"
-                    : "")
-                : formatDisplayValue(entry.value, commodity.unit) + " " + translateUnit(commodity.unit);
-            return (
-              "<div class='row " +
-              "" +
-              "'>" +
-              "<div class='rank'>#" +
-              (idx + 1) +
-              "</div>" +
-              "<div>" +
-              "<div class='country-label'>" +
-              "<div class='label-main'>" +
-              "<div class='label-title'><span class='label-name'>" +
-              escapeHtml(countryZh) +
-              "</span></div></div></div>" +
-              "<div class='metric-row'>" +
-              "<div class='bar-wrap'><div class='bar' style='width:" +
-              widthPct.toFixed(1) +
-              "%'></div></div>" +
-              "<div class='value'>" +
-              valueLabel +
-              "</div>" +
-              "<div class='label-actions'>" +
-              "<button class='sim-toggle' type='button' data-sim-commodity='" +
-              escapeHtml(commodity.commodity_en) +
-              "' data-sim-country='" +
-              escapeHtml(entry.country_en) +
-              "'>模拟停产</button>" +
-              "</div>" +
-              "</div>" +
-              "</div>" +
-              "</div>"
-            );
-          })
-          .join("");
+            const widthPct = Math.max(5, (entry.share_pct / maxShare) * 100);
+            return `
+              <div class="ranking-item offline">
+                <div class="ranking-top">
+                  <div class="rank-country"><span class="rank-num">×</span><span class="country-flag">${getFlagEmoji(countryZh)}</span><span class="country-name">${escapeHtml(countryZh)}</span></div>
+                  <button class="sim-toggle sim-toggle-active" data-sim-commodity="${escapeHtml(commodity.commodity_en)}" data-sim-country="${escapeHtml(entry.country_en)}">恢复供应</button>
+                </div>
+                <div class="bar-chart-container">
+                  <div class="bar-chart"><div class="bar-fill" style="width: ${widthPct.toFixed(1)}%;"><span class="absolute-value">${formatDisplayValue(entry.value, commodity.unit)} ${translateUnit(commodity.unit)}</span></div></div>
+                  <span class="percentage-value">缺口 ${entry.share_pct.toFixed(2)}%</span>
+                </div>
+              </div>
+            `;
+          }).join("") : "";
 
-        const disruptedRowsHtml = disruptedEntries.length
-          ? "<div class='section-label'>已模拟停产</div>" +
-            disruptedEntries
-              .map((entry) => {
-                const countryZh = toCountryZh(entry.country_en, entry.country_zh);
-                const disruptedMetricValue = metric === "share" ? entry.share_pct : entry.value;
-                const disruptedWidthPct = Math.max(
-                  3,
-                  (disruptedMetricValue /
-                    Math.max(
-                      ...disruptedEntries.map((item) =>
-                        metric === "share" ? item.share_pct : item.value
-                      ),
-                      1
-                    )) *
-                    100
-                );
-                return (
-                  "<div class='row offline " +
-                  "" +
-                  "'>" +
-                  "<div class='rank'>×</div>" +
-                  "<div>" +
-                  "<div class='country-label'>" +
-                  "<div class='label-main'>" +
-                  "<div class='label-title'><span class='label-name'>" +
-                  escapeHtml(countryZh) +
-                  "</span></div></div></div>" +
-                  "<div class='metric-row'>" +
-                  "<div class='bar-wrap'><div class='bar' style='width:" +
-                  disruptedWidthPct.toFixed(1) +
-                  "%'></div></div>" +
-                  "<div class='value'>" +
-                  (metric === "share"
-                    ? "缺口 " +
-                      entry.share_pct.toFixed(2) +
-                      "%<div class='value-sub'>原全球占比</div>"
-                    : formatDisplayValue(entry.value, commodity.unit) +
-                      " " +
-                      translateUnit(commodity.unit) +
-                      "<div class='value-sub'>已模拟停产</div>") +
-                  "</div>" +
-                  "<div class='label-actions'>" +
-                  "<button class='sim-toggle sim-toggle-active' type='button' data-sim-commodity='" +
-                  escapeHtml(commodity.commodity_en) +
-                  "' data-sim-country='" +
-                  escapeHtml(entry.country_en) +
-                  "'>恢复供应</button>" +
-                  "</div>" +
-                  "</div>" +
-                  "</div>"
-                );
-              })
-              .join("")
-          : "";
-
-        boardEl.innerHTML = boardTopHtml + (rowsHtml + disruptedRowsHtml || "<div>暂无数据</div>");
+        boardEl.innerHTML = rowsHtml + disruptedRowsHtml;
       }
 
       function renderCountryBoard() {
         const profile = selectedCountryProfile();
-        if (!profile) {
-          setBoardTags([]);
-          renderHeroPanel(null, null);
-          renderEventPanel(null);
-          renderSimulationPanel(null, [], 0, 0);
-          boardTitleEl.textContent = "暂无可显示国家/地区";
-          boardSubTitleEl.textContent = "当前筛选范围没有数据";
-          boardEl.innerHTML = "<div>暂无数据</div>";
-          return;
-        }
+        const boardEl = document.getElementById("board");
+        if (!profile) { boardEl.innerHTML = "<div>暂无数据</div>"; document.getElementById("eventPanel").innerHTML = ""; return; }
+        
+        document.getElementById("boardTitle").textContent = profile.country_zh + "核心品种贡献";
+        setBoardTags([]);
+        renderHeroPanel(null, null);
+        renderSimulationPanel(null, [], 0, 0);
+        document.getElementById("eventPanel").innerHTML = ""; 
+        document.getElementById("boardSubTitle").textContent = "按该国家/地区在各品种全球占比排序";
 
         const entries = profile.entries;
         const maxShare = Math.max(...entries.map((e) => e.share_pct), 1);
 
-        boardTitleEl.textContent = profile.country_zh + "核心品种贡献";
-        setBoardTags([]);
-        renderHeroPanel(null, null);
-        renderEventPanel(null);
-        renderSimulationPanel(null, [], 0, 0);
-        boardSubTitleEl.textContent = "按该国家/地区在各品种全球占比排序（仅展示核心国家/地区样本）";
-
-        const cr3 = entries.slice(0, 3).reduce((sum, item) => sum + item.share_pct, 0);
-        const boardTopHtml =
-          "<div class='board-overview'>" +
-          "<div class='board-overview-text'>" +
-          "覆盖品种数 <strong>" +
-          escapeHtml(String(profile.entries.length)) +
-          "</strong>，第一品种占比 <strong>" +
-          escapeHtml(entries.length ? entries[0].share_pct.toFixed(2) + "%" : "-") +
-          "</strong>，前三品种占比 <strong>" +
-          escapeHtml(cr3.toFixed(2) + "%") +
-          "</strong>，展示品种数 <strong>" +
-          escapeHtml(String(entries.length)) +
-          "</strong>。" +
-          "</div>" +
-          "<div class='metric-inline'>" +
-          "<button class='metric-chip metric-chip-active' type='button' data-set-metric='share'>全球占比 %</button>" +
-          "<button class='metric-chip' type='button' disabled>绝对值</button>" +
-          "</div>" +
-          "</div>";
-
-        const rowsHtml = entries
-          .map((entry, idx) => {
-            const widthPct = Math.max(3, (entry.share_pct / maxShare) * 100);
-            const valueLabel = entry.share_pct.toFixed(2) + "%";
-            const topicTagsHtml = renderTopicTagsHtml(getTopicTags(entry.commodity_zh), "topic-tag-inline");
-            return (
-              "<div class='row " +
-              "" +
-              "'>" +
-              "<div class='rank'>#" +
-              (idx + 1) +
-              "</div>" +
-              "<div>" +
-              "<div class='country-label'><div class='label-main'><div class='label-title'><span class='label-name'>" +
-              escapeHtml(entry.commodity_zh) +
-              "</span>" +
-              topicTagsHtml +
-              "</div></div></div>" +
-              "<div class='metric-row'>" +
-              "<div class='bar-wrap'><div class='bar' style='width:" +
-              widthPct.toFixed(1) +
-              "%'></div></div>" +
-              "<div class='value'>" +
-              valueLabel +
-              "</div>" +
-              "</div>" +
-              "</div>" +
-              "</div>"
-            );
-          })
-          .join("");
-
-        boardEl.innerHTML = boardTopHtml + (rowsHtml || "<div>暂无数据</div>");
+        boardEl.innerHTML = entries.map((entry, idx) => {
+          const widthPct = Math.max(3, (entry.share_pct / maxShare) * 100);
+          return `
+            <div class="ranking-item">
+              <div class="ranking-top">
+                <div class="rank-country">
+                  <span class="rank-num">#${idx + 1}</span>
+                  <span class="country-name">${escapeHtml(entry.commodity_zh)}</span>
+                  ${renderTopicTagsHtml(getTopicTags(entry.commodity_zh))}
+                </div>
+              </div>
+              <div class="bar-chart-container">
+                <div class="bar-chart">
+                  <div class="bar-fill" style="width: ${widthPct.toFixed(1)}%;">
+                     <span class="absolute-value">${formatDisplayValue(entry.value, entry.unit)} ${translateUnit(entry.unit)}</span>
+                  </div>
+                </div>
+                <span class="percentage-value">${entry.share_pct.toFixed(2)}%</span>
+              </div>
+            </div>
+          `;
+        }).join("");
       }
 
       function renderBoard() {
-        if (activeViewMode() === "country") {
-          renderCountryBoard();
-        } else {
-          renderCommodityBoard();
-        }
+        if (appliedMode === "country") renderCountryBoard();
+        else renderCommodityBoard();
       }
 
-      function initCommoditySelect() {
-        const products = getFilteredProducts();
-        const current = commoditySelect.value;
-
-        commoditySelect.innerHTML = products
-          .map((item) => {
-            return "<option value='" + item.commodity_en + "'>" + item.commodity_zh + "</option>";
-          })
-          .join("");
-
-        if (!products.length) return;
-        if (products.some((p) => p.commodity_en === current)) {
-          commoditySelect.value = current;
-          return;
-        }
-
-        const scope = majorCategorySelect.value || "all";
-        let preferred = null;
-        if (scope === "all") preferred = products.find((p) => p.commodity_zh === "原油");
-        if (scope === "矿产") preferred = products.find((p) => p.commodity_zh === "锡");
-        if (scope === "能化") preferred = products.find((p) => p.commodity_zh === "原油");
-        if (scope === "农产品") preferred = products.find((p) => p.commodity_zh === "大豆");
-        if (!preferred) preferred = products[0];
-        commoditySelect.value = preferred.commodity_en;
-      }
-
-      function initCountrySelect() {
-        const countryProfiles = getCountryProfiles();
-        const current = coreCountrySelect.value;
-
-        coreCountrySelect.innerHTML = countryProfiles
-          .map((item) => {
-            return (
-              "<option value='" +
-              item.country_en +
-              "'>" +
-              toCountryZh(item.country_en, item.country_zh) +
-              "</option>"
-            );
-          })
-          .join("");
-
-        if (!countryProfiles.length) return;
-        if (countryProfiles.some((c) => c.country_en === current)) {
-          coreCountrySelect.value = current;
-          return;
-        }
-
-        let preferred = null;
-        const scope = majorCategorySelect.value || "all";
-        if (scope === "all") preferred = countryProfiles.find((c) => c.country_en === "China");
-        if (scope === "矿产") preferred = countryProfiles.find((c) => c.country_en === "Chile");
-        if (scope === "能化") preferred = countryProfiles.find((c) => c.country_en === "Saudi Arabia");
-        if (scope === "农产品") preferred = countryProfiles.find((c) => c.country_en === "Brazil");
-        if (!preferred) preferred = countryProfiles[0];
-        coreCountrySelect.value = preferred.country_en;
-      }
-
-      function bindEvents() {
-        majorCategorySelect.addEventListener("change", () => {
-          initCommoditySelect();
-          initCountrySelect();
-          openSelectionPanel();
-          renderBoard();
-        });
-        commoditySelect.addEventListener("change", () => {
-          renderBoard();
-        });
-        coreCountrySelect.addEventListener("change", () => {
-          renderBoard();
-        });
-        toolbarSwitchEls.forEach((label) =>
-          label.addEventListener("click", () => {
-            window.requestAnimationFrame(() => {
-              setViewModeUI();
-              openSelectionPanel();
-            });
-          })
-        );
-        viewModeRadios.forEach((radio) =>
-          radio.addEventListener("change", () => {
-            setViewModeUI();
-            openSelectionPanel();
-            renderBoard();
-          })
-        );
-        if (selectionPanelCloseBtn) {
-          selectionPanelCloseBtn.addEventListener("click", closeSelectionPanel);
-        }
-        document.addEventListener("click", (event) => {
-          if (event.target.closest(".sim-help")) return;
-          document.querySelectorAll(".sim-help[open]").forEach((item) => item.removeAttribute("open"));
-        });
-        boardEl.addEventListener("click", (event) => {
-          const metricButton = event.target.closest("[data-set-metric]");
-          if (metricButton) {
-            const nextMetric = metricButton.getAttribute("data-set-metric");
-            if (nextMetric === "value" && !metricValueEnabled) return;
-            if (nextMetric === "share" || nextMetric === "value") {
-              currentMetric = nextMetric;
-              renderBoard();
-            }
-            return;
-          }
-          const button = event.target.closest("[data-sim-country]");
-          if (!button) return;
-          const commodityCode = button.getAttribute("data-sim-commodity");
-          const countryCode = button.getAttribute("data-sim-country");
-          if (!commodityCode || !countryCode) return;
-          toggleDisruption(commodityCode, countryCode);
-          renderBoard();
-        });
-        resetSimulationBtn.addEventListener("click", () => {
-          const commodity = selectedCommodity();
-          if (!commodity) return;
-          clearDisruptions(commodity.commodity_en);
-          renderBoard();
-        });
-      }
-
-      function init() {
-        initCommoditySelect();
-        initCountrySelect();
-        setViewModeUI();
-        openSelectionPanel();
-        bindEvents();
+      document.getElementById('board').addEventListener("click", (event) => {
+        const btn = event.target.closest(".sim-toggle");
+        if (!btn) return;
+        toggleDisruption(btn.getAttribute("data-sim-commodity"), btn.getAttribute("data-sim-country"));
         renderBoard();
-      }
+      });
+      document.getElementById('resetSimulationBtn').addEventListener("click", () => {
+        if(appliedMode !== 'commodity') return;
+        clearDisruptions(appliedCommodity); renderBoard();
+      });
 
-      init();
+      updateButtonTexts();
+      renderBoard();
     </script>
   </body>
 </html>
