@@ -496,7 +496,8 @@
       function toCountryZh(countryEn, countryZh) { if (countryZh && countryZh !== countryEn) return countryZh; return COUNTRY_ZH_PATCH[countryEn] || countryZh || countryEn; }
       function escapeHtml(text) { return String(text ?? "").replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;").replace(/"/g, "&quot;").replace(/'/g, "&#39;"); }
       function translateUnit(unit, commodityName = "") {
-        if (commodityName === "铁矿石" && (unit === "thousand metric tons" || unit === "million metric tons")) return "亿吨";
+        if ((commodityName === "铁矿石" && (unit === "thousand metric tons" || unit === "million metric tons")) ||
+            (commodityName === "煤炭" && unit === "million metric tons")) return "亿吨";
         return UNIT_ZH_MAP[unit] || unit;
       }
       function translateValueType(valueType) { return VALUE_TYPE_ZH_MAP[valueType] || "产量"; }
@@ -504,6 +505,7 @@
         const num = Number(value || 0);
         if (commodityName === "铁矿石" && unit === "thousand metric tons") return num / 100000;
         if (commodityName === "铁矿石" && unit === "million metric tons") return num / 100;
+        if (commodityName === "煤炭" && unit === "million metric tons") return num / 100;
         return (unit === "million metric tons" || unit === "million barrels per day" || unit === "million 480-lb bales") ? num * 100 : num;
       }
       function formatDisplayValue(value, unit, commodityName = "") { return new Intl.NumberFormat("zh-CN", { maximumFractionDigits: 2 }).format(normalizeDisplayValue(value, unit, commodityName)); }
