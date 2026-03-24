@@ -17,15 +17,20 @@
         --text: #111111;
         --sub: rgba(17, 17, 17, 0.58);
         --page-max-width: 500px;
+        --font-sans: "Source Han Sans", "Noto Sans CJK SC", sans-serif;
+        --font-title: "Source Han Serif Heavy", "Source Han Serif SC", "Noto Serif CJK SC", serif;
       }
 
       * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
 
       body {
         margin: 0;
-        font-family: "Inter", "Roboto", "Noto Sans CJK SC", sans-serif;
+        font-family: var(--font-sans);
         color: var(--text);
         background: #FFFFFF;
+        -webkit-font-smoothing: antialiased;
+        -moz-osx-font-smoothing: grayscale;
+        text-rendering: optimizeLegibility;
       }
 
       .layout { min-height: 100vh; display: block; width: 100%; max-width: 100%; margin: 0 auto; background: #FFFFFF; }
@@ -54,7 +59,7 @@
         color: var(--text);
         letter-spacing: -0.045em; 
         font-weight: 900; 
-        font-family: "Source Han Serif Heavy", "Source Han Serif SC", "Noto Serif CJK SC", "思源宋体", serif;
+        font-family: var(--font-title);
       }
       .header-icon { 
         width: 36px; 
