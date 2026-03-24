@@ -460,7 +460,7 @@
         钴: { date: "2025-03", type: "供应过剩", title: "印尼放量加剧全球钴市过剩", summary: "钴近年的主线不是短缺，而是印尼扩产下的价格重估。", impact: "印尼钴产能快速上升，全球钴市维持过剩格局。钴的估值逻辑从资源稀缺，切换到“新增供给何时出清”。", source_name: "Reuters" },
         铝: { date: "2026-03", type: "地缘冲突", title: "霍尔木兹风险扰动全球铝供应链", summary: "铝的最新冲击，来自中东运输受阻与海湾冶炼产能扰动。", impact: "中东冲突升级后，海湾地区部分原铝发运与原料运输受阻，全球铝价快速上行，重新进入地缘冲击定价交易。", source_name: "Reuters" },
         钾盐: { date: "2024-10", type: "供给恢复", title: "俄白回流令全球钾盐市场重回宽松", summary: "钾盐近年的关键冲击，从制裁紧张逐步切换为供给恢复后的价格压力。", impact: "随着俄罗斯和白俄罗斯出口路径修复，全球钾盐供应逐步接近战前水平，价格与利润中枢面临下移压力。", source_name: "Reuters" },
-        铁矿石: { date: "2024-05", type: "政策刺激", title: "地产政策刺激短线提振铁矿石情绪", summary: "铁矿石近年的典型冲击，更多来自中国需求预期的快速摆动。", impact: "中国出台地产支持政策后，铁矿石价格一度反弹，随后转入“政策预期与现实需求博弈”阶段。", source_name: "Reuters" },
+        铁矿石: { date: "2019-01", type: "供应冲击", title: "淡水河谷溃坝事故冲击全球铁矿石供应", summary: "铁矿石最典型的历史冲击之一，是主流矿山突发事故引发全球供应收缩预期。", impact: "2019年1月，巴西淡水河谷溃坝事故发生后，公司表示为拆除同类尾矿坝，最多将有约10%的铁矿石产量下线；随后又预计当年铁矿石和球团销量最多减少7500万吨，全球铁矿石供应预期因此被迅速重估。", source_name: "Reuters" },
         铅: { date: "2025-04", type: "供应过剩", title: "过剩预期压制铅价弹性", summary: "铅近两年的特征，不是极端短缺，而是供给宽松下的弱弹性运行。", impact: "全球铅市继续面临过剩预期，汽车电池需求增长有限而精炼产量仍偏高，资金配置明显偏谨慎。", source_name: "Reuters" },
         铜: { date: "2025-03", type: "原料紧缺", title: "铜精矿短缺迫使冶炼厂讨论减产", summary: "铜近年的关键矛盾之一，是矿端紧张与冶炼端扩张错配。", impact: "铜精矿加工费跌至极低水平后，中国铜冶炼厂利润被明显压缩，市场担忧减产，逻辑切换到“原料约束”。", source_name: "Reuters" },
         锰: { date: "2024-04", type: "运输受阻", title: "加蓬铁路事故扰动锰矿发运节奏", summary: "锰的另一类典型冲击，不在矿山本身，而在主产国运输链条受阻。", impact: "2024年4月，加蓬铁路脱轨事故导致当地锰矿运输受扰。在澳洲锰矿出口已偏紧的背景下，市场担心加蓬发运进一步收缩，全球锰矿供应预期因此再度趋紧。", source_name: "证券时报" },
@@ -495,10 +495,18 @@
       function getFlagEmoji(countryZh) { return FLAG_EMOJI_MAP[countryZh] || "🏳️"; }
       function toCountryZh(countryEn, countryZh) { if (countryZh && countryZh !== countryEn) return countryZh; return COUNTRY_ZH_PATCH[countryEn] || countryZh || countryEn; }
       function escapeHtml(text) { return String(text ?? "").replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;").replace(/"/g, "&quot;").replace(/'/g, "&#39;"); }
-      function translateUnit(unit) { return UNIT_ZH_MAP[unit] || unit; }
+      function translateUnit(unit, commodityName = "") {
+        if (commodityName === "铁矿石" && (unit === "thousand metric tons" || unit === "million metric tons")) return "亿吨";
+        return UNIT_ZH_MAP[unit] || unit;
+      }
       function translateValueType(valueType) { return VALUE_TYPE_ZH_MAP[valueType] || "产量"; }
-      function normalizeDisplayValue(value, unit) { const num = Number(value || 0); return (unit === "million metric tons" || unit === "million barrels per day" || unit === "million 480-lb bales") ? num * 100 : num; }
-      function formatDisplayValue(value, unit) { return new Intl.NumberFormat("zh-CN", { maximumFractionDigits: 2 }).format(normalizeDisplayValue(value, unit)); }
+      function normalizeDisplayValue(value, unit, commodityName = "") {
+        const num = Number(value || 0);
+        if (commodityName === "铁矿石" && unit === "thousand metric tons") return num / 100000;
+        if (commodityName === "铁矿石" && unit === "million metric tons") return num / 100;
+        return (unit === "million metric tons" || unit === "million barrels per day" || unit === "million 480-lb bales") ? num * 100 : num;
+      }
+      function formatDisplayValue(value, unit, commodityName = "") { return new Intl.NumberFormat("zh-CN", { maximumFractionDigits: 2 }).format(normalizeDisplayValue(value, unit, commodityName)); }
       function getTopicTags(name) { return HOT_TOPIC_TAGS[name] || ["全球供应链聚焦"]; }
       function renderTopicTagsHtml(tags) { 
         if (!tags || !tags.length) return "";
@@ -770,14 +778,14 @@
           const fontColor = node.kind === "other" ? "#333" : "#fff";
 
           // === 替换为 showTooltip 事件 ===
-          const alertText = `${escapeHtml(node.label)}<br>占比：${node.kind === "gap" ? node.shareLabel.replace("%", "") + "%" : node.shareLabel}<br>绝对值：${escapeHtml(formatDisplayValue(node.value, commodity.unit))} ${escapeHtml(translateUnit(commodity.unit))}`;
+          const alertText = `${escapeHtml(node.label)}<br>占比：${node.kind === "gap" ? node.shareLabel.replace("%", "") + "%" : node.shareLabel}<br>绝对值：${escapeHtml(formatDisplayValue(node.value, commodity.unit, commodity.commodity_zh))} ${escapeHtml(translateUnit(commodity.unit, commodity.commodity_zh))}`;
 
           return `<div class='treemap-block ${sizeClass}' style='left:${node.x}%;top:${node.y}%;width:${node.width}%;height:${node.height}%;background:${node.color};${opacityStyle}' onclick="showTooltip(event, '${alertText}')">
             <div class='treemap-block-inner' style='color:${fontColor}'><div><div class='treemap-name'>${escapeHtml(node.label)}</div></div>
-            <div><div class='treemap-value'>${escapeHtml(formatDisplayValue(node.value, commodity.unit))}</div><div class='treemap-value-sub'>${node.shareLabel}</div></div></div></div>`;
+            <div><div class='treemap-value'>${escapeHtml(formatDisplayValue(node.value, commodity.unit, commodity.commodity_zh))}</div><div class='treemap-value-sub'>${node.shareLabel}</div></div></div></div>`;
         }).join("");
         
-        el.innerHTML = `<div class='hero-title'>${commodity.year}年全球${escapeHtml(commodity.commodity_zh)}${simState.simulationActive ? "可供总量 " : "供应总量 "}<strong>${formatDisplayValue(simState.simulationActive ? simState.remainingTotal : commodity.world_total, commodity.unit)}</strong>${translateUnit(commodity.unit)}</div><div class='treemap-shell'><div class='treemap'>${html}</div></div>`;
+        el.innerHTML = `<div class='hero-title'>${commodity.year}年全球${escapeHtml(commodity.commodity_zh)}${simState.simulationActive ? "可供总量 " : "供应总量 "}<strong>${formatDisplayValue(simState.simulationActive ? simState.remainingTotal : commodity.world_total, commodity.unit, commodity.commodity_zh)}</strong>${translateUnit(commodity.unit, commodity.commodity_zh)}</div><div class='treemap-shell'><div class='treemap'>${html}</div></div>`;
       }
 
       function renderSimulationPanel(commodity, disruptedEntries, remainingTotal, gapPct) {
@@ -790,7 +798,7 @@
         const disruptedLabel = disruptedEntries.length === 1 ? "若该国家/地区断供" : "若这些国家/地区断供";
         const pillsHtml = disruptedEntries.map(e => `<span class='sim-pill'>${escapeHtml(toCountryZh(e.country_en, e.country_zh))}</span>`).join("");
         
-        simBody.innerHTML = `<div class='sim-alert'>${disruptedLabel}，全球将出现 <strong>${gapPct.toFixed(2)}%</strong> 的绝对缺口。</div><div class='sim-meta'>剩余可供量：${formatDisplayValue(Math.max(remainingTotal, 0), commodity.unit)} ${translateUnit(commodity.unit)}</div><div class='sim-pills'>${pillsHtml}</div>`;
+        simBody.innerHTML = `<div class='sim-alert'>${disruptedLabel}，全球将出现 <strong>${gapPct.toFixed(2)}%</strong> 的绝对缺口。</div><div class='sim-meta'>剩余可供量：${formatDisplayValue(Math.max(remainingTotal, 0), commodity.unit, commodity.commodity_zh)} ${translateUnit(commodity.unit, commodity.commodity_zh)}</div><div class='sim-pills'>${pillsHtml}</div>`;
       }
 
       function renderEventPanel(commodity) {
@@ -847,7 +855,7 @@
         const { disruptedEntries, activeEntries, remainingTotal, simulationActive, rankedEntries } = simState;
         
         document.getElementById("boardTitle").textContent = commodity.commodity_zh + "供应排行";
-        document.getElementById("boardSubTitle").textContent = `口径：${translateValueType(commodity.value_type)} | 年份：${commodity.year} | 单位：${translateUnit(commodity.unit)}`;
+        document.getElementById("boardSubTitle").textContent = `口径：${translateValueType(commodity.value_type)} | 年份：${commodity.year} | 单位：${translateUnit(commodity.unit, commodity.commodity_zh)} | 仅展示全球前${rankedEntries.length}国/地区样本`;
         setBoardTags(getTopicTags(commodity.commodity_zh));
         setBoardSource(getBoardSourceText(commodity));
         
@@ -859,7 +867,7 @@
 
         const rowsHtml = rankedEntries.map((entry, idx) => {
           const effectiveShare = simulationActive ? entry.adjusted_share : entry.share_pct;
-          const absoluteValue = formatDisplayValue(entry.value, commodity.unit) + " " + translateUnit(commodity.unit);
+          const absoluteValue = formatDisplayValue(entry.value, commodity.unit, commodity.commodity_zh) + " " + translateUnit(commodity.unit, commodity.commodity_zh);
           const widthPct = Math.max(5, (effectiveShare / maxShare) * 100); 
           const countryZh = toCountryZh(entry.country_en, entry.country_zh);
 
@@ -896,7 +904,7 @@
                   <button class="sim-toggle sim-toggle-active" data-sim-commodity="${escapeHtml(commodity.commodity_en)}" data-sim-country="${escapeHtml(entry.country_en)}">恢复供应</button>
                 </div>
                 <div class="bar-chart-container">
-                  <div class="bar-chart"><div class="bar-fill" style="width: ${widthPct.toFixed(1)}%;"><span class="absolute-value">${formatDisplayValue(entry.value, commodity.unit)} ${translateUnit(commodity.unit)}</span></div></div>
+                  <div class="bar-chart"><div class="bar-fill" style="width: ${widthPct.toFixed(1)}%;"><span class="absolute-value">${formatDisplayValue(entry.value, commodity.unit, commodity.commodity_zh)} ${translateUnit(commodity.unit, commodity.commodity_zh)}</span></div></div>
                   <span class="percentage-value">缺口 ${entry.share_pct.toFixed(2)}%</span>
                 </div>
               </div>
@@ -916,7 +924,7 @@
         renderHeroPanel(null, null);
         renderSimulationPanel(null, [], 0, 0);
         document.getElementById("eventPanel").innerHTML = ""; 
-        document.getElementById("boardSubTitle").textContent = "按该国家/地区在各品种全球占比排序";
+        document.getElementById("boardSubTitle").textContent = "按该国家/地区在各品种全球占比排序 | 仅展示核心国家/地区样本中的品种贡献";
         setBoardSource("");
 
         const entries = profile.entries;
@@ -936,7 +944,7 @@
               <div class="bar-chart-container">
                 <div class="bar-chart">
                   <div class="bar-fill" style="width: ${widthPct.toFixed(1)}%;">
-                     <span class="absolute-value">${formatDisplayValue(entry.value, entry.unit)} ${translateUnit(entry.unit)}</span>
+                     <span class="absolute-value">${formatDisplayValue(entry.value, entry.unit, entry.commodity_zh)} ${translateUnit(entry.unit, entry.commodity_zh)}</span>
                   </div>
                 </div>
                 <span class="percentage-value">${entry.share_pct.toFixed(2)}%</span>
