@@ -23,7 +23,7 @@
         --accent: var(--primary);
         --accent-soft: rgba(var(--primary-rgb), 0.1);
         --warn: var(--secondary);
-        --page-max-width: 500px;
+        --page-max-width: 460px;
       }
 
       * {
@@ -1559,7 +1559,7 @@
       @media (min-width: 1041px) {
         .layout {
           display: block;
-          width: min(calc(100% - 40px), var(--page-max-width));
+          width: min(calc(100% - 24px), var(--page-max-width));
           max-width: var(--page-max-width);
           margin: 0 auto;
         }
@@ -1675,9 +1675,9 @@
         }
 
         .row {
-          grid-template-columns: 46px 1fr 130px;
-          gap: 12px;
-          align-items: center;
+          grid-template-columns: 34px minmax(0, 1fr);
+          gap: 8px 10px;
+          align-items: start;
           margin-bottom: 0;
         }
 
@@ -1696,7 +1696,6 @@
         }
 
         .value {
-          grid-column: auto;
           text-align: right;
         }
       }
@@ -1776,7 +1775,7 @@
           <div class="board-tools">
             <div class="card sim-card" id="simulationCard">
               <div class="sim-card-head">
-                <div class="sim-card-title">断供/制裁推演</div>
+                <div class="sim-card-title">断供推演</div>
                 <div class="sim-card-tools">
                   <details class="sim-help">
                     <summary>?</summary>
