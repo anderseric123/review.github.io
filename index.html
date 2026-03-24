@@ -23,7 +23,7 @@
         --accent: var(--primary);
         --accent-soft: rgba(var(--primary-rgb), 0.1);
         --warn: var(--secondary);
-        --page-max-width: 460px;
+        --page-max-width: 650px;
       }
 
       * {
@@ -1559,7 +1559,7 @@
       @media (min-width: 1041px) {
         .layout {
           display: block;
-          width: min(calc(100% - 24px), var(--page-max-width));
+          width: min(calc(100% - 40px), var(--page-max-width));
           max-width: var(--page-max-width);
           margin: 0 auto;
         }
@@ -1675,9 +1675,9 @@
         }
 
         .row {
-          grid-template-columns: 34px minmax(0, 1fr);
-          gap: 8px 10px;
-          align-items: start;
+          grid-template-columns: 46px 1fr 130px;
+          gap: 12px;
+          align-items: center;
           margin-bottom: 0;
         }
 
@@ -1696,6 +1696,7 @@
         }
 
         .value {
+          grid-column: auto;
           text-align: right;
         }
       }
@@ -3303,6 +3304,7 @@
               "%'></div></div>" +
               "<div class='value'>" +
               valueLabel +
+              "</div>" +
               "</div>" +
               "</div>" +
               "</div>"
