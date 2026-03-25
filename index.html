@@ -54,8 +54,8 @@
       .title-wrapper { display: flex; align-items: center; justify-content: space-between; width: 100%; gap: 8px; }
       .title { 
         margin: 0; 
-        font-size: 27px; 
-        line-height: 1.04; 
+        font-size: 24px; 
+        line-height: 1.02; 
         color: var(--text);
         letter-spacing: -0.045em; 
         font-weight: 900; 
@@ -499,6 +499,9 @@
       function translateUnit(unit, commodityName = "") {
         if ((commodityName === "铁矿石" && (unit === "thousand metric tons" || unit === "million metric tons")) ||
             (commodityName === "煤炭" && unit === "million metric tons")) return "亿吨";
+        if (["电解铝", "磷矿石", "钾盐", "铅", "铜", "铝土矿", "锌", "锰"].includes(commodityName) && unit === "thousand metric tons") return "万吨";
+        if (["镍", "锡", "石墨"].includes(commodityName) && unit === "metric tons") return "万吨";
+        if (commodityName === "铝土矿" && unit === "thousand metric dry tons") return "万干吨";
         return UNIT_ZH_MAP[unit] || unit;
       }
       function translateValueType(valueType) { return VALUE_TYPE_ZH_MAP[valueType] || "产量"; }
@@ -507,6 +510,9 @@
         if (commodityName === "铁矿石" && unit === "thousand metric tons") return num / 100000;
         if (commodityName === "铁矿石" && unit === "million metric tons") return num / 100;
         if (commodityName === "煤炭" && unit === "million metric tons") return num / 100;
+        if (["电解铝", "磷矿石", "钾盐", "铅", "铜", "铝土矿", "锌", "锰"].includes(commodityName) && unit === "thousand metric tons") return num / 10;
+        if (["镍", "锡", "石墨"].includes(commodityName) && unit === "metric tons") return num / 10000;
+        if (commodityName === "铝土矿" && unit === "thousand metric dry tons") return num / 10;
         return (unit === "million metric tons" || unit === "million barrels per day" || unit === "million 480-lb bales") ? num * 100 : num;
       }
       function formatDisplayValue(value, unit, commodityName = "") { return new Intl.NumberFormat("zh-CN", { maximumFractionDigits: 2 }).format(normalizeDisplayValue(value, unit, commodityName)); }
